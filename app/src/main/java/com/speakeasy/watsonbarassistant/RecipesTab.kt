@@ -8,10 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 
 
-/**
- * A simple [Fragment] subclass.
- *
- */
 class RecipesTab : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
