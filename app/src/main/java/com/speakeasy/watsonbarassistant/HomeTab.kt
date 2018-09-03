@@ -24,7 +24,8 @@ class HomeTab : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val viewManager = LinearLayoutManager(activity)
-        viewAdapter = IngredientsAdapter((activity as MainMenu).ingredients)
+        val mainMenu = activity as MainMenu
+        viewAdapter = IngredientsAdapter(mainMenu.ingredients, mainMenu.documentsMap)
 
         recyclerView = view.findViewById<RecyclerView>(R.id.ingredients_list).apply {
             setHasFixedSize(true)

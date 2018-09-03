@@ -18,6 +18,7 @@ const val PASSWORD = "test123"
 class MainMenu : AppCompatActivity() {
 
     var ingredients = mutableListOf<Ingredient>()
+    var documentsMap = mutableMapOf<String, String>()
     var currentUser: FirebaseUser? = null
     var tabIndex = 0
 
@@ -97,7 +98,9 @@ class MainMenu : AppCompatActivity() {
 
     private fun parseSnapshot(snapshot: QueryDocumentSnapshot) {
         val name = snapshot.get("name") as? String
+        val id = snapshot.id
         if(name != null) {
+            documentsMap[name] = id
             val ingredient = Ingredient(name)
             ingredients.add(ingredient)
             Log.d("FIRESTORE", "Successfully retrieved ${ingredient.name}.")

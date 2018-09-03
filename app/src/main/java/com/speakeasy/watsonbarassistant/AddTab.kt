@@ -40,18 +40,25 @@ class AddTab : Fragment() {
     }
 
     private fun addIngredient(ingredient: Ingredient) {
+        val ingredients = (activity as MainMenu).ingredients
+        if(ingredient in ingredients) {
+            Toast.makeText(activity, "${ingredient.name} is already stored as an ingredient.", Toast.LENGTH_SHORT).show()
+            return
+        }
+        addIngredientToFireStore(ingredient)
+    }
+
+    private fun addIngredientToFireStore(ingredient: Ingredient) {
         val mainMenu = (activity as? MainMenu)
-        val uid = mainMenu?.currentUser?.uid
-        if(uid != null) {
-            fireStore.collection("app").document(uid)
-                    .collection("ingredients").add(ingredient).addOnSuccessListener { _ ->
-                Toast.makeText(context, "Successfully added ${ingredient.name}.", Toast.LENGTH_SHORT).show()
-                mainMenu.loadIngredients()
-                Log.d("FIRESTORE", "Successfully added ${ingredient.name}")
-            }.addOnFailureListener {
-                Toast.makeText(context, "Failed to add ${ingredient.name}.", Toast.LENGTH_SHORT).show()
-                Log.d("FIRESTORE", "Failed to add ${ingredient.name}")
-            }
+        val uid = mainMenu?.currentUser?.uid ?: return
+        fireStore.collection("app").document(uid)
+                .collection("ingredients").add(ingredient).addOnSuccessListener { _ ->
+            Toast.makeText(context, "Successfully added ${ingredient.name}.", Toast.LENGTH_SHORT).show()
+            mainMenu.loadIngredients()
+            Log.d("FIRESTORE", "Successfully added ${ingredient.name}")
+        }.addOnFailureListener {
+            Toast.makeText(context, "Failed to add ${ingredient.name}.", Toast.LENGTH_SHORT).show()
+            Log.d("FIRESTORE", "Failed to add ${ingredient.name}")
         }
     }
 }
