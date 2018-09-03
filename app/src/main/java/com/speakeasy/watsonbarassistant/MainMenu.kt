@@ -48,10 +48,13 @@ class MainMenu : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_menu)
 
-        showCurrentFragment()
-
         val tabLayout = findViewById<TabLayout>(R.id.tabs)
         tabLayout.addOnTabSelectedListener(MainMenuTabListener(this))
+    }
+
+    override fun onStart() {
+        super.onStart()
+        showCurrentFragment()
     }
 
     fun showCurrentFragment() {
@@ -80,7 +83,7 @@ class MainMenu : AppCompatActivity() {
                         parseSnapshot(snapshot)
                     }
                 }
-                (fragment as? HomeTab)?.displayIngredients()
+                (fragment as? HomeTab)?.refresh()
             }
         }
     }
