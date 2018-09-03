@@ -7,5 +7,7 @@
     <string name="home_tab_welcome">Home Tab</string>
     <string name="add_tab_welcome">Add Tab</string>
     <string name="recipes_tab_welcome">Recipes Tab</string>
+    <string name="ingredient_hint">Ingredients to add</string>
+    <string name="add_ingredient">Add</string>
 
 </resources>

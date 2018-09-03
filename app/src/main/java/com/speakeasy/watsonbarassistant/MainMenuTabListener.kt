@@ -1,9 +1,8 @@
 package com.speakeasy.watsonbarassistant
 
 import android.support.design.widget.TabLayout
-import android.support.v4.app.Fragment
 
-class MainMenuTabListener(private val replaceFragment: (Fragment) -> Unit):
+class MainMenuTabListener(private val mainMenu: MainMenu):
         TabLayout.OnTabSelectedListener {
 
     override fun onTabReselected(tab: TabLayout.Tab?) { }
@@ -11,11 +10,8 @@ class MainMenuTabListener(private val replaceFragment: (Fragment) -> Unit):
     override fun onTabUnselected(tab: TabLayout.Tab?) { }
 
     override fun onTabSelected(tab: TabLayout.Tab?) {
-        when(tab?.position) {
-            0 -> replaceFragment(HomeTab())
-            1 -> replaceFragment(AddTab())
-            2 -> replaceFragment(RecipesTab())
-        }
+        mainMenu.tabIndex = tab?.position ?: 0
+        mainMenu.showCurrentFragment()
     }
 
 }

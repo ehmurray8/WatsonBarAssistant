@@ -14,6 +14,4 @@ class RecipesTab : Fragment() {
                               savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_recipes_tab, container, false)
     }
-
-
 }
