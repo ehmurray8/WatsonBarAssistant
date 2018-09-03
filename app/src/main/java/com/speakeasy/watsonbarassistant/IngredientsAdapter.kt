@@ -1,6 +1,7 @@
 package com.speakeasy.watsonbarassistant
 
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
@@ -33,6 +34,10 @@ class IngredientsAdapter(private var dataSet: MutableList<Ingredient>):
         val uid = authorization.currentUser?.uid ?: return
         
         fireStore.collection("app").document(uid).collection("ingredients")
-                .document(ingredient.name).delete()
+                .document(ingredient.name).delete().addOnSuccessListener {
+                    Log.d("FIRESTORE", "Deletion success ${ingredient.name}.")
+                }.addOnFailureListener {
+                    Log.d("FIRESTORE", "Deletion failure ${ingredient.name}.")
+                }
     }
 }

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -33,8 +34,12 @@ class MainMenu : AppCompatActivity() {
         authorization.signInWithEmailAndPassword(USERNAME, PASSWORD).addOnCompleteListener {
             if(it.isSuccessful) {
                 loadUserData()
+                Log.d("FIRESTORE", "Authentication success, you are logged in as" +
+                        "${authorization.currentUser?.email}")
             } else {
                 Toast.makeText(this, "Authentication failed.", Toast.LENGTH_SHORT).show()
+                Log.d("FIRESTORE", "Authentication failed, for user $USERNAME")
+                Log.d("FIRESTORE", "Authentication failure: ${it.exception}")
             }
         }
     }
@@ -82,6 +87,8 @@ class MainMenu : AppCompatActivity() {
                     it.result.forEach { snapshot ->
                         parseSnapshot(snapshot)
                     }
+                } else {
+                    Log.d("FIRESTORE", "Failed to load ingredients.")
                 }
                 (fragment as? HomeTab)?.refresh()
             }
@@ -93,6 +100,7 @@ class MainMenu : AppCompatActivity() {
         if(name != null) {
             val ingredient = Ingredient(name)
             ingredients.add(ingredient)
+            Log.d("FIRESTORE", "Successfully retrieved ${ingredient.name}.")
         }
     }
 

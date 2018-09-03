@@ -3,6 +3,7 @@ package com.speakeasy.watsonbarassistant
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -44,12 +45,12 @@ class AddTab : Fragment() {
         if(uid != null) {
             fireStore.collection("app").document(uid)
                     .collection("ingredients").add(ingredient).addOnSuccessListener { _ ->
-                Toast.makeText(context, "Successfully added ${ingredient.name}.",
-                        Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Successfully added ${ingredient.name}.", Toast.LENGTH_SHORT).show()
                 mainMenu.loadIngredients()
+                Log.d("FIRESTORE", "Successfully added ${ingredient.name}")
             }.addOnFailureListener {
-                Toast.makeText(context, "Failed to add ${ingredient.name}.",
-                        Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Failed to add ${ingredient.name}.", Toast.LENGTH_SHORT).show()
+                Log.d("FIRESTORE", "Failed to add ${ingredient.name}")
             }
         }
     }
