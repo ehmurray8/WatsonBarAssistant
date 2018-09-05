@@ -1,7 +1,9 @@
 package com.speakeasy.watsonbarassistant
 
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.widget.ImageView
 import android.widget.TextView
 
 class RecipeDetail : AppCompatActivity() {
@@ -22,5 +24,10 @@ class RecipeDetail : AppCompatActivity() {
             recipeIngredintsString += "${i+1}. $element\n"
         }
         recipeIngredientsView.text = recipeIngredintsString
+
+        val drinkDetailImage = findViewById<ImageView>(R.id.drink_detail_image)
+        val imageId = recipe?.imageId ?: return
+        val drinkBitmap = BitmapFactory.decodeResource(resources, imageId)
+        drinkDetailImage.setImageBitmap(drinkBitmap)
     }
 }

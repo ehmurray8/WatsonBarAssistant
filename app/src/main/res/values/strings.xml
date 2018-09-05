@@ -4,12 +4,14 @@
     <string name="add_tab">Add</string>
     <string name="recipes_tab">Recipes</string>
 
-    <string name="home_tab_welcome">Home Tab</string>
-    <string name="add_tab_welcome">Add Tab</string>
-    <string name="recipes_tab_welcome">Recipes Tab</string>
+    <string name="home_tab_welcome">Current Ingredients</string>
+    <string name="add_tab_welcome">Add Ingredients</string>
+    <string name="recipes_tab_welcome">Recipes</string>
     <string name="ingredient_hint">Ingredients to add</string>
     <string name="add_ingredient">Add</string>
     <string name="add_camera_description">Add Ingredient Using Camera</string>
     <string name="ingredients_header">Ingredients</string>
+    <string name="drink_image_description">Drink Image</string>
+    <string name="speak_add_description">Speak to Add Ingredient</string>
 
 </resources>

@@ -37,6 +37,17 @@ class MainMenu : AppCompatActivity() {
         val bloodyMaryIngredients = arrayOf("Tabasco", "Salt", "3 parts Vodka", "Pepper",
                 "Worcestershire Sauce", "6 parts Tomato Juice", "1 part Lemon Juice").asList()
         recipes.add(Recipe("Bloody Mary", R.mipmap.ic_bloody_mary, bloodyMaryIngredients))
+
+        val mojitoIngredients = arrayOf("6 Leaves of Mint", "2 Teaspoons Sugar",
+                "2 Parts White Rum", "1 oz. Fresh Lime Juice", "Soda Water").asList()
+        recipes.add(Recipe("Mojito", R.mipmap.ic_mojito, mojitoIngredients))
+
+        val oldFashionedIngrdients = arrayOf("1 Sugar Cube", "2 Parts Bourbon",
+                "Few Dashes Plain Water", "2 Dashes Angostura Bitters").asList()
+        recipes.add(Recipe("Old Fashioned", R.mipmap.ic_old_fashioned, oldFashionedIngrdients))
+
+        val margaritaIngredients = arrayOf("1 oz Cointreau", "1 oz Lime Juice", "2 oz Tequila").asList()
+        recipes.add(Recipe("Margarita", R.mipmap.ic_margarita, margaritaIngredients))
     }
 
     private fun authorizeUser() {
@@ -111,7 +122,9 @@ class MainMenu : AppCompatActivity() {
             documentsMap[name] = id
             val ingredient = Ingredient(name)
             ingredients.add(ingredient)
-            Log.d("FIRESTORE", "Successfully retrieved ${ingredient.name}.")
+            ingredients.sortBy {
+                it.name
+            }
         }
     }
 

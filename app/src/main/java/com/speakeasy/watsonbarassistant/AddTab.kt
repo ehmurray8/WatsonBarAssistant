@@ -1,14 +1,16 @@
 package com.speakeasy.watsonbarassistant
 
 
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.Toast
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -17,6 +19,7 @@ class AddTab : Fragment() {
 
     private val fireStore = FirebaseFirestore.getInstance()
     private var addButton: Button? = null
+    private var ingredientInput: EditText? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -30,13 +33,33 @@ class AddTab : Fragment() {
         addButton?.setOnClickListener {
             handleAddButton()
         }
+        val cameraAdd = view.findViewById<ImageButton>(R.id.camera_button)
+        val speechAdd = view.findViewById<ImageButton>(R.id.speech_button)
+        cameraAdd?.setOnClickListener {
+            handleCameraAdd()
+        }
+        speechAdd?.setOnClickListener {
+            handleSpeechAdd()
+        }
     }
 
     private fun handleAddButton() {
-        val ingredientInput = view?.findViewById<EditText>(R.id.add_ingredient_input)
+        ingredientInput = view?.findViewById<EditText>(R.id.add_ingredient_input)
+        val inputManager = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputManager.hideSoftInputFromWindow(ingredientInput?.windowToken, 0)
         val name = ingredientInput?.text.toString()
         val ingredient = Ingredient(name)
         addIngredient(ingredient)
+    }
+
+    private fun handleCameraAdd() {
+        val mainMenu = activity as MainMenu
+        mainMenu.loadIngredients()
+    }
+
+    private fun handleSpeechAdd() {
+        val mainMenu = activity as MainMenu
+        mainMenu.loadIngredients()
     }
 
     private fun addIngredient(ingredient: Ingredient) {
@@ -53,12 +76,16 @@ class AddTab : Fragment() {
         val uid = mainMenu?.currentUser?.uid ?: return
         fireStore.collection("app").document(uid)
                 .collection("ingredients").add(ingredient).addOnSuccessListener { _ ->
-            Toast.makeText(context, "Successfully added ${ingredient.name}.", Toast.LENGTH_SHORT).show()
+            try {
+                Toast.makeText(activity, "Successfully added ${ingredient.name}.", Toast.LENGTH_SHORT).show()
+            } catch(exception: NullPointerException) { }
+            ingredientInput?.text?.clear()
             mainMenu.loadIngredients()
-            Log.d("FIRESTORE", "Successfully added ${ingredient.name}")
         }.addOnFailureListener {
-            Toast.makeText(context, "Failed to add ${ingredient.name}.", Toast.LENGTH_SHORT).show()
-            Log.d("FIRESTORE", "Failed to add ${ingredient.name}")
+            try {
+                Toast.makeText(activity, "Failed to add ${ingredient.name}.", Toast.LENGTH_SHORT).show()
+            }
+            catch(exception: NullPointerException) { }
         }
     }
 }

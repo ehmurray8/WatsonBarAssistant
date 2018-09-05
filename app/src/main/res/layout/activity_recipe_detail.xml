@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RecipeDetail">
+    tools:context=".RecipeDetail"
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/recipe_title"
@@ -14,6 +15,13 @@
         android:layout_marginTop="15dp"
         android:textSize="25sp"
         android:textStyle="bold"/>
+
+    <ImageView
+        android:id="@+id/drink_detail_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/drink_image_description"
+        android:layout_gravity="center_horizontal"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -27,6 +35,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="16sp"
-        android:layout_margin="15dp"/>
+        android:layout_marginStart="30dp"/>
 
 </LinearLayout>

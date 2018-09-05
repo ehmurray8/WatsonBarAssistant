@@ -18,8 +18,7 @@ class RecipesAdapter(private var dataSet: MutableList<Recipe>):
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.textView.text = dataSet[position].name
-        holder.textView.setCompoundDrawablesWithIntrinsicBounds(dataSet[position].image_id, 0, 0, 0)
-        holder
+        holder.textView.setCompoundDrawablesWithIntrinsicBounds(dataSet[position].imageId, 0, 0, 0)
     }
 
     override fun getItemCount(): Int = dataSet.count()
