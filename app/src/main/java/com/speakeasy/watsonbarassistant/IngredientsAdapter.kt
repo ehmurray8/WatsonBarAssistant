@@ -8,6 +8,7 @@ import android.widget.TextView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
+
 class IngredientsAdapter(private var dataSet: MutableList<Ingredient>,
                          private var documentsMap: MutableMap<String, String>):
         RecyclerView.Adapter<IngredientsAdapter.ViewHolder>() {

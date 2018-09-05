@@ -9,5 +9,7 @@
     <string name="recipes_tab_welcome">Recipes Tab</string>
     <string name="ingredient_hint">Ingredients to add</string>
     <string name="add_ingredient">Add</string>
+    <string name="add_camera_description">Add Ingredient Using Camera</string>
+    <string name="ingredients_header">Ingredients</string>
 
 </resources>

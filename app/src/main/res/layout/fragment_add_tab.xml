@@ -13,7 +13,7 @@
         android:textSize="16sp"
         android:gravity="center_horizontal"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="15sp"/>
+        android:layout_marginTop="15dp"/>
 
     <EditText
         android:id="@+id/add_ingredient_input"
@@ -33,5 +33,14 @@
         android:layout_gravity="center_horizontal"
         android:gravity="center"
         android:layout_margin="20sp"/>
+
+    <ImageButton
+        android:id="@+id/camera_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_photo_camera_black_24dp"
+        android:contentDescription="@string/add_camera_description"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"/>
 
 </LinearLayout>
