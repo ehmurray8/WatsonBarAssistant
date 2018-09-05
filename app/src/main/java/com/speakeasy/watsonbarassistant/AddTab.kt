@@ -1,8 +1,13 @@
 package com.speakeasy.watsonbarassistant
 
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
+import android.os.Handler
+import android.provider.MediaStore
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -20,6 +25,8 @@ class AddTab : Fragment() {
     private val fireStore = FirebaseFirestore.getInstance()
     private var addButton: Button? = null
     private var ingredientInput: EditText? = null
+
+    private val CAMERA_REQUEST = 1888
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -55,10 +62,15 @@ class AddTab : Fragment() {
     private fun handleCameraAdd() {
         val mainMenu = activity as MainMenu
         mainMenu.loadIngredients()
+        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        startActivityForResult(cameraIntent, CAMERA_REQUEST)
     }
 
     private fun handleSpeechAdd() {
         val mainMenu = activity as MainMenu
+        Handler().postDelayed({
+            Toast.makeText(activity, "Successfully added Tito's.", Toast.LENGTH_SHORT).show()
+        }, 5000)
         mainMenu.loadIngredients()
     }
 
@@ -86,6 +98,15 @@ class AddTab : Fragment() {
                 Toast.makeText(activity, "Failed to add ${ingredient.name}.", Toast.LENGTH_SHORT).show()
             }
             catch(exception: NullPointerException) { }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+        if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
+            val photo = data.extras.get("data") as Bitmap
+            val intent = Intent(activity, ImageViewer::class.java)
+            intent.putExtra("Image", photo)
+            startActivity(intent)
         }
     }
 }

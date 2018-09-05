@@ -8,7 +8,7 @@ import android.widget.TextView
 
 class RecipeDetail : AppCompatActivity() {
 
-    var recipe: Recipe? = null
+    private var recipe: Recipe? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,11 +19,11 @@ class RecipeDetail : AppCompatActivity() {
         recipeTitle.text = recipe?.name
 
         val recipeIngredientsView = findViewById<TextView>(R.id.recipe_ingredients)
-        var recipeIngredintsString = ""
+        var recipeIngredientsString = ""
         recipe?.ingredients?.forEachIndexed { i, element ->
-            recipeIngredintsString += "${i+1}. $element\n"
+            recipeIngredientsString += "${i+1}. $element\n"
         }
-        recipeIngredientsView.text = recipeIngredintsString
+        recipeIngredientsView.text = recipeIngredientsString
 
         val drinkDetailImage = findViewById<ImageView>(R.id.drink_detail_image)
         val imageId = recipe?.imageId ?: return
