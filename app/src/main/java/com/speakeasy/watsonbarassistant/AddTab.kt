@@ -70,7 +70,7 @@ class AddTab : Fragment() {
         val mainMenu = activity as MainMenu
         Handler().postDelayed({
             Toast.makeText(activity, "Successfully added Tito's.", Toast.LENGTH_SHORT).show()
-        }, 5000)
+        }, 3500)
         mainMenu.loadIngredients()
     }
 
