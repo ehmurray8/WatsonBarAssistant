@@ -27,5 +27,5 @@ before_install:
       #    - adb shell input keyevent 82 &
 
 script: 
-    - yes | sdkmanager -- licenses
+    - yes | sdkmanager --licenses
     - "./gradlew clean build connectedCheck -PdisablePreDex --stacktrace"
