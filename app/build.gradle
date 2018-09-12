@@ -8,13 +8,26 @@ android {
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.speakeasy.watsonbarassistant"
-        minSdkVersion 24
+        minSdkVersion 18
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+    signingConfigs {
+      ci {
+        keyAlias "ci-key-alias"
+        keyPassword System.getenv("CI_KEYSTORE_PASSWORD")
+        storeFile file("ci-key.keystore")
+        storePassword System.getenv("CI_KEYSTORE_PASSWORD")
+      }
+    }
     buildTypes {
+        debug_with_ci_keystore.initWith(buildTypes.debug)
+        debug_with_ci_keystore {
+            if(System.getenv("CI_KEYSTORE_PASSWORD")) signingConfig signingConfigs.ci
+            minifyEnabled false
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
