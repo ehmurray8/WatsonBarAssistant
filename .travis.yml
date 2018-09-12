@@ -15,7 +15,6 @@ android:
         - addon-google_apis-google-26
 
         - sys-img-armeabi-v7a-addon-google_apis-google-25
-        - sys-img-armeabi-v7a-addon-google_apis-google-26
 
 before_install:
     - chmod +x gradlew
@@ -28,5 +27,5 @@ before_install:
 #    - adb shell input keyevent 82 &
 
 script: 
-    - "y" | sdkmanager "build-tools;26.0.1" "platforms;android-26"
+    - y | sdkmanager "build-tools;26.0.1" "platforms;android-26"
     - "./gradlew clean build connectedCheck -PdisablePreDex --stacktrace"
