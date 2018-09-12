@@ -3,13 +3,15 @@ android:
     components:
         - tools
         - platform-tools
+        - tools
         - build-tools-26.0.2
         - android-26
+
         - extra-google_play_services
         - extra-google-m2repository
         - extra-android-m2repository
         - addon-google_apis-google-26
-        - sys-img-armeabi-v7a-android-26
+
         - sys-img-armeabi-v7a-android-22
         - sys-img-armeabi-v7a-android-17
 
