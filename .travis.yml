@@ -28,4 +28,5 @@ before_install:
 
 script: 
     - yes | sdkmanager --licenses
+    - sdkmanager "build-tools;26.0.1" "platforms;android-26"
     - "./gradlew clean build connectedCheck -PdisablePreDex --stacktrace"
