@@ -15,6 +15,7 @@ android:
         - addon-google_apis-google-26
 
         - sys-img-armeabi-v7a-addon-google_apis-google-25
+        - sys-img-armeabi-v7a-addon-google_apis-google-26
 
 before_install:
     - chmod +x gradlew
