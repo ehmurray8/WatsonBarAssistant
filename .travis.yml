@@ -27,6 +27,5 @@ before_install:
       #    - adb shell input keyevent 82 &
 
 script: 
-    - yes | sdkmanager --licenses
-    - sdkmanager "build-tools;26.0.1" "platforms;android-26"
+    - "y" | sdkmanager "build-tools;26.0.1" "platforms;android-26"
     - "./gradlew clean build connectedCheck -PdisablePreDex --stacktrace"
