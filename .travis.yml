@@ -41,7 +41,7 @@ script:
 - adb shell input keyevent 82
 - "./gradlew connectedCheck -PdisablePreDex --stacktrace"
 - chmod +x upload.sh
-- ./upload.sh
+- /bin/sh ./upload.sh
 
 before_install:
 - openssl aes-256-cbc -K $encrypted_f9d3779bcad5_key -iv $encrypted_f9d3779bcad5_iv
