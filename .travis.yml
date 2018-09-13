@@ -39,7 +39,7 @@ before_script:
 - android-wait-for-emulator
 script:
 - adb shell input keyevent 82
-- "./gradlew connectedCheck -PdisablePreDex --stacktrace"
+- "./gradlew connectedCheck -PdisablePreDex --stacktrace --info"
 - chmod +x upload.sh
 - /bin/sh ./upload.sh
 
