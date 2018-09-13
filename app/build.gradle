@@ -57,6 +57,7 @@ dependencies {
     implementation 'com.ibm.watson.developer_cloud:java-sdk:6.5.1'
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'net.hockeyapp.android:HockeySDK:5.1.1'
+    androidTestImplementation 'com.android.support:support-annotations:27.1.1'
 }
 
 apply plugin: 'com.google.gms.google-services'
