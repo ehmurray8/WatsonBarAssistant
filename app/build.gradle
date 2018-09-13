@@ -31,13 +31,13 @@ android {
     buildTypes {
         debug_with_ci_keystore.initWith(buildTypes.debug)
         debug_with_ci_keystore {
-            multiDexKeepProguard file('proguard-multidex-rules.pro')
+            //multiDexKeepProguard file('proguard-multidex-rules.pro')
             if(System.getenv("CI_KEYSTORE_PASSWORD")) signingConfig signingConfigs.ci
             minifyEnabled false
         }
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            //proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 }

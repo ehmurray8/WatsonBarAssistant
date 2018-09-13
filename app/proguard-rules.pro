@@ -20,4 +20,4 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--keep @org.junit.runner.RunWith public class *
+#-keep @org.junit.runner.RunWith public class *

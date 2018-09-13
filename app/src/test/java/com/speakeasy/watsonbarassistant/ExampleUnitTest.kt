@@ -1,7 +1,7 @@
 package com.speakeasy.watsonbarassistant
 
-import junit.framework.Assert
 import junit.framework.TestCase
+import org.junit.Assert
 import org.junit.Test
 
 /**
