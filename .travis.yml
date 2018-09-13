@@ -21,7 +21,7 @@ android:
   - extra-google-m2repository
   - extra-android-m2repository
   - addon-google_apis-google-26
-  - sys-img-$ANDROID_ABI-$ANDROID_TAG-$ANDROID_EMULATOR_LEVEL
+  # - sys-img-$ANDROID_ABI-$ANDROID_TAG-$ANDROID_EMULATOR_LEVEL
 licenses:
 - android-sdk-preview-license-.+
 - android-sdk-license-.+
@@ -33,19 +33,18 @@ cache:
   - "$HOME/.android/build-cache/"
 before_script:
 - android list targets
-- echo no | android create avd --force -n test -t "android-"$ANDROID_EMULATOR_LEVEL
-  --abi "google_apis/"$ANDROID_ABI
-- emulator -avd test -no-window &
-- android-wait-for-emulator
+#- echo no | android create avd --force -n test -t "android-"$ANDROID_EMULATOR_LEVEL
+#  --abi "google_apis/"$ANDROID_ABI
+#- emulator -avd test -no-window &
+#- android-wait-for-emulator
 script:
-- adb shell input keyevent 82 &
-- "./gradlew connectedCheck -PdisablePreDex --stacktrace"
+#- adb shell input keyevent 82 &
+# - "./gradlew connectedCheck -PdisablePreDex --stacktrace"
 - "./gradlew test"
 - ls -R app/build/outputs/apk
 - chmod +x upload.sh
 - /bin/sh ./upload.sh
 
 before_install:
-- git config --global core.autocrlf input
 - openssl aes-256-cbc -K $encrypted_f9d3779bcad5_key -iv $encrypted_f9d3779bcad5_iv
   -in app/google-services.json.enc -out app/google-services.json -d
