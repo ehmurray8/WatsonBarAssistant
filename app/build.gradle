@@ -16,6 +16,7 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
+        manifestPlaceholders = [HOCKEYAPP_APP_ID: "92bb8f6004284632a9d8f5a58780edd0"]
     }
     signingConfigs {
       ci {
@@ -53,7 +54,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test:rules:1.0.2'
     implementation 'com.ibm.watson.developer_cloud:java-sdk:6.5.1'
     implementation 'com.android.support:multidex:1.0.3'
-
+    implementation 'net.hockeyapp.android:HockeySDK:5.1.1'
 }
 
 apply plugin: 'com.google.gms.google-services'

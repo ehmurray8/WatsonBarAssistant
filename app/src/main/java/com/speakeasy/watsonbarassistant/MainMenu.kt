@@ -10,6 +10,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QueryDocumentSnapshot
+import net.hockeyapp.android.CrashManager
+import net.hockeyapp.android.UpdateManager
 
 
 const val USERNAME = "test@gmail.com"
@@ -75,11 +77,22 @@ class MainMenu : AppCompatActivity() {
 
         val tabLayout = findViewById<TabLayout>(R.id.tabs)
         tabLayout.addOnTabSelectedListener(MainMenuTabListener(this))
+        checkForUpdates()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        checkForCrashes()
     }
 
     override fun onStart() {
         super.onStart()
         showCurrentFragment()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        unregisterManagers()
     }
 
     fun showCurrentFragment() {
@@ -131,5 +144,19 @@ class MainMenu : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         authorization.signOut()
+        unregisterManagers()
+    }
+
+    private fun checkForCrashes() {
+        CrashManager.register(this)
+    }
+
+    private fun checkForUpdates() {
+        // Remove this for store builds!
+        UpdateManager.register(this)
+    }
+
+    private fun unregisterManagers() {
+        UpdateManager.unregister()
     }
 }
