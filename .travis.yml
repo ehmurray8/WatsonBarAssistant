@@ -38,8 +38,9 @@ before_script:
 - emulator -avd test -no-window &
 - android-wait-for-emulator
 script:
-- adb shell input keyevent 82
+- adb shell input keyevent 82 &
 - "./gradlew connectedCheck -PdisablePreDex --stacktrace --info"
+- "./gradlew test"
 - chmod +x upload.sh
 - /bin/sh ./upload.sh
 
