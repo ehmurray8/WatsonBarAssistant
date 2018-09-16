@@ -22,7 +22,8 @@ android:
   - extra-android-m2repository
   - addon-google_apis-google-26
   - addon-google_apis-google-27
-  - sys-img-$ANDROID_ABI-$ANDROID_TAG-$ANDROID_EMULATOR_LEVEL
+  #- sys-img-$ANDROID_ABI-$ANDROID_TAG-$ANDROID_EMULATOR_LEVEL
+  - sys-img-armeabi-v7a-android-26
 licenses:
 - android-sdk-preview-license-.+
 - android-sdk-license-.+
