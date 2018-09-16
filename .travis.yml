@@ -34,9 +34,10 @@ cache:
   - "$HOME/.gradle/wrapper/"
   - "$HOME/.android/build-cache/"
 before_script:
+- echo "y" | android update sdk -a --no-ui --filter android-27
+- echo "y" | android update sdk -a --no-ui --filter sys-img-armeabi-v7a-android-27
 - android list targets
-- echo no | android create avd --force -n test -t android-27
-  --abi $ANDROID_ABI
+- echo no | android create avd --force -n test -t android-27 --abi $ANDROID_ABI
 - emulator -avd test -no-window &
 - android-wait-for-emulator
 script:
