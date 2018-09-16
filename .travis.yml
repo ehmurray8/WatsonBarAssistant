@@ -20,10 +20,10 @@ android:
   - extra-android-support
   - extra-google-m2repository
   - extra-android-m2repository
-  #- addon-google_apis-google-26
+  - addon-google_apis-google-24
   - addon-google_apis-google-27
   #- sys-img-$ANDROID_ABI-$ANDROID_TAG-$ANDROID_EMULATOR_LEVEL
-  - sys-img-armeabi-v7a-android-27
+  - sys-img-armeabi-v7a-android-24
 licenses:
 - android-sdk-preview-license-.+
 - android-sdk-license-.+
@@ -34,10 +34,10 @@ cache:
   - "$HOME/.gradle/wrapper/"
   - "$HOME/.android/build-cache/"
 before_script:
-- echo "y" | android update sdk -a --no-ui --filter android-27
-- echo "y" | android update sdk -a --no-ui --filter sys-img-armeabi-v7a-android-27
+- echo "y" | android update sdk -a --no-ui --filter android-24
+- echo "y" | android update sdk -a --no-ui --filter sys-img-armeabi-v7a-android-24
 - android list targets
-- echo no | android create avd --force -n test -t android-27 --abi $ANDROID_ABI
+- echo no | android create avd --force -n test -t android-24 --abi $ANDROID_ABI
 - emulator -avd test -no-window &
 - android-wait-for-emulator
 script:
