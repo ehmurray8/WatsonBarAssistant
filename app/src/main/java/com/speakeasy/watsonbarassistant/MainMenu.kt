@@ -1,21 +1,18 @@
 package com.speakeasy.watsonbarassistant
 
+import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
-import android.widget.Toast
+import android.support.v7.widget.Toolbar
+import android.view.Menu
+import android.view.MenuItem
+import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QueryDocumentSnapshot
-import net.hockeyapp.android.CrashManager
-import net.hockeyapp.android.UpdateManager
-
-
-const val USERNAME = "test@gmail.com"
-const val PASSWORD = "test123"
+import kotlinx.android.synthetic.main.activity_main_menu.*
 
 class MainMenu : AppCompatActivity() {
 
@@ -24,14 +21,12 @@ class MainMenu : AppCompatActivity() {
     var documentsMap = mutableMapOf<String, String>()
     var currentUser: FirebaseUser? = null
     var tabIndex = 0
+    private var fragment: Fragment? = null
 
     private val fireStore = FirebaseFirestore.getInstance()
     private var authorization = FirebaseAuth.getInstance()
-    private var fragment: Fragment? = null
 
     init {
-        authorization.signOut()
-        authorizeUser()
         addDefaultRecipes()
     }
 
@@ -52,18 +47,14 @@ class MainMenu : AppCompatActivity() {
         recipes.add(Recipe("Margarita", R.mipmap.ic_margarita, margaritaIngredients))
     }
 
-    private fun authorizeUser() {
-        authorization.signInWithEmailAndPassword(USERNAME, PASSWORD).addOnCompleteListener {
-            if(it.isSuccessful) {
-                loadUserData()
-                Log.d("FIRESTORE", "Authentication success, you are logged in as" +
-                        "${authorization.currentUser?.email}")
-            } else {
-                Toast.makeText(this, "Authentication failed.", Toast.LENGTH_SHORT).show()
-                Log.d("FIRESTORE", "Authentication failed, for user $USERNAME")
-                Log.d("FIRESTORE", "Authentication failure: ${it.exception}")
-            }
-        }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        loadUserData()
+        setContentView(R.layout.activity_main_menu)
+
+        tabs.addOnTabSelectedListener(MainMenuTabListener(this))
+        setSupportActionBar(toolbar as Toolbar)
     }
 
     private fun loadUserData() {
@@ -71,28 +62,25 @@ class MainMenu : AppCompatActivity() {
         loadIngredients()
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main_menu)
-
-        val tabLayout = findViewById<TabLayout>(R.id.tabs)
-        tabLayout.addOnTabSelectedListener(MainMenuTabListener(this))
-        checkForUpdates()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        checkForCrashes()
+    fun loadIngredients() {
+        val uid = currentUser?.uid
+        ingredients.clear()
+        if(uid != null) {
+            fireStore.collection("app").document(uid)
+                    .collection("ingredients").get().addOnCompleteListener {
+                if (it.isSuccessful) {
+                    it.result.forEach { snapshot ->
+                        parseSnapshot(snapshot)
+                    }
+                }
+                (fragment as? HomeTab)?.refresh()
+            }
+        }
     }
 
     override fun onStart() {
         super.onStart()
         showCurrentFragment()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        unregisterManagers()
     }
 
     fun showCurrentFragment() {
@@ -110,24 +98,6 @@ class MainMenu : AppCompatActivity() {
         transaction.commit()
     }
 
-    fun loadIngredients() {
-        val uid = currentUser?.uid
-        ingredients.clear()
-        if(uid != null) {
-            fireStore.collection("app").document(uid)
-                    .collection("ingredients").get().addOnCompleteListener {
-                if (it.isSuccessful) {
-                    it.result.forEach { snapshot ->
-                        parseSnapshot(snapshot)
-                    }
-                } else {
-                    Log.d("FIRESTORE", "Failed to load ingredients.")
-                }
-                (fragment as? HomeTab)?.refresh()
-            }
-        }
-    }
-
     private fun parseSnapshot(snapshot: QueryDocumentSnapshot) {
         val name = snapshot.get("name") as? String
         val id = snapshot.id
@@ -141,22 +111,24 @@ class MainMenu : AppCompatActivity() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        authorization.signOut()
-        unregisterManagers()
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_toolbar_menu, menu)
+        return true
     }
 
-    private fun checkForCrashes() {
-        CrashManager.register(this)
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.sign_out) {
+            signOut()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 
-    private fun checkForUpdates() {
-        // Remove this for store builds!
-        UpdateManager.register(this)
-    }
-
-    private fun unregisterManagers() {
-        UpdateManager.unregister()
+    private fun signOut() {
+        AuthUI.getInstance().signOut(this).addOnCompleteListener {
+            val intent = Intent(this, Login::class.java)
+            startActivity(intent)
+            finish()
+        }
     }
 }

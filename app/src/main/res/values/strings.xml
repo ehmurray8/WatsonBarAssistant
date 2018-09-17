@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">WatsonBarAssistant</string>
+    <string name="app_name">Bar Assistant</string>
     <string name="home_tab">Home</string>
     <string name="add_tab">Add</string>
     <string name="recipes_tab">Recipes</string>
@@ -15,5 +15,6 @@
     <string name="speak_add_description">Speak to Add Ingredient</string>
     <string name="camera_image">Image from camera</string>
     <string name="test_camera_ingredient">Maker\'s Mark</string>
+    <string name="sign_out">Sign Out</string>
 
 </resources>
