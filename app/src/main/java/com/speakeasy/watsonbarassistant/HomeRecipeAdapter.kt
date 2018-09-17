@@ -18,7 +18,6 @@ class HomeRecipeAdapter(private val recipes: MutableList<Recipe>,
     class ViewHolder(val card: CardView) : RecyclerView.ViewHolder(card)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-
         val cardView = LayoutInflater.from(parent.context).inflate(R.layout.recipe_card,
                 parent, false) as CardView
         return ViewHolder(cardView)
@@ -49,6 +48,6 @@ class HomeRecipeAdapter(private val recipes: MutableList<Recipe>,
     }
 
     override fun getItemCount(): Int {
-        return recipes.count() + 1
+        return recipes.count()
     }
 }
