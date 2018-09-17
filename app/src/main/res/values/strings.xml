@@ -23,5 +23,6 @@
     <string name="sign_out">Sign Out</string>
     <string name="change_password">Change Password</string>
     <string name="collection_name">%1$s</string>
+    <string name="add_email">Add Email</string>
 
 </resources>
