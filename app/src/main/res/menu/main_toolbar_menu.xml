@@ -7,9 +7,10 @@
     android:layout_width="match_parent">
 
     <item
-        android:id="@+id/sign_out"
+        android:id="@+id/user_profile"
         android:orderInCategory="100"
-        android:title="@string/sign_out"
+        android:icon="@drawable/ic_user_black_24dp"
+        android:title="@string/user_profile"
         app:showAsAction="ifRoom" />
 
 </menu>

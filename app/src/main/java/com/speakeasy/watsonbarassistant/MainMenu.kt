@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
-import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
@@ -79,7 +78,6 @@ class MainMenu : AppCompatActivity() {
                         parseSnapshot(snapshot)
                     }
                 }
-                (fragment as? HomeTab)?.refresh()
             }
         }
     }
@@ -123,18 +121,11 @@ class MainMenu : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.sign_out) {
-            signOut()
+        if (item.itemId == R.id.user_profile) {
+            val intent = Intent(this, UserProfile::class.java)
+            startActivity(intent)
             return true
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    private fun signOut() {
-        AuthUI.getInstance().signOut(this).addOnCompleteListener {
-            val intent = Intent(this, Login::class.java)
-            startActivity(intent)
-            finish()
-        }
     }
 }

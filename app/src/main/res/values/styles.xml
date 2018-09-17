@@ -6,11 +6,11 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:actionMenuTextColor">@color/secondaryText</item>
+        <item name="android:actionMenuTextColor">@color/white</item>
     </style>
 
     <style name="MainTabLayout" parent="Widget.Design.TabLayout">
-        <item name="tabIndicatorColor">#FF4081</item>
+        <item name="tabIndicatorColor">@color/colorAccent</item>
     </style>
 
 </resources>
