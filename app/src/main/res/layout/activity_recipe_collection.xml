@@ -1,27 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".RecipesTab"
-    android:orientation="vertical">
 
-    <TextView
+<LinearLayout
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+   <TextView
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content" />
+
+   <TextView
+       android:id="@+id/recipe_collection_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/recipes_tab_welcome"
         android:textSize="25sp"
         android:textStyle="bold"
         android:textColor="@color/primaryText"
         android:gravity="center_horizontal"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="15dp"/>
+        android:layout_marginTop="10dp"/>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/recipes_list"
+        android:id="@+id/recipes_collection_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="50dp"
         android:layout_marginTop="20dp"/>
 
 </LinearLayout>

@@ -10,7 +10,7 @@
     </style>
 
     <style name="MainTabLayout" parent="Widget.Design.TabLayout">
-        <item name="tabIndicatorColor">#FF4081</item>
+        <item name="tabIndicatorColor">@color/colorAccent</item>
     </style>
 
 </resources>

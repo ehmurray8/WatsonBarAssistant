@@ -31,13 +31,11 @@ android {
     buildTypes {
         debug_with_ci_keystore.initWith(buildTypes.debug)
         debug_with_ci_keystore {
-            //multiDexKeepProguard file('proguard-multidex-rules.pro')
             if (System.getenv("CI_KEYSTORE_PASSWORD")) signingConfig signingConfigs.ci
             minifyEnabled false
         }
         release {
             minifyEnabled false
-            //proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 }
@@ -61,6 +59,8 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'net.hockeyapp.android:HockeySDK:5.1.1'
     androidTestImplementation 'com.android.support:support-annotations:27.1.1'
+    implementation 'com.android.support:palette-v7:27.1.1'
+    implementation 'com.android.support:cardview-v7:27.1.1'
 }
 
 apply plugin: 'com.google.gms.google-services'

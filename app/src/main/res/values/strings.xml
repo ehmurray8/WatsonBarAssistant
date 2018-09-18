@@ -15,6 +15,14 @@
     <string name="speak_add_description">Speak to Add Ingredient</string>
     <string name="camera_image">Image from camera</string>
     <string name="test_camera_ingredient">Maker\'s Mark</string>
+    <string name="placeholder_header">Header</string>
+    <string name="home_recipe_card_description">Recommended Recipe</string>
+    <string name="recipe_name_placeholder">Recipe Name</string>
+    <string name="shopping_cart">Shopping Cart</string>
+    <string name="user_profile">User Profile</string>
     <string name="sign_out">Sign Out</string>
+    <string name="change_password">Change Password</string>
+    <string name="collection_name">%1$s</string>
+    <string name="add_email">Add Email</string>
 
 </resources>

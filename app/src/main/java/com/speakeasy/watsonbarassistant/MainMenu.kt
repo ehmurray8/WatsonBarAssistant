@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
-import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
@@ -17,7 +16,8 @@ import kotlinx.android.synthetic.main.activity_main_menu.*
 class MainMenu : AppCompatActivity() {
 
     var ingredients = mutableListOf<Ingredient>()
-    var recipes = mutableListOf<Recipe>()
+    var recipes = mutableListOf<MutableList<Recipe>>()
+    var homeCategories = mutableListOf<String>()
     var documentsMap = mutableMapOf<String, String>()
     var currentUser: FirebaseUser? = null
     var tabIndex = 0
@@ -28,23 +28,28 @@ class MainMenu : AppCompatActivity() {
 
     init {
         addDefaultRecipes()
+        homeCategories.add("Suggestions")
+        homeCategories.add("Recently Viewed")
     }
 
     private fun addDefaultRecipes() {
+        recipes.add(mutableListOf())
+        recipes.add(mutableListOf())
         val bloodyMaryIngredients = arrayOf("Tabasco", "Salt", "3 parts Vodka", "Pepper",
                 "Worcestershire Sauce", "6 parts Tomato Juice", "1 part Lemon Juice").asList()
-        recipes.add(Recipe("Bloody Mary", R.mipmap.ic_bloody_mary, bloodyMaryIngredients))
+        recipes[0].add(Recipe("Bloody Mary", R.mipmap.ic_bloody_mary, bloodyMaryIngredients))
 
         val mojitoIngredients = arrayOf("6 Leaves of Mint", "2 Teaspoons Sugar",
                 "2 Parts White Rum", "1 oz. Fresh Lime Juice", "Soda Water").asList()
-        recipes.add(Recipe("Mojito", R.mipmap.ic_mojito, mojitoIngredients))
+        recipes[0].add(Recipe("Mojito", R.mipmap.ic_mojito, mojitoIngredients))
 
         val oldFashionedIngrdients = arrayOf("1 Sugar Cube", "2 Parts Bourbon",
                 "Few Dashes Plain Water", "2 Dashes Angostura Bitters").asList()
-        recipes.add(Recipe("Old Fashioned", R.mipmap.ic_old_fashioned, oldFashionedIngrdients))
+        recipes[0].add(Recipe("Old Fashioned", R.mipmap.ic_old_fashioned, oldFashionedIngrdients))
 
         val margaritaIngredients = arrayOf("1 oz Cointreau", "1 oz Lime Juice", "2 oz Tequila").asList()
-        recipes.add(Recipe("Margarita", R.mipmap.ic_margarita, margaritaIngredients))
+        recipes[0].add(Recipe("Margarita", R.mipmap.ic_margarita, margaritaIngredients))
+        recipes[0].reversed().forEach { recipes[1].add(it) }
     }
 
 
@@ -73,7 +78,6 @@ class MainMenu : AppCompatActivity() {
                         parseSnapshot(snapshot)
                     }
                 }
-                (fragment as? HomeTab)?.refresh()
             }
         }
     }
@@ -117,18 +121,11 @@ class MainMenu : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.sign_out) {
-            signOut()
+        if (item.itemId == R.id.user_profile) {
+            val intent = Intent(this, UserProfile::class.java)
+            startActivity(intent)
             return true
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    private fun signOut() {
-        AuthUI.getInstance().signOut(this).addOnCompleteListener {
-            val intent = Intent(this, Login::class.java)
-            startActivity(intent)
-            finish()
-        }
     }
 }
