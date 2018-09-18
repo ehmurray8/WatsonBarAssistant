@@ -66,7 +66,7 @@ class MainMenu : AppCompatActivity() {
     fun showCurrentFragment() {
         when(tabIndex) {
             0 -> fragment = HomeTab()
-            1 -> fragment = AddTab()
+            1 -> fragment = IngredientsTab()
             2 -> fragment = RecipesTab()
         }
         replaceFragment()
@@ -91,7 +91,7 @@ class MainMenu : AppCompatActivity() {
                 } else {
                     Log.d("FIRESTORE", "Failed to load ingredients.")
                 }
-                (fragment as? HomeTab)?.refresh()
+                //(fragment as? IngredientsTab)?.refresh()
             }
         }
     }
