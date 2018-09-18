@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
-        android:text="@string/ingredients"
+        android:text="ingredients"
         android:textAlignment="center"
         android:textAllCaps="false"
         android:textSize="18sp"
@@ -66,11 +66,11 @@
         android:layout_marginEnd="8dp"
         android:src="@android:drawable/ic_input_add"
         android:tint="@color/colorPrimary"
-        app:backgroundTint="@color/colorAccent"
+        android:backgroundTint="@color/colorAccent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:rippleColor="@android:drawable/ic_input_add"
-        app:src="@android:drawable-hdpi/ic_input_add">
+        >
 
     </android.support.design.widget.FloatingActionButton>
 
@@ -83,7 +83,7 @@
         android:layout_marginEnd="8dp"
         android:tint="@color/colorAccent"
         android:visibility="gone"
-        app:backgroundTint="@color/colorPrimary"
+        android:backgroundTint="@color/colorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:rippleColor="@android:drawable/ic_input_add"
@@ -100,7 +100,7 @@
         android:layout_marginEnd="8dp"
         android:tint="@color/colorAccent"
         android:visibility="gone"
-        app:backgroundTint="@color/colorPrimary"
+        android:backgroundTint="@color/colorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:rippleColor="@android:drawable/ic_input_add"
@@ -117,7 +117,7 @@
         android:layout_marginEnd="8dp"
         android:tint="@color/colorAccent"
         android:visibility="gone"
-        app:backgroundTint="@color/colorPrimary"
+        android:backgroundTint="@color/colorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:rippleColor="@android:drawable/ic_input_add"

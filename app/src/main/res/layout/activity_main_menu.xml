@@ -29,8 +29,8 @@
             android:layout_width="match_parent"/>
 
         <android.support.design.widget.TabItem
-            android:id="@+id/add_tab"
-            android:text="@string/add_tab"
+            android:id="@+id/ingredient_tab"
+            android:text="ingredients"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"/>
 
