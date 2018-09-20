@@ -38,7 +38,7 @@ android {
 
     if (isRunningOnTravis) {
         // configure keystore
-        signingConfigs.travis.storeFile = file("../travis.keystore.jks")
+        signingConfigs.travis.storeFile = file("travis.keystore.jks")
         signingConfigs.travis.storePassword = System.getenv("keystore_password")
         signingConfigs.travis.keyAlias = System.getenv("keystore_alias")
         signingConfigs.travis.keyPassword = System.getenv("keystore_alias_password")
