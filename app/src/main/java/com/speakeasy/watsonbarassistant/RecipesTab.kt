@@ -41,7 +41,7 @@ class RecipesTab : Fragment() {
     }
 
     private fun setupOnClickListener() {
-        recyclerView?.addOnItemClickListener(object: OnItemClickListener {
+        recyclerView?.addOnItemClickListener(object : OnItemClickListener {
             override fun onItemClicked(position: Int, view: View) {
                 val intent = Intent(activity, RecipeDetail::class.java)
                 val recipes = (activity as MainMenu).recipes

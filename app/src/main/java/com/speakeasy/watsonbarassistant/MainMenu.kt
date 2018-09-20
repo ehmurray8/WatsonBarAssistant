@@ -12,6 +12,30 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QueryDocumentSnapshot
 import net.hockeyapp.android.CrashManager
 import net.hockeyapp.android.UpdateManager
+import com.ibm.watson.developer_cloud.discovery.v1.Discovery
+import com.ibm.watson.developer_cloud.service.security.IamOptions
+import com.ibm.watson.developer_cloud.discovery.v1.model.QueryResponse
+import com.ibm.watson.developer_cloud.discovery.v1.model.QueryOptions
+
+
+const val ENV_ID_DIS_TEST = "system"
+const val COL_ID_DIS_TEST = "news-en"
+
+const val ENV_ID_DIS = "6f23a82f-ad96-4975-8ec3-539b9d4eb5d3"
+const val COL_ID_DIS = "cae1b403-6449-4719-81f8-41091a59c04b"
+
+const val ENDPOINT_DIS = "https://gateway-wdc.watsonplatform.net/discovery/api"
+const val API_KEY_DIS = "p5C9aI_YYB_-IJnfDuatG5La3if5erc3bxQ8gsXtBh4E"
+
+const val ENV_ID_MIKE_DIS = "04760902-0426-4f36-857e-37e9d7e09f5e"
+const val COL_ID_MIKE_DIS = "1ead5ab5-6a7f-4446-9529-93ba050a9bfa"
+
+const val PASSWORD_MIKE_DIS = "BERRVZvxKgto"
+const val USERNAME_MIKE_DIS = "539fdfc9-4579-4861-a1d2-74660add2ba6"
+
+const val URL_MIKE_DIS = "https://gateway.watsonplatform.net/discovery/api"
+
+const val VERSION_DIS = "2018-08-01"
 
 
 const val USERNAME = "test@gmail.com"
