@@ -13,6 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="15dp"
+        android:textColor="@color/primaryText"
         android:textSize="25sp"
         android:textStyle="bold"/>
 
@@ -27,6 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="25dp"
+        android:textColor="@color/primaryText"
         android:text="@string/ingredients_header"
         android:textSize="20sp" />
 
@@ -34,6 +36,7 @@
         android:id="@+id/recipe_ingredients"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/primaryText"
         android:textSize="16sp"
         android:layout_marginStart="30dp"/>
 

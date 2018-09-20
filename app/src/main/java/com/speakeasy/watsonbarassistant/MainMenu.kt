@@ -1,11 +1,12 @@
 package com.speakeasy.watsonbarassistant
 
+import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
-import android.widget.Toast
+import android.support.v7.widget.Toolbar
+import android.view.Menu
+import android.view.MenuItem
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
@@ -16,6 +17,7 @@ import com.ibm.watson.developer_cloud.discovery.v1.Discovery
 import com.ibm.watson.developer_cloud.service.security.IamOptions
 import com.ibm.watson.developer_cloud.discovery.v1.model.QueryResponse
 import com.ibm.watson.developer_cloud.discovery.v1.model.QueryOptions
+import kotlinx.android.synthetic.main.activity_main_menu.*
 
 
 const val ENV_ID_DIS_TEST = "system"
@@ -44,50 +46,50 @@ const val PASSWORD = "test123"
 class MainMenu : AppCompatActivity() {
 
     var ingredients = mutableListOf<Ingredient>()
-    var recipes = mutableListOf<Recipe>()
+    var recipes = mutableListOf<MutableList<Recipe>>()
+    var homeCategories = mutableListOf<String>()
     var documentsMap = mutableMapOf<String, String>()
     var currentUser: FirebaseUser? = null
     var tabIndex = 0
+    private var fragment: Fragment? = null
 
     private val fireStore = FirebaseFirestore.getInstance()
     private var authorization = FirebaseAuth.getInstance()
-    private var fragment: Fragment? = null
 
     init {
-        authorization.signOut()
-        authorizeUser()
         addDefaultRecipes()
+        homeCategories.add("Suggestions")
+        homeCategories.add("Recently Viewed")
     }
 
     private fun addDefaultRecipes() {
+        recipes.add(mutableListOf())
+        recipes.add(mutableListOf())
         val bloodyMaryIngredients = arrayOf("Tabasco", "Salt", "3 parts Vodka", "Pepper",
                 "Worcestershire Sauce", "6 parts Tomato Juice", "1 part Lemon Juice").asList()
-        recipes.add(Recipe("Bloody Mary", R.mipmap.ic_bloody_mary, bloodyMaryIngredients))
+        recipes[0].add(Recipe("Bloody Mary", R.mipmap.ic_bloody_mary, bloodyMaryIngredients))
 
         val mojitoIngredients = arrayOf("6 Leaves of Mint", "2 Teaspoons Sugar",
                 "2 Parts White Rum", "1 oz. Fresh Lime Juice", "Soda Water").asList()
-        recipes.add(Recipe("Mojito", R.mipmap.ic_mojito, mojitoIngredients))
+        recipes[0].add(Recipe("Mojito", R.mipmap.ic_mojito, mojitoIngredients))
 
         val oldFashionedIngrdients = arrayOf("1 Sugar Cube", "2 Parts Bourbon",
                 "Few Dashes Plain Water", "2 Dashes Angostura Bitters").asList()
-        recipes.add(Recipe("Old Fashioned", R.mipmap.ic_old_fashioned, oldFashionedIngrdients))
+        recipes[0].add(Recipe("Old Fashioned", R.mipmap.ic_old_fashioned, oldFashionedIngrdients))
 
         val margaritaIngredients = arrayOf("1 oz Cointreau", "1 oz Lime Juice", "2 oz Tequila").asList()
-        recipes.add(Recipe("Margarita", R.mipmap.ic_margarita, margaritaIngredients))
+        recipes[0].add(Recipe("Margarita", R.mipmap.ic_margarita, margaritaIngredients))
+        recipes[0].reversed().forEach { recipes[1].add(it) }
     }
 
-    private fun authorizeUser() {
-        authorization.signInWithEmailAndPassword(USERNAME, PASSWORD).addOnCompleteListener {
-            if(it.isSuccessful) {
-                loadUserData()
-                Log.d("FIRESTORE", "Authentication success, you are logged in as" +
-                        "${authorization.currentUser?.email}")
-            } else {
-                Toast.makeText(this, "Authentication failed.", Toast.LENGTH_SHORT).show()
-                Log.d("FIRESTORE", "Authentication failed, for user $USERNAME")
-                Log.d("FIRESTORE", "Authentication failure: ${it.exception}")
-            }
-        }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        loadUserData()
+        setContentView(R.layout.activity_main_menu)
+
+        tabs.addOnTabSelectedListener(MainMenuTabListener(this))
+        setSupportActionBar(toolbar as Toolbar)
     }
 
     private fun loadUserData() {
@@ -95,28 +97,24 @@ class MainMenu : AppCompatActivity() {
         loadIngredients()
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main_menu)
-
-        val tabLayout = findViewById<TabLayout>(R.id.tabs)
-        tabLayout.addOnTabSelectedListener(MainMenuTabListener(this))
-        checkForUpdates()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        checkForCrashes()
+    fun loadIngredients() {
+        val uid = currentUser?.uid
+        ingredients.clear()
+        if(uid != null) {
+            fireStore.collection("app").document(uid)
+                    .collection("ingredients").get().addOnCompleteListener {
+                if (it.isSuccessful) {
+                    it.result.forEach { snapshot ->
+                        parseSnapshot(snapshot)
+                    }
+                }
+            }
+        }
     }
 
     override fun onStart() {
         super.onStart()
         showCurrentFragment()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        unregisterManagers()
     }
 
     fun showCurrentFragment() {
@@ -134,24 +132,6 @@ class MainMenu : AppCompatActivity() {
         transaction.commit()
     }
 
-    fun loadIngredients() {
-        val uid = currentUser?.uid
-        ingredients.clear()
-        if(uid != null) {
-            fireStore.collection("app").document(uid)
-                    .collection("ingredients").get().addOnCompleteListener {
-                if (it.isSuccessful) {
-                    it.result.forEach { snapshot ->
-                        parseSnapshot(snapshot)
-                    }
-                } else {
-                    Log.d("FIRESTORE", "Failed to load ingredients.")
-                }
-                (fragment as? HomeTab)?.refresh()
-            }
-        }
-    }
-
     private fun parseSnapshot(snapshot: QueryDocumentSnapshot) {
         val name = snapshot.get("name") as? String
         val id = snapshot.id
@@ -165,22 +145,17 @@ class MainMenu : AppCompatActivity() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        authorization.signOut()
-        unregisterManagers()
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_toolbar_menu, menu)
+        return true
     }
 
-    private fun checkForCrashes() {
-        CrashManager.register(this)
-    }
-
-    private fun checkForUpdates() {
-        // Remove this for store builds!
-        UpdateManager.register(this)
-    }
-
-    private fun unregisterManagers() {
-        UpdateManager.unregister()
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.user_profile) {
+            val intent = Intent(this, UserProfile::class.java)
+            startActivity(intent)
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

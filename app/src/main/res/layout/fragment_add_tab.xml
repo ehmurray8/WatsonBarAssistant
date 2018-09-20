@@ -12,6 +12,7 @@
         android:text="@string/add_tab_welcome"
         android:textSize="25sp"
         android:textStyle="bold"
+        android:textColor="@color/primaryText"
         android:gravity="center_horizontal"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="15dp"/>
@@ -27,7 +28,8 @@
         android:layout_marginStart="15dp"
         android:layout_marginEnd="15dp"
         android:layout_marginTop="25dp"
-        android:layout_marginBottom="15dp"/>
+        android:layout_marginBottom="15dp"
+        android:textColor="@color/primaryText"/>
 
     <Button
         android:id="@+id/add_ingredient_button"
@@ -36,6 +38,7 @@
         android:text="@string/add_ingredient"
         android:layout_gravity="center_horizontal"
         android:gravity="center"
+        android:textColor="@color/primaryText"
         android:layout_margin="20dp"/>
 
     <LinearLayout

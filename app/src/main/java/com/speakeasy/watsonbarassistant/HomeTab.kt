@@ -2,19 +2,16 @@ package com.speakeasy.watsonbarassistant
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import kotlinx.android.synthetic.main.fragment_home_tab.*
 
 
 class HomeTab : Fragment() {
 
-    private var recyclerView: RecyclerView? = null
-    private var viewAdapter: IngredientsAdapter? = null
+    private var viewAdapter: HomeAdapter? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -25,30 +22,13 @@ class HomeTab : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val viewManager = LinearLayoutManager(activity)
         val mainMenu = activity as MainMenu
-        viewAdapter = IngredientsAdapter(mainMenu.ingredients, mainMenu.documentsMap)
+        viewAdapter = HomeAdapter(mainMenu.recipes, mainMenu.homeCategories, mainMenu)
 
-        recyclerView = view.findViewById<RecyclerView>(R.id.ingredients_list).apply {
+        home_container.apply {
             setHasFixedSize(true)
             layoutManager = viewManager
             adapter = viewAdapter
         }
-
-        val itemDecorator = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
-        recyclerView?.addItemDecoration(itemDecorator)
-
-        setupSwipeHandler()
-    }
-
-    private fun setupSwipeHandler() {
-        val context = activity?.baseContext ?: return
-        val swipeHandler = object : SwipeToDeleteCallback(context) {
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder?, direction: Int) {
-                val position = viewHolder?.layoutPosition ?: return
-                viewAdapter?.removeAt(position)
-            }
-        }
-        val itemTouchHelper = ItemTouchHelper(swipeHandler)
-        itemTouchHelper.attachToRecyclerView(recyclerView)
     }
 
     fun refresh() {

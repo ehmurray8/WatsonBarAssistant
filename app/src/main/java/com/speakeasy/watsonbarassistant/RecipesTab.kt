@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import kotlinx.android.synthetic.main.fragment_recipes_tab.*
 
 
 class RecipesTab : Fragment() {
@@ -26,9 +27,9 @@ class RecipesTab : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val viewManager = LinearLayoutManager(activity)
         val mainMenu = activity as MainMenu
-        viewAdapter = RecipesAdapter(mainMenu.recipes)
+        viewAdapter = RecipesAdapter(mainMenu.recipes[0])
 
-        recyclerView = view.findViewById<RecyclerView>(R.id.recipes_list).apply {
+        recyclerView = recipes_list.apply {
             setHasFixedSize(true)
             layoutManager = viewManager
             adapter = viewAdapter
@@ -45,7 +46,7 @@ class RecipesTab : Fragment() {
             override fun onItemClicked(position: Int, view: View) {
                 val intent = Intent(activity, RecipeDetail::class.java)
                 val recipes = (activity as MainMenu).recipes
-                intent.putExtra("Recipe", recipes[position])
+                intent.putExtra("Recipe", recipes[0][position])
                 startActivity(intent)
             }
         })
