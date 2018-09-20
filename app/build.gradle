@@ -21,22 +21,27 @@ android {
         manifestPlaceholders = [HOCKEYAPP_APP_ID: "92bb8f6004284632a9d8f5a58780edd0"]
     }
     signingConfigs {
-        ci {
-            keyAlias "ci-key-alias"
-            keyPassword System.getenv("CI_KEYSTORE_PASSWORD")
-            storeFile file("ci-key.keystore")
-            storePassword System.getenv("CI_KEYSTORE_PASSWORD")
-        }
+        travis
     }
     buildTypes {
-        debug_with_ci_keystore.initWith(buildTypes.debug)
-        debug_with_ci_keystore {
-            if (System.getenv("CI_KEYSTORE_PASSWORD")) signingConfig signingConfigs.ci
+        travis {
             minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.travis
         }
         release {
             minifyEnabled false
         }
+    }
+
+    def isRunningOnTravis = System.getenv("CI") == "true"
+
+    if (isRunningOnTravis) {
+        // configure keystore
+        signingConfigs.travis.storeFile = file("../travis.keystore.jks")
+        signingConfigs.travis.storePassword = System.getenv("keystore_password")
+        signingConfigs.travis.keyAlias = System.getenv("keystore_alias")
+        signingConfigs.travis.keyPassword = System.getenv("keystore_alias_password")
     }
 }
 

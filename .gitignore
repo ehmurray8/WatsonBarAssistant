@@ -13,6 +13,9 @@ bin/
 gen/
 out/
 
+# Keystore
+travis.keystore.jks
+
 # Gradle files
 .gradle/
 build/
