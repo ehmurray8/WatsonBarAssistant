@@ -3,6 +3,8 @@ package com.speakeasy.watsonbarassistant
 import android.app.Activity
 import android.content.Intent
 import android.graphics.BitmapFactory
+import android.support.v4.content.ContextCompat
+import android.support.v7.graphics.Palette
 import android.support.v7.widget.CardView
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -35,15 +37,23 @@ class HomeRecipeAdapter(private val recipes: MutableList<Recipe>,
             activity.startActivity(intent)
         }
         val recipe = recipes[position]
-        setupImageView(mainLayout, recipe)
         val textView = mainLayout.getChildAt(1) as TextView
+        setupImageView(mainLayout, recipe, textView)
         textView.text = recipe.name
     }
 
-    private fun setupImageView(mainLayout: RelativeLayout, recipe: Recipe) {
+    private fun setupImageView(mainLayout: RelativeLayout, recipe: Recipe, textView: TextView) {
         val imageView = mainLayout.getChildAt(0) as ImageView
         val imageId = recipe.imageId
-        val drinkBitmap = BitmapFactory.decodeResource(activity.resources, imageId)
+        var drinkBitmap = BitmapFactory.decodeResource(activity.resources, imageId)
+        Palette.from(drinkBitmap).generate {
+            val swatch = it.vibrantSwatch
+            if(swatch != null) {
+                textView.setTextColor(swatch.bodyTextColor)
+             } else {
+                textView.setTextColor(ContextCompat.getColor(activity.baseContext, R.color.primaryText))
+            }
+        }
         imageView.setImageBitmap(drinkBitmap)
     }
 
