@@ -13,6 +13,10 @@ bin/
 gen/
 out/
 
+# Keystore
+travis.keystore.jks
+travis-files.tar
+
 # Gradle files
 .gradle/
 build/
