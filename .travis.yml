@@ -32,8 +32,16 @@ cache:
   - "$HOME/.gradle/caches/"
   - "$HOME/.gradle/wrapper/"
   - "$HOME/.android/build-cache/"
-before_script: 
+before_script:
+- echo "y" | android update sdk -a --no-ui --filter android-$EMULATOR_LEVEL
+- echo "y" | android update sdk -a --no-ui --filter sys-img-armeabi-v7a-android-$EMULATOR_LEVEL
+- android list targets
+- echo no | android create avd --force -n test -t android-$EMULATOR_LEVEL --abi $ANDROID_ABI
+- emulator -avd test -no-window &
+- android-wait-for-emulator
 script:
+- adb shell input keyevent 82 &
+- "./gradlew connectedCheck -PdisablePreDex --stacktrace"
 - "./gradlew test"
 - "./gradlew assembleTravis"
 - ls -R app/build/outputs/apk
