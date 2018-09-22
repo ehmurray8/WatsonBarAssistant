@@ -21,3 +21,12 @@
 #-renamesourcefileattribute SourceFile
 
 #-keep @org.junit.runner.RunWith public class *
+-keepattributes *Annotation*, InnerClasses
+-dontnote kotlinx.serialization.SerializationKt
+-keep,includedescriptorclasses class com.speakeasy.watsonbarassistant.**$$serializer { *; }
+-keepclassmembers class com.speakeasy.watsonbarassistant.** {
+    *** Companion;
+}
+-keepclasseswithmembers class com.speakeasy.watsonbarassistant.** {
+    kotlinx.serialization.KSerializer serializer(...);
+}

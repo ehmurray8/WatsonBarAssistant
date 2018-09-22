@@ -73,9 +73,9 @@ class MainMenu : AppCompatActivity() {
                 "2 Parts White Rum", "1 oz. Fresh Lime Juice", "Soda Water").asList()
         recipes[0].add(Recipe("Mojito", R.mipmap.ic_mojito, mojitoIngredients))
 
-        val oldFashionedIngrdients = arrayOf("1 Sugar Cube", "2 Parts Bourbon",
+        val oldFashionedIngredients = arrayOf("1 Sugar Cube", "2 Parts Bourbon",
                 "Few Dashes Plain Water", "2 Dashes Angostura Bitters").asList()
-        recipes[0].add(Recipe("Old Fashioned", R.mipmap.ic_old_fashioned, oldFashionedIngrdients))
+        recipes[0].add(Recipe("Old Fashioned", R.mipmap.ic_old_fashioned, oldFashionedIngredients))
 
         val margaritaIngredients = arrayOf("1 oz Cointreau", "1 oz Lime Juice", "2 oz Tequila").asList()
         recipes[0].add(Recipe("Margarita", R.mipmap.ic_margarita, margaritaIngredients))
