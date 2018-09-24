@@ -10,7 +10,6 @@ import android.os.Handler
 import android.os.StrictMode
 import android.provider.MediaStore
 import android.support.v4.app.Fragment
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,13 +19,6 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Toast
 import com.google.firebase.firestore.FirebaseFirestore
-import com.ibm.watson.developer_cloud.discovery.v1.Discovery
-import com.ibm.watson.developer_cloud.discovery.v1.model.*
-import com.ibm.watson.developer_cloud.service.security.IamOptions
-import com.ibm.watson.developer_cloud.discovery.v1.model.ListEnvironmentsResponse
-import com.ibm.watson.developer_cloud.discovery.v1.model.ListEnvironmentsOptions
-
-
 
 
 class AddTab : Fragment() {
@@ -45,15 +37,6 @@ class AddTab : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        //NEEDED FOR WATSON CONNECTION
-        val SDK_INT = android.os.Build.VERSION.SDK_INT
-        if (SDK_INT > 8)
-        {
-            val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
-            StrictMode.setThreadPolicy(policy)
-
-        }
 
         addButton = view.findViewById(R.id.add_ingredient_button)
         addButton?.setOnClickListener {
@@ -75,26 +58,6 @@ class AddTab : Fragment() {
     }
 
     private fun handleDiscoveryButton() {
-        //Toast.makeText(activity, "DISCOVERY.", Toast.LENGTH_SHORT).show()
-        Log.i("Discovery", "Start.")
-        val options = IamOptions.Builder()
-                .apiKey(API_KEY_DIS)
-                .build()
-        val discovery = Discovery(
-                VERSION_DIS,
-                USERNAME_MIKE_DIS,
-                PASSWORD_MIKE_DIS
-        )
-        discovery.endPoint = URL_MIKE_DIS
-
-        //Log.i("Discovery", listResponse.collections.toString())
-
-        val queryBuilder = QueryOptions.Builder(ENV_ID_MIKE_DIS, COL_ID_MIKE_DIS)
-        queryBuilder.query("ingredientList:jiggers spiced rum,jiggers banana liqueur")
-        val queryResponse = discovery.query(queryBuilder.build()).execute()
-
-        Log.i("Discovery", "Return: " + queryResponse.results)
-
     }
 
     private fun handleAddButton() {
