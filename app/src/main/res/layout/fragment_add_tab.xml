@@ -64,4 +64,10 @@
 
     </LinearLayout>
 
+    <Button
+        android:id="@+id/discoveryButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Discovery" />
+
 </LinearLayout>

@@ -3,6 +3,8 @@
     package="com.speakeasy.watsonbarassistant">
 
     <uses-feature android:name="android.hardware.camera" />
+    //Permission for discovery call
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:allowBackup="true"

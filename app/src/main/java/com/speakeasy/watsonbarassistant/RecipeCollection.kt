@@ -1,5 +1,6 @@
 package com.speakeasy.watsonbarassistant
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -12,7 +13,7 @@ import kotlinx.android.synthetic.main.activity_recipe_collection.*
 class RecipeCollection : AppCompatActivity() {
 
     private var collectionName: String? = null
-    private var recipes: MutableList<Recipe> = mutableListOf()
+    private var recipes: MutableList<DiscoveryRecipe> = mutableListOf()
     private var recyclerView: RecyclerView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,14 +24,15 @@ class RecipeCollection : AppCompatActivity() {
         recipe_collection_title.text = collectionName
         try {
             @Suppress("UNCHECKED_CAST")
-            recipes = intent.getSerializableExtra("Recipes") as MutableList<Recipe>
+            recipes = intent.getSerializableExtra("Recipes") as MutableList<DiscoveryRecipe>
         } catch (exception: ClassCastException) {}
         setupListView()
     }
 
     private fun setupListView() {
         val viewManager = LinearLayoutManager(this)
-        val viewAdapter = RecipesAdapter(recipes)
+        //TODO
+        val viewAdapter = RecipesAdapter(recipes, Activity())
 
         recyclerView = recipes_collection_list.apply {
             setHasFixedSize(true)

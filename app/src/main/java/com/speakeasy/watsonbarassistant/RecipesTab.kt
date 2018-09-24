@@ -1,6 +1,7 @@
 package com.speakeasy.watsonbarassistant
 
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -27,7 +28,7 @@ class RecipesTab : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val viewManager = LinearLayoutManager(activity)
         val mainMenu = activity as MainMenu
-        viewAdapter = RecipesAdapter(mainMenu.recipes[0])
+        viewAdapter = RecipesAdapter(mainMenu.recipes[0], activity as Activity)
 
         recyclerView = recipes_list.apply {
             setHasFixedSize(true)
@@ -42,7 +43,7 @@ class RecipesTab : Fragment() {
     }
 
     private fun setupOnClickListener() {
-        recyclerView?.addOnItemClickListener(object: OnItemClickListener {
+        recyclerView?.addOnItemClickListener(object : OnItemClickListener {
             override fun onItemClicked(position: Int, view: View) {
                 val intent = Intent(activity, RecipeDetail::class.java)
                 val recipes = (activity as MainMenu).recipes
