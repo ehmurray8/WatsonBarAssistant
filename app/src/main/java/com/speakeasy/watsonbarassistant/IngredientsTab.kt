@@ -4,65 +4,63 @@ package com.speakeasy.watsonbarassistant
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import android.support.design.widget.FloatingActionButton
-import android.support.design.widget.Snackbar
+import android.support.v7.widget.LinearLayoutManager
 import android.view.animation.Animation
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QueryDocumentSnapshot
-import android.graphics.drawable.AnimationDrawable
+import android.support.v7.widget.RecyclerView
+import android.view.*
 import android.view.animation.AnimationUtils
-import android.widget.Toolbar
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException
-import com.google.firebase.auth.FirebaseAuth
-import kotlinx.android.synthetic.*
+import android.view.inputmethod.EditorInfo
+import com.google.firebase.firestore.FirebaseFirestore
+
 
 
 class IngredientsTab : Fragment() {
 
     private val fireStore = FirebaseFirestore.getInstance()
-    //private var addButton: Button? = null
-    lateinit var addMenuButton: FloatingActionButton
-    lateinit var addViaTextButton: FloatingActionButton
-    lateinit var addViaCameraButton: FloatingActionButton
-    lateinit var addViaVoiceButton: FloatingActionButton
-    val ingredientInput = view?.findViewById<EditText>(R.id.add_ingredient_input)
-    //lateinit var toolbar: Toolbar
+
+    private lateinit var addMenuButton: FloatingActionButton
+    private lateinit var addViaTextButton: FloatingActionButton
+    private lateinit var addViaCameraButton: FloatingActionButton
+    private lateinit var addViaVoiceButton: FloatingActionButton
+    lateinit var ingredientInputView: View
 
     lateinit var menu_anim_open: Animation
     lateinit var menu_anim_close: Animation
     lateinit var menu_anim_rotate_out: Animation
     lateinit var menu_anim_rotate_back: Animation
 
-    var ingredients = mutableListOf<Ingredient>()
-    var documentsMap = mutableMapOf<String, String>()
-    var currentUser: FirebaseUser? = null
-    private var fragment: Fragment? = null
     private var isAddMenuOpen: Boolean = false
-    private var authorization = FirebaseAuth.getInstance()
+    private lateinit var recyclerView: RecyclerView
+    private var viewAdapter: IngredientsAdapter? = null
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.ingredient_item_list, container, false)
+       super.onCreateView(inflater, container, savedInstanceState)
+       return inflater.inflate(R.layout.fragment_ingredient_tab, container, false)
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //loadUserData()
-        //loadIngredients()
+        val viewManager = LinearLayoutManager(activity)
+        val mainMenu = activity as MainMenu
+        viewAdapter = IngredientsAdapter(mainMenu.ingredients, mainMenu.documentsMap)
 
-        //toolbar = findViewById(R.id.toolbar) as Toolbar
+        recyclerView = view.findViewById<RecyclerView>(R.id.ingredients_recycler_view).apply {
+            setHasFixedSize(true)
+            layoutManager = viewManager
+            adapter = viewAdapter
+        }
+
         addMenuButton = view.findViewById(R.id.addIngredientId) as FloatingActionButton
         addViaTextButton = view.findViewById(R.id.addingViaTextId) as FloatingActionButton
         addViaCameraButton = view.findViewById(R.id.addingViaCameraId) as FloatingActionButton
         addViaVoiceButton = view.findViewById(R.id.addingViaVoiceId) as FloatingActionButton
+        ingredientInputView = view.findViewById(R.id.add_ingredient_input)
 
         menu_anim_open = AnimationUtils.loadAnimation(context, R.anim.menu_anim_open)
         menu_anim_close = AnimationUtils.loadAnimation(context, R.anim.menu_anim_close)
@@ -73,144 +71,111 @@ class IngredientsTab : Fragment() {
             override fun onClick(v: View) {
 
                 if (isAddMenuOpen) {
-
-                    addMenuButton.startAnimation(menu_anim_rotate_back)
-                    addViaTextButton.startAnimation(menu_anim_close)
-                    addViaCameraButton.startAnimation(menu_anim_close)
-                    addViaVoiceButton.startAnimation(menu_anim_close)
-                    addViaTextButton.isClickable = false
-                    addViaTextButton.visibility = View.GONE
-                    addViaCameraButton.isClickable = false
-                    addViaCameraButton.visibility = View.GONE
-                    addViaVoiceButton.isClickable = false
-                    addViaVoiceButton.visibility = View.GONE
-                    ingredientInput.to(View.GONE)
-                    isAddMenuOpen = false
-                    //Log.d("Raj", "close")
+                    closeMenus()
 
                 } else {
-
-                    addMenuButton.startAnimation(menu_anim_rotate_out)
-                    addViaTextButton.startAnimation(menu_anim_open)
-                    addViaCameraButton.startAnimation(menu_anim_open)
-                    addViaVoiceButton.startAnimation(menu_anim_open)
-                    addViaTextButton.isClickable = true
-                    addViaTextButton.visibility = View.VISIBLE
-                    addViaCameraButton.isClickable = true
-                    addViaCameraButton.visibility = View.VISIBLE
-                    addViaVoiceButton.isClickable = true
-                    addViaVoiceButton.visibility = View.VISIBLE
-                    ingredientInput.to(View.VISIBLE)
-                    isAddMenuOpen = true
-                    //Log.d("Raj","open")
-
+                    openMenus()
                 }
             }
         })
         addViaTextButton.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View) {
 
-                val name = ingredientInput?.text.toString()
-                val ingredient = Ingredient(name)
-                addIngredient(ingredient)
+                val ingredientInput = view?.findViewById(R.id.add_ingredient_input) as EditText
+
+                closeMenus()
+                ingredientInputView.visibility = View.VISIBLE
+                //ingredientInputView.requestFocus()
+
+
+
+                ingredientInput.setOnEditorActionListener { v, actionId, event ->
+                    return@setOnEditorActionListener when (actionId) {
+                        EditorInfo.IME_ACTION_DONE -> {
+                            val name = ingredientInput.text.toString()
+                            val ingredient = Ingredient(name)
+                            addIngredient(ingredient)
+                            ingredientInput.selectAll()
+                            ingredientInput.setText("")
+                            true
+                        }
+                        else -> false
+                    }
+                }
 
             }
         })
         addViaCameraButton.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View) {
 
-                Toast.makeText(context, "To be added!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Camera support to be added!", Toast.LENGTH_SHORT).show()
 
             }
         })
         addViaVoiceButton.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View) {
 
-                Toast.makeText(context, "To be added!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Voice support to be added!", Toast.LENGTH_SHORT).show()
 
             }
         })
     }
-    /*addButton = view.findViewById(R.id.add_ingredient_button)
-        addButton?.setOnClickListener {
-            handleAddButton()
-        }*/
 
-    /*private fun handleAddButton() {
-        val ingredientInput = view?.findViewById<EditText>(R.id.add_ingredient_input)
-        val name = ingredientInput?.text.toString()
-        val ingredient = Ingredient(name)
-        addIngredient(ingredient)
-    }*/
+    fun addIngredient(ingredient: Ingredient){
 
-
-    private fun addIngredient(ingredient: Ingredient) {
-        val ingredients = (activity as IngredientsTab).ingredients
-        if (ingredient in ingredients) {
+        val ingredients = (activity as MainMenu).ingredients
+        if(ingredient in ingredients) {
             Toast.makeText(activity, "${ingredient.name} is already stored as an ingredient.", Toast.LENGTH_SHORT).show()
             return
         }
-        //addIngredientToFireStore(ingredient)
+        addIngredientToFireStore(ingredient)
     }
-}
 
-    /*private fun addIngredientToFireStore(ingredient: Ingredient) {
-        val ingredientsTab = (activity as? IngredientsTab)
-        val uid = ingredientsTab?.currentUser?.uid ?: return
+    private fun addIngredientToFireStore(ingredient: Ingredient) {
+        Toast.makeText(context, "REEE", Toast.LENGTH_SHORT).show()
+        val mainMenu = (activity as? MainMenu)
+        val uid = mainMenu?.currentUser?.uid ?: return
         fireStore.collection("app").document(uid)
                 .collection("ingredients").add(ingredient).addOnSuccessListener { _ ->
                     Toast.makeText(context, "Successfully added ${ingredient.name}.", Toast.LENGTH_SHORT).show()
-                    ingredientsTab.loadIngredients()
+                    mainMenu.loadIngredients()
                     Log.d("FIRESTORE", "Successfully added ${ingredient.name}")
                 }.addOnFailureListener {
                     Toast.makeText(context, "Failed to add ${ingredient.name}.", Toast.LENGTH_SHORT).show()
                     Log.d("FIRESTORE", "Failed to add ${ingredient.name}")
                 }
-        var undoOnClickListener: View.OnClickListener = View.OnClickListener { view ->
-            listItems.removeAt(listItems.size - 1)
-            adapter?.notifyDataSetChanged()
-            Snackbar.make(view, "Item removed", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-        }
     }
 
-    private fun loadUserData() {
-        currentUser = authorization.currentUser
-        loadIngredients()
+
+    private fun closeMenus(){
+        addMenuButton.startAnimation(menu_anim_rotate_back)
+        addViaTextButton.startAnimation(menu_anim_close)
+        addViaCameraButton.startAnimation(menu_anim_close)
+        addViaVoiceButton.startAnimation(menu_anim_close)
+        addViaTextButton.isClickable = false
+        addViaTextButton.visibility = View.INVISIBLE
+        addViaCameraButton.isClickable = false
+        addViaCameraButton.visibility = View.INVISIBLE
+        addViaVoiceButton.isClickable = false
+        addViaVoiceButton.visibility = View.INVISIBLE
+        ingredientInputView.visibility = View.GONE
+        isAddMenuOpen = false
     }
 
-    private fun loadIngredients() {
-        val uid = currentUser?.uid
-        ingredients.clear()
-        if(uid != null) {
-            fireStore.collection("app").document(uid)
-                    .collection("ingredients").get().addOnCompleteListener {
-                        if (it.isSuccessful) {
-                            it.result.forEach { snapshot ->
-                                parseSnapshot(snapshot)
-                            }
-                        } else {
-                            Log.d("FIRESTORE", "Failed to load ingredients.")
-                        }
-                        (fragment as? IngredientsTab)?.refresh()
-                    }
-        }
+    private fun openMenus(){
+        addMenuButton.startAnimation(menu_anim_rotate_out)
+        addViaTextButton.startAnimation(menu_anim_open)
+        addViaCameraButton.startAnimation(menu_anim_open)
+        addViaVoiceButton.startAnimation(menu_anim_open)
+        addViaTextButton.isClickable = true
+        addViaTextButton.visibility = View.VISIBLE
+        addViaCameraButton.isClickable = true
+        addViaCameraButton.visibility = View.VISIBLE
+        addViaVoiceButton.isClickable = true
+        addViaVoiceButton.visibility = View.VISIBLE
+        isAddMenuOpen = true
     }
 
-    private fun parseSnapshot(snapshot: QueryDocumentSnapshot) {
-        val name = snapshot.get("name") as? String
-        val id = snapshot.id
-        if(name != null) {
-            documentsMap[name] = id
-            val ingredient = Ingredient(name)
-            ingredients.add(ingredient)
-            Log.d("FIRESTORE", "Successfully retrieved ${ingredient.name}.")
-        }
-    }
-
-    /*fun refresh() {
-        viewAdapter?.notifyDataSetChanged()
-    }*/
 }
-*/
+
 
