@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">WatsonBarAssistant</string>
     <string name="home_tab">Home</string>
-    <string name="add_tab">Add</string>
+    <string name="ingredients_tab">Ingredients</string>
     <string name="recipes_tab">Recipes</string>
 
     <string name="home_tab_welcome">Home Tab</string>
