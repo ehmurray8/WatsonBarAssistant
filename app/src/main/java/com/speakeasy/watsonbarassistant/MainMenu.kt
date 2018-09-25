@@ -138,7 +138,7 @@ class MainMenu : AppCompatActivity() {
     fun showCurrentFragment() {
         when(tabIndex) {
             0 -> fragment = HomeTab()
-            1 -> fragment = AddTab()
+            1 -> fragment = IngredientsTab()
             2 -> fragment = RecipesTab()
         }
         replaceFragment()

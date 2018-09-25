@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinateLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="bottom"
+    android:fitsSystemWindows="false"
+    tools:context=".IngredientsTab">
+
+    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".IngredientsTab">
+
+        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/ingredient"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="ingredients"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/add_ingredient_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="48dp"
+            android:layout_marginStart="8dp"
+            android:clickable="true"
+            android:hint="@string/ingredient_hint"
+            android:imeOptions="actionDone"
+            android:inputType="text"
+            android:lines="1"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:layout_constrainedWidth="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/addingViaTextId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/ic_text_add"
+            android:tint="@color/colorPrimary"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/addIngredientId"
+            app:layout_constraintEnd_toEndOf="parent">
+
+        </android.support.design.widget.FloatingActionButton>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/addingViaCameraId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/ic_camera_add"
+            android:tint="@color/colorPrimary"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/addingViaVoiceId"
+            app:layout_constraintEnd_toEndOf="parent">
+
+        </android.support.design.widget.FloatingActionButton>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/addingViaVoiceId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/ic_voice_add"
+            android:tint="@color/colorPrimary"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/addingViaTextId"
+            app:layout_constraintEnd_toEndOf="parent">
+
+        </android.support.design.widget.FloatingActionButton>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/addIngredientId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/ic_add_icon"
+            android:tint="@color/colorPrimary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+        </android.support.design.widget.FloatingActionButton>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/ingredients_recycler_view"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:scrollbars="vertical"
+            app:layout_constraintBottom_toTopOf="@+id/add_ingredient_input"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ingredient" />
+
+
+    </android.support.constraint.ConstraintLayout>
+
+
+</android.support.design.widget.CoordinatorLayout>
