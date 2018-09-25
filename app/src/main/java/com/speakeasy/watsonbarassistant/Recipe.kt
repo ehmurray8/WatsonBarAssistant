@@ -45,5 +45,4 @@ data class DiscoveryRecipe(
         val imageId = Base64.decode(imageBase64, Base64.DEFAULT)
         return BitmapFactory.decodeByteArray(imageId, 0, imageId.count())
     }
-
 }

@@ -1,5 +1,6 @@
 package com.speakeasy.watsonbarassistant
 
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.TextView
@@ -23,7 +24,10 @@ class RecipeDetail : AppCompatActivity() {
         }
         recipe_ingredients.text = recipeIngredientsString
 
-        val imageBitmap = recipe?.createBitMap()
+        var imageBitmap = recipe?.createBitMap()
+        if(recipe?.imageBase64 == DEFAULT_IMAGE_BASE64) {
+            imageBitmap = BitmapFactory.decodeResource(resources, R.mipmap.ic_alcohol)
+        }
         drink_detail_image.setImageBitmap(imageBitmap)
     }
 }
