@@ -2,7 +2,7 @@ package com.speakeasy.watsonbarassistant
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.BitmapFactory
+import android.graphics.Typeface
 import android.support.v4.content.ContextCompat
 import android.support.v7.graphics.Palette
 import android.support.v7.widget.CardView
@@ -13,7 +13,7 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
 
-class HomeRecipeAdapter(private val recipes: MutableList<Recipe>,
+class HomeRecipeAdapter(private val recipes: MutableList<DiscoveryRecipe>,
                         private val activity: Activity):
         RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -39,13 +39,14 @@ class HomeRecipeAdapter(private val recipes: MutableList<Recipe>,
         val recipe = recipes[position]
         val textView = mainLayout.getChildAt(1) as TextView
         setupImageView(mainLayout, recipe, textView)
-        textView.text = recipe.name
+        textView.text = recipe.title
     }
 
-    private fun setupImageView(mainLayout: RelativeLayout, recipe: Recipe, textView: TextView) {
+    private fun setupImageView(mainLayout: RelativeLayout, recipe: DiscoveryRecipe,
+                               textView: TextView) {
         val imageView = mainLayout.getChildAt(0) as ImageView
-        val imageId = recipe.imageId
-        var drinkBitmap = BitmapFactory.decodeResource(activity.resources, imageId)
+        val drinkBitmap = recipe.createBitMap()
+        textView.setTypeface(textView.typeface, Typeface.BOLD)
         Palette.from(drinkBitmap).generate {
             val swatch = it.vibrantSwatch
             if(swatch != null) {
@@ -54,10 +55,8 @@ class HomeRecipeAdapter(private val recipes: MutableList<Recipe>,
                 textView.setTextColor(ContextCompat.getColor(activity.baseContext, R.color.primaryText))
             }
         }
-        imageView.setImageBitmap(drinkBitmap)
+        imageView.setImageBitmap(recipe.createBitMap())
     }
 
-    override fun getItemCount(): Int {
-        return recipes.count()
-    }
+    override fun getItemCount(): Int =  recipes.count()
 }

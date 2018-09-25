@@ -36,18 +36,27 @@ class AddTab : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         addButton = view.findViewById(R.id.add_ingredient_button)
         addButton?.setOnClickListener {
             handleAddButton()
         }
         val cameraAdd = view.findViewById<ImageButton>(R.id.camera_button)
         val speechAdd = view.findViewById<ImageButton>(R.id.speech_button)
+        val discoveryButton = view.findViewById<Button>(R.id.discoveryButton)
+
         cameraAdd?.setOnClickListener {
             handleCameraAdd()
         }
         speechAdd?.setOnClickListener {
             handleSpeechAdd()
         }
+        discoveryButton?.setOnClickListener {
+            handleDiscoveryButton()
+        }
+    }
+
+    private fun handleDiscoveryButton() {
     }
 
     private fun handleAddButton() {

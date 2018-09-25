@@ -18,6 +18,7 @@
             android:layout_height="match_parent"
             android:src="@mipmap/ic_old_fashioned"
             android:scaleType="centerCrop"
+            android:alpha=".6"
             android:contentDescription="@string/home_recipe_card_description" />
 
         <TextView

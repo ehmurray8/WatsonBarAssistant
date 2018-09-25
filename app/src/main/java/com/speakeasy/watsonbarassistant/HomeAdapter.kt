@@ -12,7 +12,7 @@ import android.widget.LinearLayout
 import java.io.Serializable
 
 
-class HomeAdapter(private var dataSet: MutableList<MutableList<Recipe>>,
+class HomeAdapter(private var dataSet: MutableList<MutableList<DiscoveryRecipe>>,
                   private var categories: MutableList<String>, private var activity: Activity):
         RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 

@@ -1,6 +1,7 @@
 package com.speakeasy.watsonbarassistant
 
 import android.content.Intent
+import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
@@ -11,53 +12,45 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QueryDocumentSnapshot
+import com.ibm.watson.developer_cloud.discovery.v1.Discovery
+import com.ibm.watson.developer_cloud.discovery.v1.model.QueryOptions
 import kotlinx.android.synthetic.main.activity_main_menu.*
+import kotlinx.serialization.json.JSON
+import java.util.*
+
+
+const val ENV_ID_MIKE_DIS = "04760902-0426-4f36-857e-37e9d7e09f5e"
+const val COL_ID_MIKE_DIS = "aecd1f2c-6cab-4fa4-96cf-81d8c55bf181"
+const val PASSWORD_MIKE_DIS = "BERRVZvxKgto"
+const val USERNAME_MIKE_DIS = "539fdfc9-4579-4861-a1d2-74660add2ba6"
+const val URL_MIKE_DIS = "https://gateway.watsonplatform.net/discovery/api"
+const val VERSION_DIS = "2018-08-01"
+
 
 class MainMenu : AppCompatActivity() {
 
     var ingredients = mutableListOf<Ingredient>()
-    var recipes = mutableListOf<MutableList<Recipe>>()
+    var recipes = mutableListOf<MutableList<DiscoveryRecipe>>()
     var homeCategories = mutableListOf<String>()
-    var documentsMap = mutableMapOf<String, String>()
+    private var documentsMap = mutableMapOf<String, String>()
     var currentUser: FirebaseUser? = null
     var tabIndex = 0
-    private var fragment: Fragment? = null
+    var fragment: Fragment? = null
 
     private val fireStore = FirebaseFirestore.getInstance()
     private var authorization = FirebaseAuth.getInstance()
 
     init {
-        addDefaultRecipes()
+        recipes.add(0, mutableListOf())
+        recipes.add(1, mutableListOf())
         homeCategories.add("Suggestions")
         homeCategories.add("Recently Viewed")
     }
-
-    private fun addDefaultRecipes() {
-        recipes.add(mutableListOf())
-        recipes.add(mutableListOf())
-        val bloodyMaryIngredients = arrayOf("Tabasco", "Salt", "3 parts Vodka", "Pepper",
-                "Worcestershire Sauce", "6 parts Tomato Juice", "1 part Lemon Juice").asList()
-        recipes[0].add(Recipe("Bloody Mary", R.mipmap.ic_bloody_mary, bloodyMaryIngredients))
-
-        val mojitoIngredients = arrayOf("6 Leaves of Mint", "2 Teaspoons Sugar",
-                "2 Parts White Rum", "1 oz. Fresh Lime Juice", "Soda Water").asList()
-        recipes[0].add(Recipe("Mojito", R.mipmap.ic_mojito, mojitoIngredients))
-
-        val oldFashionedIngredients = arrayOf("1 Sugar Cube", "2 Parts Bourbon",
-                "Few Dashes Plain Water", "2 Dashes Angostura Bitters").asList()
-        recipes[0].add(Recipe("Old Fashioned", R.mipmap.ic_old_fashioned, oldFashionedIngredients))
-
-        val margaritaIngredients = arrayOf("1 oz Cointreau", "1 oz Lime Juice", "2 oz Tequila").asList()
-        recipes[0].add(Recipe("Margarita", R.mipmap.ic_margarita, margaritaIngredients))
-        recipes[0].reversed().forEach { recipes[1].add(it) }
-    }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         loadUserData()
         setContentView(R.layout.activity_main_menu)
-
         tabs.addOnTabSelectedListener(MainMenuTabListener(this))
         setSupportActionBar(toolbar as Toolbar)
     }
@@ -77,6 +70,8 @@ class MainMenu : AppCompatActivity() {
                     it.result.forEach { snapshot ->
                         parseSnapshot(snapshot)
                     }
+                    val discovery = SearchDiscovery(HandleDiscovery(recipes, this))
+                    discovery.execute(ingredients)
                 }
             }
         }
@@ -127,5 +122,63 @@ class MainMenu : AppCompatActivity() {
             return true
         }
         return super.onOptionsItemSelected(item)
+    }
+}
+
+ class SearchDiscovery(private val inputListener: OnTaskCompleted):
+         AsyncTask<List<Ingredient>, Void, MutableList<DiscoveryRecipe>>() {
+
+    override fun doInBackground(vararg args: List<Ingredient>): MutableList<DiscoveryRecipe> {
+        val ingredients = args[0]
+        val orderedRecipes = PriorityQueue<DiscoveryRecipe>(10) { a, b ->
+            when {
+                a.queueValue < b.queueValue -> 1
+                else -> -1
+            }
+        }
+
+        val discovery = Discovery(VERSION_DIS, USERNAME_MIKE_DIS, PASSWORD_MIKE_DIS)
+        discovery.endPoint = URL_MIKE_DIS
+
+        val queryBuilder = QueryOptions.Builder(ENV_ID_MIKE_DIS, COL_ID_MIKE_DIS)
+
+        queryBuilder.query(buildIngredientQuery(ingredients)).count(50)
+        val queryResponse = discovery.query(queryBuilder.build()).execute()
+
+        for(response in queryResponse.results){
+            val recipe = JSON.nonstrict.parse<DiscoveryRecipe>(response.toString())
+            recipe.calculatePercentAvailable(ingredients)
+            orderedRecipes.add(recipe)
+        }
+        return orderedRecipes.toMutableList()
+    }
+
+    override fun onPostExecute(result: MutableList<DiscoveryRecipe>){
+        super.onPostExecute(result)
+        inputListener.onTaskCompleted(result)
+    }
+
+    private fun buildIngredientQuery(ingredients: List<Ingredient>): String{
+        return ingredients.asSequence().filter { it.name != "" }
+                .joinToString("|", "ingredientList:") { it.name }
+    }
+}
+
+interface OnTaskCompleted {
+    fun onTaskCompleted(recipes: MutableList<DiscoveryRecipe>)
+}
+
+class HandleDiscovery(private val overAllList: MutableList<MutableList<DiscoveryRecipe>>,
+                      private val mainMenu: MainMenu?): OnTaskCompleted {
+
+    override fun onTaskCompleted(recipes: MutableList<DiscoveryRecipe>) {
+        overAllList[0].addAll(recipes)
+        overAllList[1].addAll(recipes.shuffled().toMutableList())
+        val fragment = mainMenu?.fragment
+        if(fragment as? HomeTab != null) {
+            fragment.refresh()
+        } else if(fragment as? RecipesTab != null) {
+            fragment.refresh()
+        }
     }
 }
