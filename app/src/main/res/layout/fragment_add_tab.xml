@@ -10,10 +10,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/add_tab_welcome"
-        android:textSize="16sp"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        android:textColor="@color/primaryText"
         android:gravity="center_horizontal"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="15sp"/>
+        android:layout_marginTop="15dp"/>
 
     <EditText
         android:id="@+id/add_ingredient_input2"
@@ -22,8 +24,12 @@
         android:layout_height="wrap_content"
         android:hint="@string/ingredient_hint"
         android:inputType="text"
-        android:textSize="12sp"
-        android:layout_margin="20sp"/>
+        android:textSize="16sp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginBottom="15dp"
+        android:textColor="@color/primaryText"/>
 
     <Button
         android:id="@+id/add_ingredient_button"
@@ -32,6 +38,36 @@
         android:text="@string/add_ingredient"
         android:layout_gravity="center_horizontal"
         android:gravity="center"
-        android:layout_margin="20sp"/>
+        android:textColor="@color/primaryText"
+        android:layout_margin="20dp"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center_horizontal">
+
+        <ImageButton
+            android:id="@+id/camera_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_photo_camera_black_24dp"
+            android:contentDescription="@string/add_camera_description"/>
+
+        <ImageButton
+            android:id="@+id/speech_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_mic_black_24dp"
+            android:contentDescription="@string/speak_add_description"
+            android:layout_marginStart="20dp"/>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/discoveryButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Discovery" />
 
 </LinearLayout>

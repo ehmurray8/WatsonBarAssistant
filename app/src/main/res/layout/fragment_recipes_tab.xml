@@ -10,9 +10,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/recipes_tab_welcome"
-        android:textSize="16sp"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        android:textColor="@color/primaryText"
         android:gravity="center_horizontal"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="15sp"/>
+        android:layout_marginTop="15dp"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recipes_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="50dp"
+        android:layout_marginTop="20dp"/>
 
 </LinearLayout>

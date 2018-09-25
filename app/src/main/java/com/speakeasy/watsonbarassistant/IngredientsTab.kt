@@ -2,17 +2,19 @@ package com.speakeasy.watsonbarassistant
 
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.util.Log
-import android.widget.EditText
-import android.widget.Toast
 import android.support.design.widget.FloatingActionButton
+import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
-import android.view.animation.Animation
 import android.support.v7.widget.RecyclerView
-import android.view.*
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.view.inputmethod.EditorInfo
+import android.widget.EditText
+import android.widget.Toast
 import com.google.firebase.firestore.FirebaseFirestore
 
 
@@ -81,7 +83,7 @@ class IngredientsTab : Fragment() {
         addViaTextButton.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View) {
 
-                val ingredientInput = view?.findViewById(R.id.add_ingredient_input) as EditText
+                val ingredientInput = view.findViewById(R.id.add_ingredient_input) as EditText
 
                 closeMenus()
                 ingredientInputView.visibility = View.VISIBLE
@@ -89,7 +91,7 @@ class IngredientsTab : Fragment() {
 
 
 
-                ingredientInput.setOnEditorActionListener { v, actionId, event ->
+                ingredientInput.setOnEditorActionListener { _, actionId, _ ->
                     return@setOnEditorActionListener when (actionId) {
                         EditorInfo.IME_ACTION_DONE -> {
                             val name = ingredientInput.text.toString()
