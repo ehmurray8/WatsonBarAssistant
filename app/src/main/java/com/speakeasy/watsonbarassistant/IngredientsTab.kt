@@ -81,7 +81,7 @@ class IngredientsTab : Fragment() {
         addViaTextButton.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View) {
 
-                val ingredientInput = view.findViewById(R.id.add_ingredient_input) as EditText
+                val ingredientInput = view?.findViewById(R.id.add_ingredient_input) as EditText
 
                 closeMenus()
                 ingredientInputView.visibility = View.VISIBLE
