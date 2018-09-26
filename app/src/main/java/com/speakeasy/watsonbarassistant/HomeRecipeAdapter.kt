@@ -4,8 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Typeface
-import android.support.v4.content.ContextCompat
-import android.support.v7.graphics.Palette
 import android.support.v7.widget.CardView
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -46,19 +44,7 @@ class HomeRecipeAdapter(private val recipes: MutableList<DiscoveryRecipe>,
     private fun setupImageView(mainLayout: RelativeLayout, recipe: DiscoveryRecipe,
                                textView: TextView) {
         val imageView = mainLayout.getChildAt(0) as ImageView
-        var drinkBitmap = recipe.createBitMap()
-        if(recipe.imageBase64 == DEFAULT_IMAGE_BASE64) {
-            drinkBitmap = BitmapFactory.decodeResource(activity.resources,R.mipmap.ic_alcohol)
-        }
         textView.setTypeface(textView.typeface, Typeface.BOLD)
-        Palette.from(drinkBitmap).generate {
-            val swatch = it.vibrantSwatch
-            if(swatch != null) {
-                textView.setTextColor(swatch.bodyTextColor)
-             } else {
-                textView.setTextColor(ContextCompat.getColor(activity.baseContext, R.color.primaryText))
-            }
-        }
         var bitmap = recipe.createBitMap()
         if(recipe.imageBase64 == DEFAULT_IMAGE_BASE64) {
             bitmap = BitmapFactory.decodeResource(activity.resources, R.mipmap.ic_alcohol)
