@@ -23,6 +23,8 @@ class RecipeDetail : AppCompatActivity() {
         }
         recipe_ingredients.text = recipeIngredientsString
 
+        description_content.text = recipe?.description
+
         val imageBitmap = recipe?.createBitMap()
         drink_detail_image.setImageBitmap(imageBitmap)
     }

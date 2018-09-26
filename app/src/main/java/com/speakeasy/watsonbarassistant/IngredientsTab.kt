@@ -3,7 +3,10 @@ package com.speakeasy.watsonbarassistant
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -79,6 +82,10 @@ class IngredientsTab : Fragment() {
         }
         addViaCameraButton.setOnClickListener { Toast.makeText(context, "Camera support to be added!", Toast.LENGTH_SHORT).show() }
         addViaVoiceButton.setOnClickListener { Toast.makeText(context, "Voice support to be added!", Toast.LENGTH_SHORT).show() }
+        val itemDecorator = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
+        ingredients_recycler_view.addItemDecoration(itemDecorator)
+
+        setupSwipeHandler()
     }
 
     private fun addIngredient(ingredient: Ingredient) {
@@ -89,6 +96,19 @@ class IngredientsTab : Fragment() {
             addIngredientToFireStore(ingredient)
         }
     }
+
+     private fun setupSwipeHandler() {
+         val context = activity?.baseContext ?: return
+         val swipeHandler = object : SwipeToDeleteCallback(context) {
+             override fun onSwiped(viewHolder: RecyclerView.ViewHolder?, direction: Int) {
+                 val position = viewHolder?.layoutPosition ?: return
+                 viewAdapter?.removeAt(position)
+             }
+         }
+         val itemTouchHelper = ItemTouchHelper(swipeHandler)
+
+         itemTouchHelper.attachToRecyclerView(ingredients_recycler_view)
+     }
 
     private fun addIngredientToFireStore(ingredient: Ingredient) {
         val mainMenu = (activity as? MainMenu)

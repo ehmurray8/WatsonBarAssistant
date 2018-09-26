@@ -52,7 +52,7 @@ class MainMenu : AppCompatActivity() {
         loadIngredients()
     }
 
-    fun loadIngredients() {
+    private fun loadIngredients() {
         val uid = currentUser?.uid
         ingredients.clear()
         if(uid != null) {
@@ -134,15 +134,18 @@ class MainMenu : AppCompatActivity() {
 
         val queryBuilder = QueryOptions.Builder(ENV_ID_MIKE_DIS, COL_ID_MIKE_DIS)
 
-        queryBuilder.query(buildIngredientQuery(ingredients)).count(50)
-        val queryResponse = discovery.query(queryBuilder.build()).execute()
+        if(ingredients.count() > 0) {
+            queryBuilder.query(buildIngredientQuery(ingredients)).count(50)
+            val queryResponse = discovery.query(queryBuilder.build()).execute()
 
-        for(response in queryResponse.results){
-            val recipe = JSON.nonstrict.parse<DiscoveryRecipe>(response.toString())
-            recipe.calculatePercentAvailable(ingredients)
-            orderedRecipes.add(recipe)
+            for (response in queryResponse.results) {
+                val recipe = JSON.nonstrict.parse<DiscoveryRecipe>(response.toString())
+                recipe.calculatePercentAvailable(ingredients)
+                orderedRecipes.add(recipe)
+            }
+            return orderedRecipes.toMutableList()
         }
-        return orderedRecipes.toMutableList()
+        return mutableListOf()
     }
 
     override fun onPostExecute(result: MutableList<DiscoveryRecipe>){
