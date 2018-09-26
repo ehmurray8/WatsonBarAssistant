@@ -139,7 +139,7 @@ class MainMenu : AppCompatActivity() {
         when(tabIndex) {
             0 -> fragment = HomeTab()
             1 -> fragment = IngredientsTab()
-            2 -> fragment = RecipesTab()
+            2 -> fragment = MyRecipesTab()
         }
         replaceFragment()
     }
@@ -218,7 +218,7 @@ class CompareLists {
         //Log.i("Discovery", "Response: " + queryResponse.results[0])
         for(response in queryResponse.results){
             val recipe = JSON.nonstrict.parse<DiscoveryRecipe>(response.toString())
-            if(recipe.imgageBase64 == ""){
+            if(recipe.imageBase64 == ""){
                 Log.i("Discovery","Failed: " + recipe.title + ": " + response.toString() + "\n")
             }
             recipe.calculatePercentAvailable(ingredients)
