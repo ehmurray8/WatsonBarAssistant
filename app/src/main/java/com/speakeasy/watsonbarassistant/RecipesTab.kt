@@ -28,6 +28,7 @@ class RecipesTab : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val viewManager = LinearLayoutManager(activity)
         val mainMenu = activity as MainMenu
+        mainMenu.loadIngredients()
         viewAdapter = RecipesAdapter(mainMenu.recipes[0], activity as Activity)
 
         recyclerView = recipes_list.apply {
