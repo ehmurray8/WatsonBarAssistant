@@ -7,6 +7,7 @@
     <string name="home_tab_welcome">Current Ingredients</string>
     <string name="add_tab_welcome">Add Ingredients</string>
     <string name="recipes_tab_welcome">Recipes</string>
+    <string name="my_recipes_tab_welcome">My Recipes</string>
     <string name="ingredient_hint">Ingredients to add</string>
     <string name="add_ingredient">Add</string>
     <string name="add_camera_description">Add Ingredient Using Camera</string>
