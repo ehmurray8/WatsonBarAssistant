@@ -58,7 +58,7 @@ class MainMenu : AppCompatActivity() {
     var documentsMap = mutableMapOf<String, String>()
     var currentUser: FirebaseUser? = null
     var tabIndex = 0
-    private var fragment: Fragment? = null
+    var fragment: Fragment? = null
 
     private val fireStore = FirebaseFirestore.getInstance()
     private var authorization = FirebaseAuth.getInstance()
@@ -236,7 +236,7 @@ class CompareLists {
     override fun onPostExecute(result: MutableList<DiscoveryRecipe>){
         super.onPostExecute(result)
 
-        this.listener.onTaskCompleted(result)
+        this.listener.onTaskCompleted(result, MainMenu())
     }
 
     private fun buildIngredientQuery(ingredients: List<Ingredient>): String{
@@ -259,7 +259,7 @@ class CompareLists {
 }
 
 interface OnTaskCompleted {
-    fun onTaskCompleted(recipes: MutableList<DiscoveryRecipe>)
+    fun onTaskCompleted(recipes: MutableList<DiscoveryRecipe>, mainMenu: MainMenu)
 }
 
 class HandleDiscovery(overAllList: MutableList<MutableList<DiscoveryRecipe>>): OnTaskCompleted{
@@ -267,11 +267,13 @@ class HandleDiscovery(overAllList: MutableList<MutableList<DiscoveryRecipe>>): O
     init{
         this.list = overAllList
     }
-    override fun onTaskCompleted(recipes: MutableList<DiscoveryRecipe>) {
+    override fun onTaskCompleted(recipes: MutableList<DiscoveryRecipe>, mainMenu: MainMenu) {
         this.list.add(0, recipes)
         this.list.add(1, recipes)
-
-        HomeTab().refresh()
+        val frag = mainMenu.fragment
+        if(frag is HomeTab) {
+            frag.refresh()
+        }
 
         Log.i("Discovery", "TEST")
     }
