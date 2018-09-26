@@ -1,12 +1,13 @@
 <resources>
     <string name="app_name">Bar Assistant</string>
     <string name="home_tab">Home</string>
-    <string name="add_tab">Add</string>
+    <string name="ingredients_tab">Ingredients</string>
     <string name="recipes_tab">Recipes</string>
 
     <string name="home_tab_welcome">Current Ingredients</string>
     <string name="add_tab_welcome">Add Ingredients</string>
     <string name="recipes_tab_welcome">Recipes</string>
+    <string name="my_recipes_tab_welcome">My Recipes</string>
     <string name="ingredient_hint">Ingredients to add</string>
     <string name="add_ingredient">Add</string>
     <string name="add_camera_description">Add Ingredient Using Camera</string>
@@ -24,5 +25,6 @@
     <string name="change_password">Change Password</string>
     <string name="collection_name">%1$s</string>
     <string name="add_email">Add Email</string>
+    <string name="see_all">See All</string>
 
 </resources>

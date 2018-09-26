@@ -24,7 +24,7 @@ class MainMenu : AppCompatActivity() {
     var ingredients = mutableListOf<Ingredient>()
     var recipes = mutableListOf<MutableList<DiscoveryRecipe>>()
     var homeCategories = mutableListOf<String>()
-    private var documentsMap = mutableMapOf<String, String>()
+    var documentsMap = mutableMapOf<String, String>()
     var currentUser: FirebaseUser? = null
     var tabIndex = 0
     var fragment: Fragment? = null
@@ -77,8 +77,8 @@ class MainMenu : AppCompatActivity() {
     fun showCurrentFragment() {
         when(tabIndex) {
             0 -> fragment = HomeTab()
-            1 -> fragment = AddTab()
-            2 -> fragment = RecipesTab()
+            1 -> fragment = IngredientsTab()
+            2 -> fragment = MyRecipesTab()
         }
         replaceFragment()
     }
@@ -169,7 +169,7 @@ class HandleDiscovery(private val overAllList: MutableList<MutableList<Discovery
         val fragment = mainMenu?.fragment
         if(fragment as? HomeTab != null) {
             fragment.refresh()
-        } else if(fragment as? RecipesTab != null) {
+        } else if(fragment as? MyRecipesTab != null) {
             fragment.refresh()
         }
     }

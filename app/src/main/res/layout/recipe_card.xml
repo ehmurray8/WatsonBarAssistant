@@ -25,6 +25,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_marginStart="10dp"
+            android:maxLines="2"
             android:layout_below="@+id/home_recipe_card"
             android:textColor="@color/primaryText"
             android:text="@string/recipe_name_placeholder"/>

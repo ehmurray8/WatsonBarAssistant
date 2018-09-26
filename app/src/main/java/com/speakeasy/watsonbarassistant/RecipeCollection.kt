@@ -1,6 +1,5 @@
 package com.speakeasy.watsonbarassistant
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -30,7 +29,7 @@ class RecipeCollection : AppCompatActivity() {
 
     private fun setupListView() {
         val viewManager = LinearLayoutManager(this)
-        val viewAdapter = RecipesAdapter(recipesList, Activity())
+        val viewAdapter = MyRecipeAdapter(recipesList, this)
 
         recyclerView = recipes_collection_list.apply {
             setHasFixedSize(true)

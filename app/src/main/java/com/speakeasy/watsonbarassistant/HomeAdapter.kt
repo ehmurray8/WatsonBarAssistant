@@ -72,7 +72,7 @@ class HomeAdapter(private var dataSet: MutableList<MutableList<DiscoveryRecipe>>
         val recipesList = layout.getChildAt(1) as RecyclerView
 
         val viewManager = LinearLayoutManager(activity.applicationContext, LinearLayoutManager.HORIZONTAL, false)
-        val viewAdapter = HomeRecipeAdapter(dataSet[position], activity)
+        val viewAdapter = HomeRecipeAdapter(dataSet[position], activity, categories[position])
 
         recipesList.apply {
             layoutManager = viewManager
