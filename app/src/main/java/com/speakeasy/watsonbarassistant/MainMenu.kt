@@ -8,6 +8,7 @@ import android.support.design.widget.TabItem
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
+import android.view.Menu
 import android.view.MenuItem
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -62,6 +63,11 @@ class MainMenu : AppCompatActivity() {
         tabs.getTabAt(tabIndex)?.select()
         tabs.addOnTabSelectedListener(MainMenuTabListener(this))
         setSupportActionBar(toolbar as Toolbar)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_toolbar_menu, menu)
+        return true
     }
 
     override fun onDestroy() {
