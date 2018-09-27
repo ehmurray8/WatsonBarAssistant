@@ -29,14 +29,14 @@
         style="@style/MainTabLayout">
 
         <android.support.design.widget.TabItem
-            android:id="@+id/home_tab"
-            android:text="@string/home_tab"
+            android:id="@+id/ingredient_tab"
+            android:text="Ingredients"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"/>
 
         <android.support.design.widget.TabItem
-            android:id="@+id/ingredient_tab"
-            android:text="ingredients"
+            android:id="@+id/home_tab"
+            android:text="@string/home_tab"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"/>
 

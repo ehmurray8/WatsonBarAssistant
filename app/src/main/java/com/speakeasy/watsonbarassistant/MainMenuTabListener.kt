@@ -13,5 +13,4 @@ class MainMenuTabListener(private val mainMenu: MainMenu):
         mainMenu.tabIndex = tab?.position ?: 0
         mainMenu.showCurrentFragment()
     }
-
 }

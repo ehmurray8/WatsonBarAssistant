@@ -26,6 +26,10 @@ data class DiscoveryRecipe(
         val ingredientList: List<String> = emptyList()
 ): Serializable{
 
+    companion object {
+        fun newInstance(): DiscoveryRecipe = DiscoveryRecipe()
+    }
+
     fun calculatePercentAvailable(ingredients: List<Ingredient>){
         val recipeIngredients = this.ingredientList
         var count = 0

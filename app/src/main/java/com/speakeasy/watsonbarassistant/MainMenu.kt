@@ -1,17 +1,19 @@
 package com.speakeasy.watsonbarassistant
 
+import android.content.Context
 import android.content.Intent
 import android.os.AsyncTask
 import android.os.Bundle
+import android.support.design.widget.TabItem
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
-import android.view.Menu
 import android.view.MenuItem
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QueryDocumentSnapshot
+import com.google.gson.Gson
 import com.ibm.watson.developer_cloud.discovery.v1.Discovery
 import com.ibm.watson.developer_cloud.discovery.v1.model.QueryOptions
 import kotlinx.android.synthetic.main.activity_main_menu.*
@@ -26,8 +28,10 @@ class MainMenu : AppCompatActivity() {
     var homeCategories = mutableListOf<String>()
     var documentsMap = mutableMapOf<String, String>()
     var currentUser: FirebaseUser? = null
-    var tabIndex = 0
+    var tabIndex = 1
     var fragment: Fragment? = null
+
+    private var tabsItems: Array<TabItem>? = null
 
     private val fireStore = FirebaseFirestore.getInstance()
     private var authorization = FirebaseAuth.getInstance()
@@ -41,10 +45,35 @@ class MainMenu : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        loadUserData()
         setContentView(R.layout.activity_main_menu)
+
+        val preferences = getSharedPreferences(SHARED_PREFERENCES_SETTINGS, Context.MODE_PRIVATE)
+        tabIndex = preferences.getInt(TAB_INDEX, 1)
+        val gson = Gson()
+        homeCategories.forEachIndexed { i, category ->
+            val json = preferences.getString(category, "")
+            val storedRecipes = gson.fromJson(json, Array<DiscoveryRecipe>::class.java)
+            if(storedRecipes != null && storedRecipes.count() > 0) {
+                recipes[i].addAll(storedRecipes.toList())
+            }
+        }
+
+        loadUserData()
+        tabs.getTabAt(tabIndex)?.select()
         tabs.addOnTabSelectedListener(MainMenuTabListener(this))
         setSupportActionBar(toolbar as Toolbar)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        val preferences = getSharedPreferences(SHARED_PREFERENCES_SETTINGS, Context.MODE_PRIVATE)
+        val editor = preferences.edit()
+        val gson = Gson()
+        homeCategories.forEachIndexed { i, category ->
+            val json = gson.toJson(recipes[i].toTypedArray())
+            editor.putString(category, json)
+        }
+        editor.apply()
     }
 
     private fun loadUserData() {
@@ -76,8 +105,8 @@ class MainMenu : AppCompatActivity() {
 
     fun showCurrentFragment() {
         when(tabIndex) {
-            0 -> fragment = HomeTab()
-            1 -> fragment = IngredientsTab()
+            0 -> fragment = IngredientsTab()
+            1 -> fragment = HomeTab()
             2 -> fragment = MyRecipesTab()
         }
         replaceFragment()
@@ -87,6 +116,7 @@ class MainMenu : AppCompatActivity() {
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.fragment_container, fragment)
         transaction.commit()
+        tabsItems?.get(tabIndex)?.isSelected = true
     }
 
     private fun parseSnapshot(snapshot: QueryDocumentSnapshot) {
@@ -100,11 +130,6 @@ class MainMenu : AppCompatActivity() {
                 it.name
             }
         }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.main_toolbar_menu, menu)
-        return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -167,6 +192,8 @@ class HandleDiscovery(private val overAllList: MutableList<MutableList<Discovery
                       private val mainMenu: MainMenu?): OnTaskCompleted {
 
     override fun onTaskCompleted(recipes: MutableList<DiscoveryRecipe>) {
+        overAllList[0].clear()
+        overAllList[1].clear()
         overAllList[0].addAll(recipes)
         overAllList[1].addAll(recipes.shuffled().toMutableList())
         val fragment = mainMenu?.fragment
