@@ -1,43 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RecipeDetail"
-    android:orientation="vertical">
+    tools:context=".RecipeDetail">
 
-    <TextView
-        android:id="@+id/recipe_title"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_marginBottom="20dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="15dp"
-        android:textColor="@color/primaryText"
-        android:textSize="25sp"
-        android:textStyle="bold"/>
+        android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/drink_detail_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/drink_image_description"
-        android:layout_gravity="center_horizontal"/>
+        <TextView
+            android:id="@+id/recipe_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="10dp"
+            android:textColor="@color/primaryText"
+            android:textSize="25sp"
+            android:textStyle="bold"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="25dp"
-        android:textColor="@color/primaryText"
-        android:text="@string/ingredients_header"
-        android:textSize="20sp" />
+        <ImageView
+            android:id="@+id/drink_detail_image"
+            android:layout_width="400dp"
+            android:layout_height="247dp"
+            android:contentDescription="@string/drink_image_description"
+            android:layout_gravity="center_horizontal"/>
 
-    <TextView
-        android:id="@+id/recipe_ingredients"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/primaryText"
-        android:textSize="16sp"
-        android:layout_marginStart="30dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginStart="25dp"
+            android:layout_marginEnd="25dp"
+            android:textColor="@color/primaryText"
+            android:text="Description"
+            android:textSize="20sp" />
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/description_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="20dp"
+            android:textColor="@color/primaryText"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="25dp"
+            android:textColor="@color/primaryText"
+            android:text="@string/ingredients_header"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/recipe_ingredients"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/primaryText"
+            android:textSize="16sp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginStart="30dp"/>
+
+    </LinearLayout>
+
+</ScrollView>

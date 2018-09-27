@@ -3,14 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RecipesTab"
+    tools:context=".MyRecipesTab"
     android:orientation="vertical">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="left"
-        android:layout_marginLeft="15dp"
+        android:layout_gravity="start"
+        android:layout_marginStart="15dp"
         android:layout_marginTop="15dp"
         android:gravity="center_horizontal"
         android:text="@string/my_recipes_tab_welcome"
@@ -22,7 +22,6 @@
         android:id="@+id/recipes_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="50dp"
         android:layout_marginTop="20dp"/>
 
 </LinearLayout>

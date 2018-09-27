@@ -1,28 +1,19 @@
 package com.speakeasy.watsonbarassistant
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.Toolbar
-import android.util.AttributeSet
-import android.view.*
-import android.widget.TextView
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QueryDocumentSnapshot
-import kotlinx.android.synthetic.main.activity_main_menu.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_my_recipes_tab.*
 
 class MyRecipesTab : Fragment() {
 
-    var recipes = mutableListOf<Recipe>()
     private var viewAdapter: MyRecipeAdapter? = null
     private var recyclerView: RecyclerView? = null
 
@@ -35,7 +26,6 @@ class MyRecipesTab : Fragment() {
 
         val viewManager = LinearLayoutManager(activity)
         val mainMenu = activity as MainMenu
-//        val discoverList = mutableListOf<DiscoveryRecipe>(DiscoveryRecipe(title = "Drink",description = "Ante ullamcorper pharetra tempus ut purus mauris enim integer, felis at placerat lorem dignissim velit tincidunt, sociis rutrum senectus ad augue tortor porttitor."),DiscoveryRecipe(title = "Drink",description = "Interesting Drink to make"), DiscoveryRecipe(title = "Third Drink"))
         viewAdapter = MyRecipeAdapter(mainMenu.recipes[0],activity as Activity)
 
         recyclerView = recipes_list.apply {
@@ -59,5 +49,9 @@ class MyRecipesTab : Fragment() {
                 startActivity(intent)
             }
         })
+    }
+
+    fun refresh() {
+        viewAdapter?.notifyDataSetChanged()
     }
 }
