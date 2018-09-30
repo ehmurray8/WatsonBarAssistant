@@ -155,7 +155,7 @@ class MainMenu : AppCompatActivity() {
         val ingredients = args[0]
         val orderedRecipes = PriorityQueue<DiscoveryRecipe>(10) { a, b ->
             when {
-                a.queueValue < b.queueValue -> 1
+                a.queueValue < (b.queueValue) -> 1
                 else -> -1
             }
         }
@@ -173,6 +173,9 @@ class MainMenu : AppCompatActivity() {
                 val recipe = JSON.nonstrict.parse<DiscoveryRecipe>(response.toString())
                 recipe.calculatePercentAvailable(ingredients)
                 orderedRecipes.add(recipe)
+            }
+            orderedRecipes.filter {
+                it.title != "" && it.ingredientList.count() > 0
             }
             return orderedRecipes.toMutableList()
         }

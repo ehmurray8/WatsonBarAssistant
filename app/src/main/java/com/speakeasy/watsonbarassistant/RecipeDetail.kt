@@ -3,11 +3,13 @@ package com.speakeasy.watsonbarassistant
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.TextView
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_recipe_detail.*
 
 class RecipeDetail : AppCompatActivity() {
 
     private var recipe: DiscoveryRecipe? = null
+    private val picasso = Picasso.get()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,7 +27,7 @@ class RecipeDetail : AppCompatActivity() {
 
         description_content.text = recipe?.description
 
-        val imageBitmap = recipe?.createBitMap()
-        drink_detail_image.setImageBitmap(imageBitmap)
+        val imageUri = recipe?.createImageUri(baseContext)
+        picasso.load(imageUri).into(drink_detail_image)
     }
 }

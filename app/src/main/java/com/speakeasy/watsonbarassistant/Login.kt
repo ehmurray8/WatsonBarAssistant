@@ -1,7 +1,6 @@
 package com.speakeasy.watsonbarassistant
 
 import android.content.Intent
-import android.content.res.AssetManager
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
@@ -16,9 +15,6 @@ const val RC_SIGN_IN = 123
 
 class Login : AppCompatActivity() {
 
-    companion object Properties {
-        var assetManager: AssetManager? = null
-    }
 
     private var authorization = FirebaseAuth.getInstance()
 
@@ -26,7 +22,6 @@ class Login : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         MetricsManager.register(application)
-        assetManager = assets
         if(authorization.currentUser == null) {
             createSignInIntent()
         } else {

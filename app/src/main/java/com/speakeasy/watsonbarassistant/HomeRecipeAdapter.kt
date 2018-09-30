@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
+import com.squareup.picasso.Picasso
 
 const val MAX_RECIPES = 15
 
@@ -20,6 +21,8 @@ class HomeRecipeAdapter(private val recipes: MutableList<DiscoveryRecipe>,
     class ViewHolder(val card: CardView) : RecyclerView.ViewHolder(card)
 
     class ViewHolderSeeAll(val card: CardView) : RecyclerView.ViewHolder(card)
+
+    private val picasso: Picasso = Picasso.get()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if(viewType == 0) {
@@ -69,8 +72,9 @@ class HomeRecipeAdapter(private val recipes: MutableList<DiscoveryRecipe>,
                                textView: TextView) {
         val imageView = mainLayout.getChildAt(0) as ImageView
         textView.setTypeface(textView.typeface, Typeface.BOLD)
-        val bitmap = recipe.createBitMap()
-        imageView.setImageBitmap(bitmap)
+        //val bitmap = recipe.createBitMap()
+        //imageView.setImageBitmap(bitmap)
+        picasso.load(recipe.createImageUri(activity.baseContext)).into(imageView)
     }
 
     override fun getItemCount(): Int {

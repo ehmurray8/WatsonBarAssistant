@@ -24,6 +24,8 @@ class HomeTab : Fragment() {
         val mainMenu = activity as MainMenu
         viewAdapter = HomeAdapter(mainMenu.recipes, mainMenu.homeCategories, mainMenu)
 
+        home_container.isNestedScrollingEnabled = true
+
         home_container.apply {
             setHasFixedSize(true)
             layoutManager = viewManager
