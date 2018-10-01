@@ -16,23 +16,35 @@ class MyRecipesTab : Fragment() {
 
     private var viewAdapter: MyRecipeAdapter? = null
     private var recyclerView: RecyclerView? = null
+    private var manager: LinearLayoutManager? = null
+
+    companion object {
+        var lastScrolledPosition: Int = 0
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?):View? {
         return inflater.inflate(R.layout.fragment_my_recipes_tab, container, false)
     }
 
+    override fun onStop() {
+        super.onStop()
+        lastScrolledPosition = manager?.findFirstVisibleItemPosition() ?: 0
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?){
         super.onViewCreated(view, savedInstanceState)
 
-        val viewManager = LinearLayoutManager(activity)
+        manager = LinearLayoutManager(activity?.baseContext)
         val mainMenu = activity as MainMenu
         viewAdapter = MyRecipeAdapter(mainMenu.recipes[0],activity as Activity)
 
         recyclerView = recipes_list.apply {
             setHasFixedSize(true)
-            layoutManager = viewManager
+            layoutManager = manager
             adapter = viewAdapter
         }
+
+        manager?.scrollToPosition(lastScrolledPosition)
 
         val itemDecorator = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
         recyclerView?.addItemDecoration(itemDecorator)
