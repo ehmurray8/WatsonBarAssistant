@@ -21,7 +21,7 @@ data class DiscoveryRecipe(@Optional var queueValue: Int = 0,
                            @Optional val ingredientList: List<String> = emptyList(),
                            @Optional var imageUriString: String = ""): Serializable {
 
-    fun calculatePercentAvailable(userIngredients: List<Ingredient>){
+    fun calculatePercentAvailable(userIngredients: Array<Ingredient>){
         var count = 0
 
         for(recipeIngredient in ingredientList) {
@@ -32,7 +32,6 @@ data class DiscoveryRecipe(@Optional var queueValue: Int = 0,
                 }
             }
         }
-
         queueValue = (count * 100) / (ingredientList.count())
     }
 

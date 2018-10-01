@@ -72,8 +72,6 @@ class HomeRecipeAdapter(private val recipes: MutableList<DiscoveryRecipe>,
                                textView: TextView) {
         val imageView = mainLayout.getChildAt(0) as ImageView
         textView.setTypeface(textView.typeface, Typeface.BOLD)
-        //val bitmap = recipe.createBitMap()
-        //imageView.setImageBitmap(bitmap)
         picasso.load(recipe.createImageUri(activity.baseContext)).into(imageView)
     }
 
