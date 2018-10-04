@@ -19,20 +19,21 @@
 
         <TextView xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/ingredient"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:text="ingredients"
-            android:textAlignment="center"
-            android:textAllCaps="false"
-            android:textSize="18sp"
+            android:layout_margin="10dp"
+            android:text="Ingredients"
+            android:textSize="25sp"
+            android:textColor="@color/primaryText"
+            android:layout_gravity="start"
+            android:gravity="center"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
-            android:id="@+id/add_ingredient_input"
+            android:id="@+id/ingredientInputView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
@@ -49,58 +50,59 @@
             app:layout_constrainedWidth="false"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            android:focusable="true" />
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/addingViaTextId"
+            android:id="@+id/addViaTextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
             android:src="@drawable/ic_text_add"
-            android:tint="@color/colorPrimary"
+            android:tint="@color/primaryText"
             android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/addIngredientId"
+            app:layout_constraintBottom_toTopOf="@+id/addMenuButton"
             app:layout_constraintEnd_toEndOf="parent">
 
         </android.support.design.widget.FloatingActionButton>
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/addingViaCameraId"
+            android:id="@+id/addViaCameraButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
             android:src="@drawable/ic_camera_add"
-            android:tint="@color/colorPrimary"
+            android:tint="@color/primaryText"
             android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/addingViaVoiceId"
+            app:layout_constraintBottom_toTopOf="@+id/addViaVoiceButton"
             app:layout_constraintEnd_toEndOf="parent">
 
         </android.support.design.widget.FloatingActionButton>
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/addingViaVoiceId"
+            android:id="@+id/addViaVoiceButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
             android:src="@drawable/ic_voice_add"
-            android:tint="@color/colorPrimary"
+            android:tint="@color/primaryText"
             android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/addingViaTextId"
+            app:layout_constraintBottom_toTopOf="@+id/addViaTextButton"
             app:layout_constraintEnd_toEndOf="parent">
 
         </android.support.design.widget.FloatingActionButton>
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/addIngredientId"
+            android:id="@+id/addMenuButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:layout_marginEnd="16dp"
             android:src="@drawable/ic_add_icon"
-            android:tint="@color/colorPrimary"
+            android:tint="@color/primaryText"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
@@ -115,7 +117,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:scrollbars="vertical"
-            app:layout_constraintBottom_toTopOf="@+id/add_ingredient_input"
+            app:layout_constraintBottom_toTopOf="@+id/ingredientInputView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/ingredient" />

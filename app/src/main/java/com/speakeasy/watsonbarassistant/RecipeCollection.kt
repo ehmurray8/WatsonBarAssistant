@@ -1,6 +1,5 @@
 package com.speakeasy.watsonbarassistant
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -13,8 +12,11 @@ import kotlinx.android.synthetic.main.activity_recipe_collection.*
 class RecipeCollection : AppCompatActivity() {
 
     private var collectionName: String? = null
-    private var recipes: MutableList<DiscoveryRecipe> = mutableListOf()
     private var recyclerView: RecyclerView? = null
+
+    companion object Recipes {
+        var recipesList: MutableList<DiscoveryRecipe> = mutableListOf()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,17 +24,12 @@ class RecipeCollection : AppCompatActivity() {
 
         collectionName = intent.getStringExtra("Collection Name")
         recipe_collection_title.text = collectionName
-        try {
-            @Suppress("UNCHECKED_CAST")
-            recipes = intent.getSerializableExtra("Recipes") as MutableList<DiscoveryRecipe>
-        } catch (exception: ClassCastException) {}
         setupListView()
     }
 
     private fun setupListView() {
         val viewManager = LinearLayoutManager(this)
-        //TODO
-        val viewAdapter = RecipesAdapter(recipes, Activity())
+        val viewAdapter = MyRecipeAdapter(recipesList, this)
 
         recyclerView = recipes_collection_list.apply {
             setHasFixedSize(true)
@@ -50,7 +47,7 @@ class RecipeCollection : AppCompatActivity() {
         recyclerView?.addOnItemClickListener(object: OnItemClickListener {
             override fun onItemClicked(position: Int, view: View) {
                 val intent = Intent(applicationContext, RecipeDetail::class.java)
-                val recipe = recipes.get(position)
+                val recipe = recipesList[position]
                 intent.putExtra("Recipe", recipe)
                 startActivity(intent)
             }

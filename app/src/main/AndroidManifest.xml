@@ -3,7 +3,6 @@
     package="com.speakeasy.watsonbarassistant">
 
     <uses-feature android:name="android.hardware.camera" />
-    //Permission for discovery call
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
@@ -30,7 +29,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".UserProfile" />
-        <activity android:name=".RecipeCollection"></activity>
+        <activity android:name=".RecipeCollection"/>
     </application>
 
 </manifest>

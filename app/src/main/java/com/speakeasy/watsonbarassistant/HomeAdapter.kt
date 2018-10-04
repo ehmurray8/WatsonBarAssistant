@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
-import java.io.Serializable
 
 
 class HomeAdapter(private var dataSet: MutableList<MutableList<DiscoveryRecipe>>,
@@ -67,13 +66,13 @@ class HomeAdapter(private var dataSet: MutableList<MutableList<DiscoveryRecipe>>
         headerView.setOnClickListener {
             val intent = Intent(activity.applicationContext, RecipeCollection::class.java)
             intent.putExtra("Collection Name", categories[position])
-            intent.putExtra("Recipes", dataSet[position] as Serializable)
+            RecipeCollection.recipesList = dataSet[position]
             activity.startActivity(intent)
         }
         val recipesList = layout.getChildAt(1) as RecyclerView
 
         val viewManager = LinearLayoutManager(activity.applicationContext, LinearLayoutManager.HORIZONTAL, false)
-        val viewAdapter = HomeRecipeAdapter(dataSet[position], activity)
+        val viewAdapter = HomeRecipeAdapter(dataSet[position], activity, categories[position])
 
         recipesList.apply {
             layoutManager = viewManager

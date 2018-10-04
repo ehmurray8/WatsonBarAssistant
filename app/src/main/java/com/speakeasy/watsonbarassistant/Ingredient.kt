@@ -1,3 +1,5 @@
 package com.speakeasy.watsonbarassistant
 
-data class Ingredient(val name: String)
+import java.io.Serializable
+
+data class Ingredient(val name: String): Serializable
