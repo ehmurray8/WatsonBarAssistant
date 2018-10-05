@@ -165,9 +165,7 @@ class MainMenu : AppCompatActivity() {
             documentsMap[name] = id
             val ingredient = Ingredient(name)
             ingredients.add(ingredient)
-            ingredients.sortBy {
-                it.name
-            }
+            ingredients.sortBy { it.name.toLowerCase().replace("\\s".toRegex(), "") }
         }
     }
 

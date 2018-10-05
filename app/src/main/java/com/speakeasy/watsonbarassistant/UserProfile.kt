@@ -1,5 +1,6 @@
 package com.speakeasy.watsonbarassistant
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
@@ -97,13 +98,15 @@ class UserProfile : AppCompatActivity() {
         }
 
         builder.show()
-
-
     }
 
     private fun signOut() {
         AuthUI.getInstance().signOut(this).addOnCompleteListener {
             val intent = Intent(this, Login::class.java)
+            val preferences = getSharedPreferences(SHARED_PREFERENCES_SETTINGS, Context.MODE_PRIVATE)
+            val editor = preferences.edit()
+            editor.clear()
+            editor.apply()
             startActivity(intent)
             finish()
         }

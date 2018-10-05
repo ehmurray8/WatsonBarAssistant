@@ -24,7 +24,7 @@ class IngredientsAdapter(private var dataSet: MutableList<Ingredient>,
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.textView.text = dataSet[position].name
+        holder.textView.text = dataSet[position].name.capitalize()
     }
 
     override fun getItemCount(): Int = dataSet.count()

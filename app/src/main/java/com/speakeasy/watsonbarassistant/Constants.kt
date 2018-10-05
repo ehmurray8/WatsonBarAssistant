@@ -15,7 +15,4 @@ const val SHARED_PREFERENCES_SETTINGS = "Settings"
 const val TAB_INDEX = "TabIndex"
 const val INGREDIENT_PREFERENCES_ID = "Ingredient"
 
-const val HOME_LIST_KEY = "HomeRecycler"
-const val RECIPE_LIST_KEY = "RecipeRecycler"
-
 const val DEFAULT_IMAGE_URI = "file:///android_asset/$DEFAULT_RECIPE_IMAGE_NAME"
