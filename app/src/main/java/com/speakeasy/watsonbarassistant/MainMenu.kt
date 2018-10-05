@@ -27,7 +27,6 @@ class MainMenu : AppCompatActivity() {
 
     var ingredients = mutableListOf<Ingredient>()
     var recipes = mutableListOf<MutableList<DiscoveryRecipe>>()
-    var homeCategories = mutableListOf<String>()
     var documentsMap = mutableMapOf<String, String>()
     var currentUser: FirebaseUser? = null
     var tabIndex = 1
@@ -37,19 +36,16 @@ class MainMenu : AppCompatActivity() {
 
     private val fireStore = FirebaseFirestore.getInstance()
     private var authorization = FirebaseAuth.getInstance()
-
-    private var scrollPositionMap: MutableMap<String, Int> = mutableMapOf()
-
-
     private var lastDiscoveryRefreshTime = -1L
 
+
+    companion object {
+        var homeCategories = mutableListOf("Suggestions", "Recently Viewed")
+    }
+
     init {
-        recipes.add(0, mutableListOf())
-        recipes.add(1, mutableListOf())
-        homeCategories.add("Suggestions")
-        homeCategories.add("Recently Viewed")
-        homeCategories.forEach {
-            scrollPositionMap[it] = 0
+        homeCategories.forEach { _ ->
+            recipes.add(mutableListOf())
         }
     }
 

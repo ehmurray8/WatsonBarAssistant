@@ -18,7 +18,8 @@ class MyRecipeAdapter(private var recipes: MutableList<DiscoveryRecipe>,
     private val picasso = Picasso.get()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyRecipeAdapter.ViewHolder {
-        val layout = LayoutInflater.from(parent.context).inflate(R.layout.my_recipe_view,parent,false) as ConstraintLayout
+        val layout = LayoutInflater.from(parent.context)
+                .inflate(R.layout.my_recipe_view, parent,false) as ConstraintLayout
         return ViewHolder(layout)
     }
 
