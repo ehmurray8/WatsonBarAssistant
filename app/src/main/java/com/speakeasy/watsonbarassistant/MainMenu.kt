@@ -86,8 +86,8 @@ class MainMenu : AppCompatActivity() {
         return true
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onPause() {
+        super.onPause()
         val preferences = getSharedPreferences(SHARED_PREFERENCES_SETTINGS, Context.MODE_PRIVATE)
         val editor = preferences.edit()
         val gson = Gson()
@@ -110,9 +110,9 @@ class MainMenu : AppCompatActivity() {
         refreshDiscovery()
         val oldIngredients = ingredients.toTypedArray()
         if(uid != null) {
-            ingredients.clear()
             fireStore.collection("app").document(uid)
                     .collection("ingredients").get().addOnCompleteListener {
+                ingredients.clear()
                 if (it.isSuccessful) {
                     it.result.forEach { snapshot ->
                         parseSnapshot(snapshot)
