@@ -63,21 +63,28 @@ class HomeAdapter(private var dataSet: MutableList<MutableList<DiscoveryRecipe>>
         val layout = recipeHolder.layout
         val headerView = layout.getChildAt(0) as Button
         headerView.text = activity.resources.getString(R.string.collection_name, categories[position])
+        val category = categories[position]
         headerView.setOnClickListener {
             val intent = Intent(activity.applicationContext, RecipeCollection::class.java)
-            intent.putExtra("Collection Name", categories[position])
+            intent.putExtra("Collection Name", category)
             RecipeCollection.recipesList = dataSet[position]
             activity.startActivity(intent)
         }
         val recipesList = layout.getChildAt(1) as RecyclerView
 
-        val viewManager = LinearLayoutManager(activity.applicationContext, LinearLayoutManager.HORIZONTAL, false)
-        val viewAdapter = HomeRecipeAdapter(dataSet[position], activity, categories[position])
+        val viewManager = LinearLayoutManager(activity.applicationContext,
+                LinearLayoutManager.HORIZONTAL, false)
+
+        HomeTab.homeScrollManagers[position] = viewManager
+        val viewAdapter = HomeRecipeAdapter(dataSet[position], activity, category)
 
         recipesList.apply {
+            setHasFixedSize(true)
             layoutManager = viewManager
             adapter = viewAdapter
         }
+
+        viewManager.scrollToPosition(HomeTab.homeScrollPositions[category] ?: 0)
     }
 
     override fun getItemCount(): Int = dataSet.count() + 1

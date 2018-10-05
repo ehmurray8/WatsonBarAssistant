@@ -90,7 +90,7 @@ class IngredientsTab : Fragment() {
 
     private fun addIngredient(ingredient: Ingredient) {
         val ingredients = (activity as MainMenu).ingredients
-        if(ingredient in ingredients) {
+        if(ingredients.any { it.name.toLowerCase() == ingredient.name.toLowerCase() }) {
             Toast.makeText(activity, "${ingredient.name} is already stored as an ingredient.", Toast.LENGTH_SHORT).show()
         } else {
             addIngredientToFireStore(ingredient)
@@ -117,7 +117,7 @@ class IngredientsTab : Fragment() {
                 .collection("ingredients").add(ingredient).addOnSuccessListener { _ ->
                     Toast.makeText(context, "Successfully added ${ingredient.name}.", Toast.LENGTH_SHORT).show()
                     mainMenu.ingredients.add(ingredient)
-                    mainMenu.ingredients.sortBy { it.name }
+                    mainMenu.ingredients.sortBy { it.name.toLowerCase().replace("\\s".toRegex(), "") }
                     refresh()
                 }.addOnFailureListener {
                     Toast.makeText(context, "Failed to add ${ingredient.name}.", Toast.LENGTH_SHORT).show()

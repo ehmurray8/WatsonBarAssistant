@@ -30,7 +30,7 @@
 
         <android.support.design.widget.TabItem
             android:id="@+id/ingredient_tab"
-            android:text="Ingredients"
+            android:text="@string/ingredients_tab"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"/>
 
