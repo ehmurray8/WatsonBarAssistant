@@ -1,21 +1,12 @@
 <resources>
     <string name="app_name">Bar Assistant</string>
     <string name="home_tab">Home</string>
-    <string name="ingredients_tab">Ingredients</string>
     <string name="recipes_tab">Recipes</string>
 
     <string name="home_tab_welcome">Current Ingredients</string>
-    <string name="add_tab_welcome">Add Ingredients</string>
-    <string name="recipes_tab_welcome">Recipes</string>
     <string name="my_recipes_tab_welcome">My Recipes</string>
     <string name="ingredient_hint">Ingredients to add</string>
-    <string name="add_ingredient">Add</string>
-    <string name="add_camera_description">Add Ingredient Using Camera</string>
-    <string name="ingredients_header">Ingredients</string>
     <string name="drink_image_description">Drink Image</string>
-    <string name="speak_add_description">Speak to Add Ingredient</string>
-    <string name="camera_image">Image from camera</string>
-    <string name="test_camera_ingredient">Maker\'s Mark</string>
     <string name="placeholder_header">Header</string>
     <string name="home_recipe_card_description">Recommended Recipe</string>
     <string name="recipe_name_placeholder">Recipe Name</string>
@@ -26,5 +17,9 @@
     <string name="collection_name">%1$s</string>
     <string name="add_email">Add Email</string>
     <string name="see_all">See All</string>
+    <string name="recipe_image_description">Recipe image</string>
+    <string name="ingredients_tab">Ingredients</string>
+    <string name="description_header">Description</string>
+    <string name="ingredients_header">Ingredients</string>
 
 </resources>

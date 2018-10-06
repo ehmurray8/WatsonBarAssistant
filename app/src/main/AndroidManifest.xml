@@ -20,7 +20,6 @@
             android:name=".MainMenu"
             android:windowSoftInputMode="adjustPan" />
         <activity android:name=".RecipeDetail" />
-        <activity android:name=".ImageViewer" />
         <activity android:name=".Login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

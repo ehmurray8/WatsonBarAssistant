@@ -16,6 +16,9 @@ class HomeTab : Fragment() {
 
     companion object {
         private var lastScrolledState = 0
+        var homeScrollPositions: MutableMap<String, Int> =
+                MainMenu.homeCategories.map { it to 0 }.toMap().toMutableMap()
+        var homeScrollManagers = mutableListOf<LinearLayoutManager?>(null, null)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -26,6 +29,9 @@ class HomeTab : Fragment() {
     override fun onStop() {
         super.onStop()
         lastScrolledState = manager?.findFirstVisibleItemPosition() ?: 0
+        homeScrollManagers.forEachIndexed { i, manager ->
+            homeScrollPositions[MainMenu.homeCategories[i]] = manager?.findFirstVisibleItemPosition() ?: 0
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -33,7 +39,7 @@ class HomeTab : Fragment() {
 
         manager = LinearLayoutManager(activity)
         val mainMenu = activity as MainMenu
-        viewAdapter = HomeAdapter(mainMenu.recipes, mainMenu.homeCategories, mainMenu)
+        viewAdapter = HomeAdapter(mainMenu.recipes, MainMenu.homeCategories, mainMenu)
 
         mainRefreshLayout.setOnRefreshListener {
             mainMenu.refreshDiscovery()

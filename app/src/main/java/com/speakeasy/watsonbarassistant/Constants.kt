@@ -10,12 +10,9 @@ const val PASSWORD_MIKE_DIS = "BERRVZvxKgto"
 const val USERNAME_MIKE_DIS = "539fdfc9-4579-4861-a1d2-74660add2ba6"
 const val URL_MIKE_DIS = "https://gateway.watsonplatform.net/discovery/api"
 const val VERSION_DIS = "2018-08-01"
-const val DEFAULT_RECIPE_IMAGE_NAME = "alcohol_tall.png"
+const val DEFAULT_RECIPE_IMAGE_NAME = "alcohol_tall.jpg"
 const val SHARED_PREFERENCES_SETTINGS = "Settings"
 const val TAB_INDEX = "TabIndex"
 const val INGREDIENT_PREFERENCES_ID = "Ingredient"
-
-const val HOME_LIST_KEY = "HomeRecycler"
-const val RECIPE_LIST_KEY = "RecipeRecycler"
 
 const val DEFAULT_IMAGE_URI = "file:///android_asset/$DEFAULT_RECIPE_IMAGE_NAME"
