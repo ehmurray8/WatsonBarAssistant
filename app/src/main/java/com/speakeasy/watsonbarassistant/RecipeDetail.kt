@@ -27,7 +27,7 @@ class RecipeDetail : AppCompatActivity() {
 
         description_content.text = recipe?.description
 
-        val imageUri = recipe?.createImageUri(baseContext)
-        picasso.load(imageUri).into(drink_detail_image)
+        // val imageUri = recipe?.createImageUri(baseContext)
+        // picasso.load(imageUri).into(drink_detail_image)
     }
 }

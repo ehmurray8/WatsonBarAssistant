@@ -2,6 +2,8 @@ apply plugin: 'com.android.application'
 
 apply plugin: 'com.google.firebase.firebase-perf'
 
+apply plugin: 'io.fabric'
+
 apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlinx-serialization'
@@ -78,6 +80,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.2'
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'com.google.firebase:firebase-perf:16.1.2'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.5'
 }
 
 apply plugin: 'com.google.gms.google-services'

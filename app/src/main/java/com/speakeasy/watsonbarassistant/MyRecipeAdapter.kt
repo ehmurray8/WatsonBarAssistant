@@ -28,8 +28,8 @@ class MyRecipeAdapter(private var recipes: MutableList<DiscoveryRecipe>,
         val name = holder.layout.getChildAt(2) as TextView
         val description = holder.layout.getChildAt(1) as TextView
 
-        val uri = recipes[position].createImageUri(activity.baseContext)
-        picasso.load(uri).into(image)
+        // val uri = recipes[position].createImageUri(activity.baseContext)
+        // picasso.load(uri).into(image)
 
         name.text = recipes[position].title
         description.text = recipes[position].description
