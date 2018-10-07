@@ -29,7 +29,7 @@ class RecipeCollection : AppCompatActivity() {
 
     private fun setupListView() {
         val viewManager = LinearLayoutManager(this)
-        val viewAdapter = MyRecipeAdapter(recipesList)
+        val viewAdapter = MyRecipeAdapter(recipesList, assets)
 
         recyclerView = recipes_collection_list.apply {
             setHasFixedSize(true)

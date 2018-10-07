@@ -32,4 +32,8 @@ data class DiscoveryRecipe(@Optional var queueValue: Int = 0,
         }
         queueValue = (count * 100) / (ingredientList.count())
     }
+
+    fun getImageName(): String {
+        return "recipe_images/GSBimg-${imageId.toFloat().toInt()}.jpg"
+    }
 }

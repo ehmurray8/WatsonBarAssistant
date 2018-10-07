@@ -35,7 +35,7 @@ class MyRecipesTab : Fragment() {
 
         manager = LinearLayoutManager(activity?.baseContext)
         val mainMenu = activity as MainMenu
-        viewAdapter = MyRecipeAdapter(mainMenu.recipes[0])
+        viewAdapter = MyRecipeAdapter(mainMenu.recipes[0], mainMenu.assets)
 
         recyclerView = recipes_list.apply {
             setHasFixedSize(true)

@@ -72,7 +72,7 @@ class HomeRecipeAdapter(private val recipes: MutableList<DiscoveryRecipe>,
                                textView: TextView) {
         val imageView = mainLayout.getChildAt(0) as ImageView
         textView.setTypeface(textView.typeface, Typeface.BOLD)
-        // picasso.load(recipe.createImageUri(activity.baseContext)).into(imageView)
+        loadImage(activity.assets, imageView, recipe, picasso)
     }
 
     override fun getItemCount(): Int {
@@ -89,5 +89,4 @@ class HomeRecipeAdapter(private val recipes: MutableList<DiscoveryRecipe>,
         }
         return MAX_RECIPES
     }
-
 }
