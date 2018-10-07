@@ -18,10 +18,11 @@ import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.google.gson.Gson
 import com.ibm.watson.developer_cloud.discovery.v1.Discovery
 import com.ibm.watson.developer_cloud.discovery.v1.model.QueryOptions
+import com.speakeasy.watsonbarassistant.Discovery.HandleDiscovery
+import com.speakeasy.watsonbarassistant.Discovery.SearchDiscovery
 import kotlinx.android.synthetic.main.activity_main_menu.*
 import kotlinx.serialization.json.JSON
 import java.util.*
-
 
 class MainMenu : AppCompatActivity() {
 
@@ -172,67 +173,5 @@ class MainMenu : AppCompatActivity() {
             return true
         }
         return super.onOptionsItemSelected(item)
-    }
-}
-
- class SearchDiscovery(private val inputListener: OnTaskCompleted):
-         AsyncTask<Array<Ingredient>, Void, MutableList<DiscoveryRecipe>>() {
-
-    override fun doInBackground(vararg args: Array<Ingredient>): MutableList<DiscoveryRecipe> {
-        val ingredients = args[0]
-        val orderedRecipes = PriorityQueue<DiscoveryRecipe>(10) { a, b ->
-            when {
-                a.queueValue < (b.queueValue) -> 1
-                else -> -1
-            }
-        }
-        val discovery = Discovery(VERSION_DIS, USERNAME_MIKE_DIS, PASSWORD_MIKE_DIS)
-        discovery.endPoint = URL_MIKE_DIS
-
-        val queryBuilder = QueryOptions.Builder(ENV_ID_MIKE_DIS, COL_ID_MIKE_DIS)
-
-        queryBuilder.query(buildIngredientQuery(ingredients)).count(50)
-        val queryResponse = discovery.query(queryBuilder.build()).execute()
-
-        for (response in queryResponse.results) {
-            val recipe = JSON.nonstrict.parse<DiscoveryRecipe>(response.toString())
-            recipe.calculatePercentAvailable(ingredients)
-            orderedRecipes.add(recipe)
-        }
-        orderedRecipes.filter {
-            it.title != "" && it.ingredientList.count() > 0
-        }
-        return orderedRecipes.toMutableList()
-    }
-
-    override fun onPostExecute(result: MutableList<DiscoveryRecipe>){
-        super.onPostExecute(result)
-        inputListener.onTaskCompleted(result)
-    }
-
-    private fun buildIngredientQuery(ingredients: Array<Ingredient>): String{
-        return ingredients.asSequence().filter { it.name != "" }
-                .joinToString("|", "ingredientList:") { it.name }
-    }
-}
-
-interface OnTaskCompleted {
-    fun onTaskCompleted(recipes: MutableList<DiscoveryRecipe>)
-}
-
-class HandleDiscovery(private val overAllList: MutableList<MutableList<DiscoveryRecipe>>,
-                      private val mainMenu: MainMenu?): OnTaskCompleted {
-
-    override fun onTaskCompleted(recipes: MutableList<DiscoveryRecipe>) {
-        overAllList[0].clear()
-        overAllList[1].clear()
-        overAllList[0].addAll(recipes)
-        overAllList[1].addAll(recipes.shuffled().toMutableList())
-        val fragment = mainMenu?.fragment
-        if(fragment as? HomeTab != null) {
-            fragment.refresh()
-        } else if(fragment as? MyRecipesTab != null) {
-            fragment.refresh()
-        }
     }
 }

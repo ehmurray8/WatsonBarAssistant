@@ -10,6 +10,7 @@ import java.io.FileOutputStream
 import java.io.Serializable
 
 @kotlinx.serialization.Serializable
+
 data class DiscoveryRecipe(@Optional var queueValue: Int = 0,
                            @Optional var imageBase64: String = DEFAULT_IMAGE_BASE64,
                            @Optional val description: String = "",
@@ -22,6 +23,7 @@ data class DiscoveryRecipe(@Optional var queueValue: Int = 0,
                            @Optional var imageUriString: String = ""): Serializable {
 
     fun calculatePercentAvailable(userIngredients: Array<Ingredient>){
+
         var count = 0
 
         for(recipeIngredient in ingredientList) {
@@ -37,6 +39,7 @@ data class DiscoveryRecipe(@Optional var queueValue: Int = 0,
 
     private fun createBitMap(): Bitmap {
         val imageId = Base64.decode(imageBase64, Base64.DEFAULT)
+
         return BitmapFactory.decodeByteArray(imageId, 0, imageId.count())
     }
 
