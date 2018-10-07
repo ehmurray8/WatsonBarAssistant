@@ -2,7 +2,6 @@ package com.speakeasy.watsonbarassistant
 
 import android.content.Context
 import android.content.Intent
-import android.os.AsyncTask
 import android.os.Bundle
 import android.support.design.widget.TabItem
 import android.support.v4.app.Fragment
@@ -16,12 +15,9 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.google.gson.Gson
-import com.ibm.watson.developer_cloud.discovery.v1.Discovery
-import com.ibm.watson.developer_cloud.discovery.v1.model.QueryOptions
 import com.speakeasy.watsonbarassistant.Discovery.HandleDiscovery
 import com.speakeasy.watsonbarassistant.Discovery.SearchDiscovery
 import kotlinx.android.synthetic.main.activity_main_menu.*
-import kotlinx.serialization.json.JSON
 import java.util.*
 
 class MainMenu : AppCompatActivity() {
@@ -111,7 +107,7 @@ class MainMenu : AppCompatActivity() {
                     .collection("ingredients").get().addOnCompleteListener {
                 ingredients.clear()
                 if (it.isSuccessful) {
-                    it.result.forEach { snapshot ->
+                    it.result?.forEach { snapshot ->
                         parseSnapshot(snapshot)
                     }
                     if(!oldIngredients.toMutableList().containsAll(ingredients)) {
@@ -150,7 +146,7 @@ class MainMenu : AppCompatActivity() {
 
     private fun replaceFragment() {
         val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.fragment_container, fragment)
+        transaction.replace(R.id.fragment_container, fragment ?: return)
         transaction.commit()
         tabsItems?.get(tabIndex)?.isSelected = true
     }

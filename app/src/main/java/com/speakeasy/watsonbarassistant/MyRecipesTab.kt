@@ -1,6 +1,5 @@
 package com.speakeasy.watsonbarassistant
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -36,7 +35,7 @@ class MyRecipesTab : Fragment() {
 
         manager = LinearLayoutManager(activity?.baseContext)
         val mainMenu = activity as MainMenu
-        viewAdapter = MyRecipeAdapter(mainMenu.recipes[0],activity as Activity)
+        viewAdapter = MyRecipeAdapter(mainMenu.recipes[0], mainMenu.assets)
 
         recyclerView = recipes_list.apply {
             setHasFixedSize(true)
