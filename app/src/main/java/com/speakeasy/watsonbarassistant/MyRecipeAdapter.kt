@@ -1,17 +1,14 @@
 package com.speakeasy.watsonbarassistant
 
-import android.app.Activity
 import android.support.constraint.ConstraintLayout
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import com.squareup.picasso.Picasso
 
-class MyRecipeAdapter(private var recipes: MutableList<DiscoveryRecipe>,
-                      private val activity: Activity):
-        RecyclerView.Adapter<MyRecipeAdapter.ViewHolder>(){
+class MyRecipeAdapter(private var recipes: MutableList<DiscoveryRecipe>):
+        RecyclerView.Adapter<MyRecipeAdapter.ViewHolder>() {
 
         class ViewHolder(val layout: ConstraintLayout) : RecyclerView.ViewHolder(layout)
 
@@ -24,7 +21,7 @@ class MyRecipeAdapter(private var recipes: MutableList<DiscoveryRecipe>,
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int){
-        val image = holder.layout.getChildAt(0) as ImageView
+        //val image = holder.layout.getChildAt(0) as ImageView
         val name = holder.layout.getChildAt(2) as TextView
         val description = holder.layout.getChildAt(1) as TextView
 

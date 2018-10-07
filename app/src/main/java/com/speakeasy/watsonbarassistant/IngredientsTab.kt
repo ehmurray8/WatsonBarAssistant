@@ -65,7 +65,7 @@ class IngredientsTab : Fragment() {
             closeMenus()
             ingredientInputView.visibility = View.VISIBLE
             ingredientInputView.setOnEditorActionListener { _, actionId, _ ->
-                addMenuButton.visibility = View.INVISIBLE
+                addMenuButton.hide()
                 return@setOnEditorActionListener when (actionId) {
                     EditorInfo.IME_ACTION_DONE -> {
                         val name = ingredientInputView.text.toString()
@@ -73,7 +73,7 @@ class IngredientsTab : Fragment() {
                         addIngredient(ingredient)
                         ingredientInputView.selectAll()
                         ingredientInputView.setText("")
-                        addMenuButton.visibility = View.VISIBLE
+                        addMenuButton.show()
                         true
                     }
                     else -> false
@@ -100,8 +100,14 @@ class IngredientsTab : Fragment() {
      private fun setupSwipeHandler() {
          val context = activity?.baseContext ?: return
          val swipeHandler = object : SwipeToDeleteCallback(context) {
-             override fun onSwiped(viewHolder: RecyclerView.ViewHolder?, direction: Int) {
-                 val position = viewHolder?.layoutPosition ?: return
+             override fun onMove(p0: RecyclerView, p1: RecyclerView.ViewHolder, p2: RecyclerView.ViewHolder): Boolean {
+                 super.onMove(p0, p1, p2)
+                 p0.scrollTo(1, 1)
+                 return true
+             }
+
+             override fun onSwiped(p0: RecyclerView.ViewHolder, direction: Int) {
+                 val position = p0.layoutPosition
                  viewAdapter?.removeAt(position)
              }
          }
@@ -134,11 +140,11 @@ class IngredientsTab : Fragment() {
         addViaCameraButton.startAnimation(menuAnimClose)
         addViaVoiceButton.startAnimation(menuAnimClose)
         addViaTextButton.isClickable = false
-        addViaTextButton.visibility = View.INVISIBLE
+        addViaTextButton.hide()
         addViaCameraButton.isClickable = false
-        addViaCameraButton.visibility = View.INVISIBLE
+        addViaCameraButton.hide()
         addViaVoiceButton.isClickable = false
-        addViaVoiceButton.visibility = View.INVISIBLE
+        addViaVoiceButton.hide()
         ingredientInputView.visibility = View.GONE
         isAddMenuOpen = false
     }
@@ -149,11 +155,11 @@ class IngredientsTab : Fragment() {
         addViaCameraButton.startAnimation(menuAnimOpen)
         addViaVoiceButton.startAnimation(menuAnimOpen)
         addViaTextButton.isClickable = true
-        addViaTextButton.visibility = View.VISIBLE
+        addViaTextButton.show()
         addViaCameraButton.isClickable = true
-        addViaCameraButton.visibility = View.VISIBLE
+        addViaCameraButton.show()
         addViaVoiceButton.isClickable = true
-        addViaVoiceButton.visibility = View.VISIBLE
+        addViaVoiceButton.show()
         isAddMenuOpen = true
     }
 }

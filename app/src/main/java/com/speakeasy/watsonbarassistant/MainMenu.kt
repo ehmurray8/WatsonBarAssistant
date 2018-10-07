@@ -146,7 +146,7 @@ class MainMenu : AppCompatActivity() {
 
     private fun replaceFragment() {
         val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.fragment_container, fragment)
+        transaction.replace(R.id.fragment_container, fragment ?: return)
         transaction.commit()
         tabsItems?.get(tabIndex)?.isSelected = true
     }
