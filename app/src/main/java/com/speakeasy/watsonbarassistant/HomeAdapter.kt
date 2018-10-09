@@ -9,6 +9,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
+import com.speakeasy.watsonbarassistant.Recipe.DiscoveryRecipe
+import com.speakeasy.watsonbarassistant.Recipe.RecipeCollection
 
 
 class HomeAdapter(private var dataSet: MutableList<MutableList<DiscoveryRecipe>>,

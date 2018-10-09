@@ -1,9 +1,11 @@
 package com.speakeasy.watsonbarassistant.Discovery
 
 import com.speakeasy.watsonbarassistant.*
+import com.speakeasy.watsonbarassistant.Recipe.DiscoveryRecipe
+import com.speakeasy.watsonbarassistant.Recipe.MyRecipesTab
 
 
-class HandleDiscovery(private val overAllList: MutableList<MutableList<DiscoveryRecipe>>,
+open class HandleDiscovery(private val overAllList: MutableList<MutableList<DiscoveryRecipe>>,
                       private val mainMenu: MainMenu?): OnTaskCompleted {
 
     override fun onTaskCompleted(recipes: MutableList<DiscoveryRecipe>) {

@@ -4,6 +4,7 @@ import android.content.res.AssetManager
 import android.graphics.drawable.Drawable
 import android.widget.ImageView
 import com.google.firebase.storage.FirebaseStorage
+import com.speakeasy.watsonbarassistant.Recipe.DiscoveryRecipe
 import com.squareup.picasso.Picasso
 
 private val storageReference = FirebaseStorage.getInstance().reference

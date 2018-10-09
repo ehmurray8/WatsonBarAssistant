@@ -10,6 +10,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
+import com.speakeasy.watsonbarassistant.Recipe.DiscoveryRecipe
+import com.speakeasy.watsonbarassistant.Recipe.RecipeCollection
+import com.speakeasy.watsonbarassistant.Recipe.RecipeDetail
 import com.squareup.picasso.Picasso
 
 const val MAX_RECIPES = 15

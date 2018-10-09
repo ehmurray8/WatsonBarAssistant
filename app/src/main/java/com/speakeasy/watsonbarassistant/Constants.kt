@@ -10,5 +10,6 @@ const val DEFAULT_RECIPE_IMAGE_NAME = "alcohol_tall.jpg"
 const val SHARED_PREFERENCES_SETTINGS = "Settings"
 const val TAB_INDEX = "TabIndex"
 const val INGREDIENT_PREFERENCES_ID = "Ingredient"
+const val DIS_COUNT = 50L
 
 const val DEFAULT_IMAGE_URI = "file:///android_asset/$DEFAULT_RECIPE_IMAGE_NAME"

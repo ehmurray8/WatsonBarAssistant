@@ -17,6 +17,8 @@ import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.google.gson.Gson
 import com.speakeasy.watsonbarassistant.Discovery.HandleDiscovery
 import com.speakeasy.watsonbarassistant.Discovery.SearchDiscovery
+import com.speakeasy.watsonbarassistant.Recipe.DiscoveryRecipe
+import com.speakeasy.watsonbarassistant.Recipe.MyRecipesTab
 import kotlinx.android.synthetic.main.activity_main_menu.*
 import java.util.*
 

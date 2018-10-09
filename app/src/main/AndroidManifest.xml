@@ -19,7 +19,7 @@
         <activity
             android:name=".MainMenu"
             android:windowSoftInputMode="adjustPan" />
-        <activity android:name=".RecipeDetail" />
+        <activity android:name=".Recipe.RecipeDetail" />
         <activity android:name=".Login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,7 +28,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".UserProfile" />
-        <activity android:name=".RecipeCollection"/>
+        <activity android:name=".Recipe.RecipeCollection"/>
     </application>
 
 </manifest>
