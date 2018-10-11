@@ -64,5 +64,11 @@ class SearchDiscovery(private val inputListener: OnTaskCompleted):
                 .joinToString("|", "ingredientList:") { it.name }
     }
 
+    fun buildPowerSet(ingredients: Array<Ingredient>, length: Int): String{
+        var query = ""
+
+        
+        return query
+    }
 
 }
