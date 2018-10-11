@@ -1,74 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RecipeDetail">
+    android:layout_width="match_parent">
 
-    <LinearLayout
-        android:layout_marginBottom="20dp"
+    <ScrollView
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".RecipeDetail">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/recipe_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:textColor="@color/primaryText"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/drink_detail_image"
+                android:layout_width="400dp"
+                android:layout_height="247dp"
+                android:layout_gravity="center_horizontal"
+                android:contentDescription="@string/drink_image_description" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="25dp"
+                android:layout_marginBottom="10dp"
+                android:text="@string/description_header"
+                android:textColor="@color/primaryText"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/description_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="20dp"
+                android:textColor="@color/primaryText"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="25dp"
+                android:text="@string/ingredients_header"
+                android:textColor="@color/primaryText"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/recipe_ingredients"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="20dp"
+                android:textColor="@color/primaryText"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/favorite_not_pressed"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="13dp"
+        android:layout_marginBottom="13dp"
+        android:visibility="visible"
+        app:backgroundTint="@color/colorAccent"
+        app:srcCompat="@android:drawable/btn_star_big_off" />
 
-        <TextView
-            android:id="@+id/recipe_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginBottom="10dp"
-            android:textColor="@color/primaryText"
-            android:textSize="25sp"
-            android:textStyle="bold"/>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/favorite_pressed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom|end"
+        android:layout_marginStart="13dp"
+        android:layout_marginTop="13dp"
+        android:layout_marginEnd="13dp"
+        android:layout_marginBottom="12dp"
+        android:visibility="gone"
+        app:backgroundTint="@color/colorAccent"
+        app:srcCompat="@android:drawable/btn_star_big_on" />
 
-        <ImageView
-            android:id="@+id/drink_detail_image"
-            android:layout_width="400dp"
-            android:layout_height="247dp"
-            android:contentDescription="@string/drink_image_description"
-            android:layout_gravity="center_horizontal"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginStart="25dp"
-            android:layout_marginEnd="25dp"
-            android:textColor="@color/primaryText"
-            android:text="@string/description_header"
-            android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/description_content"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
-            android:layout_marginEnd="20dp"
-            android:textColor="@color/primaryText"
-            android:textSize="16sp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="25dp"
-            android:textColor="@color/primaryText"
-            android:text="@string/ingredients_header"
-            android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/recipe_ingredients"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/primaryText"
-            android:textSize="16sp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginStart="30dp"/>
-
-    </LinearLayout>
-
-</ScrollView>
+</RelativeLayout>
