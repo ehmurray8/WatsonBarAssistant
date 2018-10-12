@@ -7,13 +7,16 @@ import android.support.v7.widget.CardView
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
+<<<<<<< HEAD
 import com.speakeasy.watsonbarassistant.Recipe.DiscoveryRecipe
 import com.speakeasy.watsonbarassistant.Recipe.RecipeCollection
 import com.speakeasy.watsonbarassistant.Recipe.RecipeDetail
 import com.squareup.picasso.Picasso
+=======
+import com.facebook.drawee.view.SimpleDraweeView
+>>>>>>> master
 
 const val MAX_RECIPES = 15
 
@@ -24,8 +27,6 @@ class HomeRecipeAdapter(private val recipes: MutableList<DiscoveryRecipe>,
     class ViewHolder(val card: CardView) : RecyclerView.ViewHolder(card)
 
     class ViewHolderSeeAll(val card: CardView) : RecyclerView.ViewHolder(card)
-
-    private val picasso: Picasso = Picasso.get()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if(viewType == 0) {
@@ -73,9 +74,9 @@ class HomeRecipeAdapter(private val recipes: MutableList<DiscoveryRecipe>,
 
     private fun setupImageView(mainLayout: RelativeLayout, recipe: DiscoveryRecipe,
                                textView: TextView) {
-        val imageView = mainLayout.getChildAt(0) as ImageView
+        val imageView = mainLayout.getChildAt(0) as SimpleDraweeView
         textView.setTypeface(textView.typeface, Typeface.BOLD)
-        loadImage(activity.assets, imageView, recipe, picasso)
+        loadImage(activity.baseContext, imageView, recipe)
     }
 
     override fun getItemCount(): Int {

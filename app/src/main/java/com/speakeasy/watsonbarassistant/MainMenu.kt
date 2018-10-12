@@ -21,9 +21,6 @@ import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.widget.EditText
-import android.widget.ImageButton
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -89,6 +86,7 @@ class MainMenu : AppCompatActivity() {
         tabs.addOnTabSelectedListener(MainMenuTabListener(this))
         setSupportActionBar(toolbar as Toolbar)
 
+
         //TODO does this go here?
         //Checking for audio access
         val permission = ContextCompat.checkSelfPermission(this,
@@ -96,6 +94,10 @@ class MainMenu : AppCompatActivity() {
         if (permission != PackageManager.PERMISSION_GRANTED) {
             Log.i("Main Menu", "Permission to record denied")
             makeRequest()
+
+        if(!BarAssistant.isInternetConnected()) {
+            Toast.makeText(baseContext, "Failed to download user data from the internet.", Toast.LENGTH_SHORT).show()
+
         }
     }
 
@@ -142,21 +144,23 @@ class MainMenu : AppCompatActivity() {
     }
 
     private fun loadIngredients() {
-        val uid = currentUser?.uid
-        refreshDiscovery()
-        val oldIngredients = ingredients.toTypedArray()
-        if(uid != null) {
-            fireStore.collection("app").document(uid)
-                    .collection("ingredients").get().addOnCompleteListener {
-                ingredients.clear()
-                if (it.isSuccessful) {
-                    it.result?.forEach { snapshot ->
-                        parseSnapshot(snapshot)
-                    }
-                    if(!oldIngredients.toMutableList().containsAll(ingredients)) {
-                        refreshDiscovery(true)
-                    }
-                }
+        if(BarAssistant.isInternetConnected()) {
+            val uid = currentUser?.uid
+            refreshDiscovery()
+            val oldIngredients = ingredients.toTypedArray()
+            if (uid != null) {
+                fireStore.collection("app").document(uid)
+                        .collection("ingredients").get().addOnCompleteListener {
+                            ingredients.clear()
+                            if (it.isSuccessful) {
+                                it.result?.forEach { snapshot ->
+                                    parseSnapshot(snapshot)
+                                }
+                                if (!oldIngredients.toMutableList().containsAll(ingredients)) {
+                                    refreshDiscovery(true)
+                                }
+                            }
+                        }
             }
         }
     }

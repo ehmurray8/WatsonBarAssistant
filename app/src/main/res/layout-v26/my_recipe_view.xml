@@ -31,12 +31,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageView"
         app:layout_constraintTop_toBottomOf="@+id/titleView"
-        android:maxLines="3"
+        android:maxLines="4"
         android:ellipsize="end" />
 
     <TextView
         android:id="@+id/titleView"
         android:layout_width="0dp"
+        android:autoSizeMinTextSize="14sp"
+        android:autoSizeTextType="uniform"
+        android:lines="1"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:textSize="18sp"
