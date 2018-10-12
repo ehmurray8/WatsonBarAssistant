@@ -1,24 +1,58 @@
 package com.speakeasy.watsonbarassistant
 
 
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.view.inputmethod.EditorInfo
+import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.Toast
 import com.google.firebase.firestore.FirebaseFirestore
+import com.ibm.watson.developer_cloud.android.library.audio.MicrophoneHelper
+import com.ibm.watson.developer_cloud.android.library.audio.MicrophoneInputStream
+import com.ibm.watson.developer_cloud.android.library.audio.StreamPlayer
+import com.ibm.watson.developer_cloud.android.library.audio.utils.ContentType
+import com.ibm.watson.developer_cloud.speech_to_text.v1.SpeechToText
+import com.ibm.watson.developer_cloud.speech_to_text.v1.model.RecognizeOptions
+import com.ibm.watson.developer_cloud.speech_to_text.v1.model.SpeechRecognitionResults
+import com.ibm.watson.developer_cloud.speech_to_text.v1.websocket.BaseRecognizeCallback
 import kotlinx.android.synthetic.main.fragment_ingredient_tab.*
+import java.util.ArrayList
 
 
 class IngredientsTab : Fragment() {
+
+
+
+    var permissionToRecordAccepted = false
+    var listening = false
+
+    private val recyclerView: RecyclerView? = null
+    //private val mAdapter: ChatAdapter? = null
+    private val messageArrayList: ArrayList<String>? = null
+    var inputMessage: EditText? = null
+    private val btnSend: ImageButton? = null
+    private val btnRecord: ImageButton? = null
+    //private Map<String,Object> context = new HashMap<>();
+    var context: com.ibm.watson.developer_cloud.conversation.v1.model.Context? = null
+    var streamPlayer: StreamPlayer? = null
+    private val initialRequest: Boolean = false
+    private val speechService: SpeechToText = SpeechToText()
+    private var capture: MicrophoneInputStream = MicrophoneInputStream(false)
+    //private val recoTokens: SpeakerLabelsDiarization.RecoTokens? = null
+    private val microphoneHelper: MicrophoneHelper? = null
 
     private val fireStore = FirebaseFirestore.getInstance()
 
@@ -82,6 +116,8 @@ class IngredientsTab : Fragment() {
         }
         addViaCameraButton.setOnClickListener { Toast.makeText(context, "Camera support to be added!", Toast.LENGTH_SHORT).show() }
         addViaVoiceButton.setOnClickListener { Toast.makeText(context, "Voice support to be added!", Toast.LENGTH_SHORT).show() }
+
+
         val itemDecorator = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
         ingredients_recycler_view.addItemDecoration(itemDecorator)
 
@@ -162,4 +198,114 @@ class IngredientsTab : Fragment() {
         addViaVoiceButton.show()
         isAddMenuOpen = true
     }
+
+
+    // Speech-to-Text Record Audio permission
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        when (requestCode) {
+            REQUEST_RECORD_AUDIO_PERMISSION -> {
+                permissionToRecordAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED
+            }
+            RECORD_REQUEST_CODE -> {
+                if (grantResults.size == 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                    Log.i("Speech to Text", "Permission has been denied by user")
+                } else {
+                    Log.i("Speech to Text", "Permission has been granted by user")
+                }
+                return
+            }
+        }
+        if (!permissionToRecordAccepted) finish()
+    }
+
+
+    //Record a message via Watson Speech to Text
+    private fun recordMessage() {
+        //mic.setEnabled(false);
+        speechService.setUsernameAndPassword(StT_USERNAME, StT_PASSWORD)
+        if (listening !== true) {
+            capture = MicrophoneInputStream(true)
+            Thread(Runnable {
+                try {
+                    speechService.recognizeUsingWebSocket(getRecognizeOptions(),  MicrophoneRecognizeDelegate())
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }).start()
+            listening = true
+            Toast.makeText(context, "Listening....Click to Stop", Toast.LENGTH_LONG).show()
+        } else {
+            try {
+                capture.close()
+                listening = false
+                Toast.makeText(this@MainMenu, "Stopped Listening....Click to Start", Toast.LENGTH_LONG).show()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+
+        }
+    }
+
+
+
+    //Private Methods - Speech to Text
+    private fun getRecognizeOptions(): RecognizeOptions {
+        return  RecognizeOptions.Builder()
+                .contentType(ContentType.OPUS.toString())
+                //.model("en-UK_NarrowbandModel")
+                .interimResults(true)
+                .inactivityTimeout(2000)
+                //TODO: Uncomment this to enable Speaker Diarization
+                //.speakerLabels(true)
+                .build()
+    }
+
+
+    private class MicrophoneRecognizeDelegate : BaseRecognizeCallback() {
+
+        override fun onTranscription(speechResults: SpeechRecognitionResults) {
+            System.out.println(speechResults)
+            //TODO: Uncomment this to enable Speaker Diarization
+            /*recoTokens = new SpeakerLabelsDiarization.RecoTokens()
+            if(speechResults.getSpeakerLabels() !=null)
+            {
+                recoTokens.add(speechResults)
+                Log.i("SPEECHRESULTS",speechResults.getSpeakerLabels().get(0).toString())
+            }*/
+
+            if(speechResults.getResults() != null && !speechResults.getResults().isEmpty()) {
+                var text = speechResults.getResults().get(0).getAlternatives().get(0).getTranscript()
+                inputMessage.setText(text)
+            }
+        }
+
+        override fun onConnected() {
+
+        }
+
+        override fun onError(e: Exception) {
+            //showError(e)
+            //btnRecord.setEnabled(true)
+        }
+
+        override fun onDisconnected() {
+            btnRecord.setEnabled(true)
+        }
+
+        override fun onInactivityTimeout(runtimeException: RuntimeException ) {
+
+        }
+
+        override fun onListening() {
+
+        }
+
+        override fun onTranscriptionComplete() {
+
+        }
+    }
+
+
 }

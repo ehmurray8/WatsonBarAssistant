@@ -13,3 +13,9 @@ const val INGREDIENT_PREFERENCES_ID = "Ingredient"
 const val DIS_COUNT = 50L
 
 const val DEFAULT_IMAGE_URI = "file:///android_asset/$DEFAULT_RECIPE_IMAGE_NAME"
+
+
+const val RECORD_REQUEST_CODE = 101
+const val REQUEST_RECORD_AUDIO_PERMISSION = 200
+const val StT_USERNAME = ""
+const val StT_PASSWORD = ""

@@ -1,26 +1,58 @@
 package com.speakeasy.watsonbarassistant
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Typeface
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.os.Bundle
+import android.support.annotation.NonNull
 import android.support.design.widget.TabItem
+import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.DefaultItemAnimator
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.EditText
+import android.widget.ImageButton
+import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.google.gson.Gson
+
+import com.ibm.watson.developer_cloud.android.library.audio.MicrophoneHelper
+import com.ibm.watson.developer_cloud.android.library.audio.MicrophoneInputStream
+import com.ibm.watson.developer_cloud.android.library.audio.StreamPlayer
+import com.ibm.watson.developer_cloud.android.library.audio.utils.ContentType
+import com.ibm.watson.developer_cloud.conversation.v1.Conversation
+import com.ibm.watson.developer_cloud.conversation.v1.model.InputData
+import com.ibm.watson.developer_cloud.conversation.v1.model.MessageOptions
+import com.ibm.watson.developer_cloud.conversation.v1.model.MessageResponse
+import com.ibm.watson.developer_cloud.speech_to_text.v1.SpeechToText
+import com.ibm.watson.developer_cloud.speech_to_text.v1.model.RecognizeOptions
+import com.ibm.watson.developer_cloud.speech_to_text.v1.model.SpeechRecognitionResults
+import com.ibm.watson.developer_cloud.speech_to_text.v1.websocket.BaseRecognizeCallback
+import com.ibm.watson.developer_cloud.speech_to_text.v1.websocket.RecognizeCallback
+import com.ibm.watson.developer_cloud.text_to_speech.v1.TextToSpeech
+import com.ibm.watson.developer_cloud.text_to_speech.v1.model.Voice
 import com.speakeasy.watsonbarassistant.Discovery.HandleDiscovery
 import com.speakeasy.watsonbarassistant.Discovery.SearchDiscovery
 import com.speakeasy.watsonbarassistant.Recipe.DiscoveryRecipe
 import com.speakeasy.watsonbarassistant.Recipe.MyRecipesTab
 import kotlinx.android.synthetic.main.activity_main_menu.*
 import java.util.*
+
 
 class MainMenu : AppCompatActivity() {
 
@@ -56,6 +88,15 @@ class MainMenu : AppCompatActivity() {
         tabs.getTabAt(tabIndex)?.select()
         tabs.addOnTabSelectedListener(MainMenuTabListener(this))
         setSupportActionBar(toolbar as Toolbar)
+
+        //TODO does this go here?
+        //Checking for audio access
+        val permission = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.RECORD_AUDIO)
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            Log.i("Main Menu", "Permission to record denied")
+            makeRequest()
+        }
     }
 
     private fun loadSharedPreferences() {
@@ -172,4 +213,36 @@ class MainMenu : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
+
+    fun showMicText(text: String) {
+        runOnUiThread{
+            fun run() {
+                inputMessage.setText(text)
+            }
+        }
+    }
+
+    private fun enableMicButton() {
+        runOnUiThread{
+            @Override fun run() {
+                btnRecord.setEnabled(true)
+            }
+        }
+    }
+
+    private fun showError(e : Exception) {
+        runOnUiThread{
+            @Override fun run() {
+                Toast.makeText(this@MainMenu, e.message, Toast.LENGTH_SHORT).show()
+                e.printStackTrace()
+            }
+        }
+    }
+
+
+    private fun makeRequest() {
+        var permission = Array(32){"Manifest.permission.RECORD_AUDIO"}
+        ActivityCompat.requestPermissions(this,permission, RECORD_REQUEST_CODE)
+    }
 }
+
