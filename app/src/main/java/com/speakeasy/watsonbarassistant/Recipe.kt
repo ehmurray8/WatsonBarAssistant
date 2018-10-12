@@ -38,4 +38,38 @@ data class DiscoveryRecipe(@Optional var queueValue: Int = 0,
     fun getImageName(): String {
         return "recipe_images/GSBimg-${imageId.toFloat().toInt()}.jpg"
     }
+
+    fun getTags(): List<RecipeTag> {
+        val tags = mutableListOf<RecipeTag>()
+        if(checkPercentIngredientsOwned()) tags.add(RecipeTag.MISSING)
+        if(checkWhiskeyTag()) tags.add(RecipeTag.WHISKEY)
+        if(checkVodkaTag()) tags.add(RecipeTag.VODKA)
+        if(checkTequilaTag()) tags.add(RecipeTag.TEQUILA)
+        return tags
+    }
+
+    private fun checkWhiskeyTag(): Boolean {
+        return ingredientList.any {
+            it.contains("Whiskey", true) ||
+                    it.contains("Whisky", true) ||
+                    it.contains("Bourbon", true) ||
+                    it.contains("Scotch", true)
+        }
+    }
+
+    private fun checkVodkaTag(): Boolean {
+        return ingredientList.any {
+            it.contains("Vodka", true)
+        }
+    }
+
+    private fun checkTequilaTag(): Boolean {
+        return ingredientList.any() {
+            it.contains("Tequila", true)
+        }
+    }
+
+    private fun checkPercentIngredientsOwned(): Boolean {
+        return queueValue > 50
+    }
 }
