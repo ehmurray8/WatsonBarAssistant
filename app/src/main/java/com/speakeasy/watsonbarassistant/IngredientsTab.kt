@@ -36,7 +36,6 @@ class IngredientsTab : Fragment() {
 
 
 
-    var permissionToRecordAccepted = false
     var listening = false
 
     private val recyclerView: RecyclerView? = null
@@ -46,7 +45,7 @@ class IngredientsTab : Fragment() {
     private val btnSend: ImageButton? = null
     private val btnRecord: ImageButton? = null
     //private Map<String,Object> context = new HashMap<>();
-    var context: com.ibm.watson.developer_cloud.conversation.v1.model.Context? = null
+    //var context: com.ibm.watson.developer_cloud.conversation.v1.model.Context? = null
     var streamPlayer: StreamPlayer? = null
     private val initialRequest: Boolean = false
     private val speechService: SpeechToText = SpeechToText()
@@ -115,7 +114,11 @@ class IngredientsTab : Fragment() {
             }
         }
         addViaCameraButton.setOnClickListener { Toast.makeText(context, "Camera support to be added!", Toast.LENGTH_SHORT).show() }
-        addViaVoiceButton.setOnClickListener { Toast.makeText(context, "Voice support to be added!", Toast.LENGTH_SHORT).show() }
+        addViaVoiceButton.setOnClickListener {
+            Toast.makeText(context, "Voice support to be added!", Toast.LENGTH_SHORT).show()
+
+            recordMessage()
+        }
 
 
         val itemDecorator = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
@@ -200,27 +203,6 @@ class IngredientsTab : Fragment() {
     }
 
 
-    // Speech-to-Text Record Audio permission
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
-        when (requestCode) {
-            REQUEST_RECORD_AUDIO_PERMISSION -> {
-                permissionToRecordAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED
-            }
-            RECORD_REQUEST_CODE -> {
-                if (grantResults.size == 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                    Log.i("Speech to Text", "Permission has been denied by user")
-                } else {
-                    Log.i("Speech to Text", "Permission has been granted by user")
-                }
-                return
-            }
-        }
-        if (!permissionToRecordAccepted) finish()
-    }
-
-
     //Record a message via Watson Speech to Text
     private fun recordMessage() {
         //mic.setEnabled(false);
@@ -240,7 +222,7 @@ class IngredientsTab : Fragment() {
             try {
                 capture.close()
                 listening = false
-                Toast.makeText(this@MainMenu, "Stopped Listening....Click to Start", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "Stopped Listening....Click to Start", Toast.LENGTH_LONG).show()
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -277,7 +259,7 @@ class IngredientsTab : Fragment() {
 
             if(speechResults.getResults() != null && !speechResults.getResults().isEmpty()) {
                 var text = speechResults.getResults().get(0).getAlternatives().get(0).getTranscript()
-                inputMessage.setText(text)
+                //inputMessage.setText(text)
             }
         }
 
@@ -291,7 +273,7 @@ class IngredientsTab : Fragment() {
         }
 
         override fun onDisconnected() {
-            btnRecord.setEnabled(true)
+            //btnRecord.setEnabled(true)
         }
 
         override fun onInactivityTimeout(runtimeException: RuntimeException ) {

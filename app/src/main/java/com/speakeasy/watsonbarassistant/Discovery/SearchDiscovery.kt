@@ -7,37 +7,22 @@ import com.ibm.watson.developer_cloud.discovery.v1.model.QueryOptions
 import com.ibm.watson.developer_cloud.discovery.v1.model.QueryResponse
 import com.ibm.watson.developer_cloud.service.exception.NotFoundException
 import com.speakeasy.watsonbarassistant.*
-import com.speakeasy.watsonbarassistant.Recipe.DiscoveryRecipe
+import com.speakeasy.watsonbarassistant.DiscoveryRecipe
 import kotlinx.serialization.json.JSON
+import java.util.*
 
 class SearchDiscovery(private val inputListener: OnTaskCompleted):
         AsyncTask<Array<Ingredient>, Void, MutableList<DiscoveryRecipe>>() {
 
     override fun doInBackground(vararg args: Array<Ingredient>): MutableList<DiscoveryRecipe> {
-<<<<<<< HEAD
-        val ingredients = args[0]
-        val discovery = Discovery(VERSION_DIS, USERNAME_MIKE_DIS, PASSWORD_MIKE_DIS)
-        discovery.endPoint = URL_MIKE_DIS
-=======
         if(BarAssistant.isInternetConnected()) {
             val ingredients = args[0]
             val recipes = mutableListOf<DiscoveryRecipe>()
             val discovery = Discovery(VERSION_DIS, USERNAME_MIKE_DIS, PASSWORD_MIKE_DIS)
             discovery.endPoint = URL_MIKE_DIS
->>>>>>> master
 
             val queryBuilder = QueryOptions.Builder(ENV_ID_MIKE_DIS, COL_ID_MIKE_DIS)
 
-<<<<<<< HEAD
-        queryBuilder.query(buildIngredientQuery(ingredients)).count(DIS_COUNT)
-
-        try {
-            val queryResponse = discovery.query(queryBuilder.build()).execute()
-
-            return this.processResponse(queryResponse, ingredients)
-        } catch (exception: NotFoundException) {
-            Log.d("Discovery Down", "Discovery service is not working.")
-=======
             queryBuilder.query(buildIngredientQuery(ingredients)).count(50)
             try {
                 val queryResponse = discovery.query(queryBuilder.build()).execute()
@@ -50,10 +35,9 @@ class SearchDiscovery(private val inputListener: OnTaskCompleted):
                     it.title != "" && it.ingredientList.count() > 0
                 }
                 return recipes.sortedBy { it.percentOfIngredientsOwned }.reversed().toMutableList()
-            } catch (exception: NotFoundException) {
+            } catch (e: NotFoundException) {
                 Log.d("Discovery Down", "Discovery service is not working.")
             }
->>>>>>> master
         }
         return mutableListOf()
     }

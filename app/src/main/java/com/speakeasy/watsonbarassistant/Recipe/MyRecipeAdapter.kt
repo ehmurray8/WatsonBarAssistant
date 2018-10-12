@@ -37,7 +37,7 @@ class MyRecipeAdapter(private var recipes: MutableList<DiscoveryRecipe>, private
         description.text = recipe.description
     }
 
-    private fun addTags(tagContainer: LinearLayout, recipe: DiscoveryRecipe.DiscoveryRecipe) {
+    private fun addTags(tagContainer: LinearLayout, recipe: DiscoveryRecipe) {
         val inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         tagContainer.removeAllViews()
         var tags = recipe.getTags()

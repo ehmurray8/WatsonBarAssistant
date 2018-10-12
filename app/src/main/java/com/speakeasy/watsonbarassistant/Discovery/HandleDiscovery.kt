@@ -1,7 +1,7 @@
 package com.speakeasy.watsonbarassistant.Discovery
 
 import com.speakeasy.watsonbarassistant.*
-import com.speakeasy.watsonbarassistant.Recipe.DiscoveryRecipe
+import com.speakeasy.watsonbarassistant.DiscoveryRecipe
 import com.speakeasy.watsonbarassistant.Recipe.MyRecipesTab
 
 

@@ -1,6 +1,6 @@
 package com.speakeasy.watsonbarassistant.Discovery
 
-import com.speakeasy.watsonbarassistant.Recipe.DiscoveryRecipe
+import com.speakeasy.watsonbarassistant.DiscoveryRecipe
 
 
 interface OnTaskCompleted {

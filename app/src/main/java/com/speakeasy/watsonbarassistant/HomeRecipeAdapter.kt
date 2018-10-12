@@ -9,14 +9,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
-<<<<<<< HEAD
-import com.speakeasy.watsonbarassistant.Recipe.DiscoveryRecipe
-import com.speakeasy.watsonbarassistant.Recipe.RecipeCollection
-import com.speakeasy.watsonbarassistant.Recipe.RecipeDetail
-import com.squareup.picasso.Picasso
-=======
 import com.facebook.drawee.view.SimpleDraweeView
->>>>>>> master
+
 
 const val MAX_RECIPES = 15
 
