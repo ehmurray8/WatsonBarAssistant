@@ -5,7 +5,7 @@ import java.io.Serializable
 
 @kotlinx.serialization.Serializable
 
-data class DiscoveryRecipe(@Optional var queueValue: Int = 0,
+data class DiscoveryRecipe(@Optional var percentOfIngredientsOwned: Int = 0,
                            @Optional val title: String = "",
                            @Optional val imageUrl: String = "",
                            @Optional val reviewCount: String = "",
@@ -26,13 +26,13 @@ data class DiscoveryRecipe(@Optional var queueValue: Int = 0,
         var count = 0
         for(recipeIngredient in ingredientList) {
             for(userIngredient in userIngredients) {
-                if(recipeIngredient.contains(userIngredient.name, ignoreCase = true)) {
+                if(recipeIngredient.toLowerCase().contains("[\\s ,.]${userIngredient.name.toLowerCase()}[\\s ,.]".toRegex())) {
                     count++
                     break
                 }
             }
         }
-        queueValue = (count * 100) / (ingredientList.count())
+        percentOfIngredientsOwned = (count * 100) / (ingredientList.count())
     }
 
     fun getImageName(): String {
@@ -41,7 +41,7 @@ data class DiscoveryRecipe(@Optional var queueValue: Int = 0,
 
     fun getTags(): List<RecipeTag> {
         val tags = mutableListOf<RecipeTag>()
-        if(checkPercentIngredientsOwned()) tags.add(RecipeTag.MISSING)
+        if(checkMissing()) tags.add(RecipeTag.MISSING)
         if(checkWhiskeyTag()) tags.add(RecipeTag.WHISKEY)
         if(checkVodkaTag()) tags.add(RecipeTag.VODKA)
         if(checkTequilaTag()) tags.add(RecipeTag.TEQUILA)
@@ -69,7 +69,7 @@ data class DiscoveryRecipe(@Optional var queueValue: Int = 0,
         }
     }
 
-    private fun checkPercentIngredientsOwned(): Boolean {
-        return queueValue > 50
+    private fun checkMissing(): Boolean {
+        return percentOfIngredientsOwned < 50
     }
 }
