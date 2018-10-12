@@ -7,7 +7,6 @@ import com.ibm.watson.developer_cloud.discovery.v1.model.QueryOptions
 import com.ibm.watson.developer_cloud.service.exception.NotFoundException
 import com.speakeasy.watsonbarassistant.*
 import kotlinx.serialization.json.JSON
-import java.util.*
 
 class SearchDiscovery(private val inputListener: OnTaskCompleted):
         AsyncTask<Array<Ingredient>, Void, MutableList<DiscoveryRecipe>>() {
@@ -15,12 +14,7 @@ class SearchDiscovery(private val inputListener: OnTaskCompleted):
     override fun doInBackground(vararg args: Array<Ingredient>): MutableList<DiscoveryRecipe> {
         if(BarAssistant.isInternetConnected()) {
             val ingredients = args[0]
-            val orderedRecipes = PriorityQueue<DiscoveryRecipe>(10) { a, b ->
-                when {
-                    a.queueValue < (b.queueValue) -> 1
-                    else -> -1
-                }
-            }
+            val recipes = mutableListOf<DiscoveryRecipe>()
             val discovery = Discovery(VERSION_DIS, USERNAME_MIKE_DIS, PASSWORD_MIKE_DIS)
             discovery.endPoint = URL_MIKE_DIS
 
@@ -32,12 +26,12 @@ class SearchDiscovery(private val inputListener: OnTaskCompleted):
                 for (response in queryResponse.results) {
                     val recipe = JSON.nonstrict.parse<DiscoveryRecipe>(response.toString())
                     recipe.calculatePercentAvailable(ingredients)
-                    orderedRecipes.add(recipe)
+                    recipes.add(recipe)
                 }
-                orderedRecipes.filter {
+                recipes.filter {
                     it.title != "" && it.ingredientList.count() > 0
                 }
-                return orderedRecipes.toMutableList()
+                return recipes.sortedBy { it.percentOfIngredientsOwned }.reversed().toMutableList()
             } catch (exception: NotFoundException) {
                 Log.d("Discovery Down", "Discovery service is not working.")
             }
