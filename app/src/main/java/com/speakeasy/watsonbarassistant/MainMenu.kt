@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
@@ -54,6 +55,9 @@ class MainMenu : AppCompatActivity() {
         tabs.getTabAt(tabIndex)?.select()
         tabs.addOnTabSelectedListener(MainMenuTabListener(this))
         setSupportActionBar(toolbar as Toolbar)
+        if(!BarAssistant.isInternetConnected()) {
+            Toast.makeText(baseContext, "Failed to download user data from the internet.", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun loadSharedPreferences() {
@@ -99,21 +103,23 @@ class MainMenu : AppCompatActivity() {
     }
 
     private fun loadIngredients() {
-        val uid = currentUser?.uid
-        refreshDiscovery()
-        val oldIngredients = ingredients.toTypedArray()
-        if(uid != null) {
-            fireStore.collection("app").document(uid)
-                    .collection("ingredients").get().addOnCompleteListener {
-                ingredients.clear()
-                if (it.isSuccessful) {
-                    it.result?.forEach { snapshot ->
-                        parseSnapshot(snapshot)
-                    }
-                    if(!oldIngredients.toMutableList().containsAll(ingredients)) {
-                        refreshDiscovery(true)
-                    }
-                }
+        if(BarAssistant.isInternetConnected()) {
+            val uid = currentUser?.uid
+            refreshDiscovery()
+            val oldIngredients = ingredients.toTypedArray()
+            if (uid != null) {
+                fireStore.collection("app").document(uid)
+                        .collection("ingredients").get().addOnCompleteListener {
+                            ingredients.clear()
+                            if (it.isSuccessful) {
+                                it.result?.forEach { snapshot ->
+                                    parseSnapshot(snapshot)
+                                }
+                                if (!oldIngredients.toMutableList().containsAll(ingredients)) {
+                                    refreshDiscovery(true)
+                                }
+                            }
+                        }
             }
         }
     }

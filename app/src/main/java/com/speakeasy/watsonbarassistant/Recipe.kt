@@ -7,7 +7,7 @@ import java.io.Serializable
 
 data class DiscoveryRecipe(@Optional var queueValue: Int = 0,
                            @Optional val title: String = "",
-                           @Optional val imageUri: String = "",
+                           @Optional val imageUrl: String = "",
                            @Optional val reviewCount: String = "",
                            @Optional val description: String = "",
                            @Optional val recipeUrl: String = "",
@@ -18,7 +18,9 @@ data class DiscoveryRecipe(@Optional var queueValue: Int = 0,
                            @Optional val totalTime: String = "",
                            @Optional val imageId: String = "",
                            @Optional val googleBestImgUrl: String = "",
-                           @Optional val googleBestImgScore: Double = 0.0): Serializable {
+                           @Optional val googleBestImgScore: Double = 0.0,
+                           @Optional var recipeImageUriString: String = ""): Serializable {
+
 
     fun calculatePercentAvailable(userIngredients: Array<Ingredient>){
         var count = 0
