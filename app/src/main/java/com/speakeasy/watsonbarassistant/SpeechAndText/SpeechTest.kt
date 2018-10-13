@@ -41,7 +41,7 @@ import com.speakeasy.watsonbarassistant.R
 import java.util.ArrayList
 import java.util.HashMap
 
-
+/*
 class MainActivity : AppCompatActivity() {
 
 
@@ -364,4 +364,4 @@ class MainActivity : AppCompatActivity() {
         private val RECORD_REQUEST_CODE = 101
     }
 
-}
+}*/

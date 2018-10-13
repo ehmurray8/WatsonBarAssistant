@@ -4,12 +4,9 @@ import android.os.AsyncTask
 import android.util.Log
 import com.ibm.watson.developer_cloud.discovery.v1.Discovery
 import com.ibm.watson.developer_cloud.discovery.v1.model.QueryOptions
-import com.ibm.watson.developer_cloud.discovery.v1.model.QueryResponse
 import com.ibm.watson.developer_cloud.service.exception.NotFoundException
 import com.speakeasy.watsonbarassistant.*
-import com.speakeasy.watsonbarassistant.DiscoveryRecipe
 import kotlinx.serialization.json.JSON
-import java.util.*
 
 class SearchDiscovery(private val inputListener: OnTaskCompleted):
         AsyncTask<Array<Ingredient>, Void, MutableList<DiscoveryRecipe>>() {
@@ -35,7 +32,7 @@ class SearchDiscovery(private val inputListener: OnTaskCompleted):
                     it.title != "" && it.ingredientList.count() > 0
                 }
                 return recipes.sortedBy { it.percentOfIngredientsOwned }.reversed().toMutableList()
-            } catch (e: NotFoundException) {
+            } catch (exception: NotFoundException) {
                 Log.d("Discovery Down", "Discovery service is not working.")
             }
         }
@@ -47,37 +44,16 @@ class SearchDiscovery(private val inputListener: OnTaskCompleted):
         inputListener.onTaskCompleted(result)
     }
 
-    fun processResponse(input: QueryResponse, ingredients: Array<Ingredient>): MutableList<DiscoveryRecipe>{
-
-        val orderedRecipes = PriorityQueue<DiscoveryRecipe>(10) { a, b ->
-            when {
-                a.queueValue < (b.queueValue) -> 1
-                else -> -1
-            }
-        }
-
-        for (response in input.results) {
-            val recipe = JSON.nonstrict.parse<DiscoveryRecipe>(response.toString())
-            recipe.calculatePercentAvailable(ingredients)
-            orderedRecipes.add(recipe)
-        }
-        orderedRecipes.filter {
-            it.title != "" && it.ingredientList.count() > 0
-        }
-
-        return orderedRecipes.toMutableList()
-    }
-
-    fun buildIngredientQuery(ingredients: Array<Ingredient>): String{
+    private fun buildIngredientQuery(ingredients: Array<Ingredient>): String{
         return ingredients.asSequence().filter { it.name != "" }
                 .joinToString("|", "ingredientList:") { it.name }
     }
 
+
     fun buildPowerSet(ingredients: Array<Ingredient>, length: Int): String{
         var query = ""
 
-        
+
         return query
     }
-
 }

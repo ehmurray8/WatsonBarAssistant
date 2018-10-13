@@ -117,7 +117,7 @@ class IngredientsTab : Fragment() {
         addViaVoiceButton.setOnClickListener {
             Toast.makeText(context, "Voice support to be added!", Toast.LENGTH_SHORT).show()
 
-            recordMessage()
+            //recordMessage()
         }
 
 
@@ -206,6 +206,8 @@ class IngredientsTab : Fragment() {
     //Record a message via Watson Speech to Text
     private fun recordMessage() {
         //mic.setEnabled(false);
+        Toast.makeText(context, "In button", Toast.LENGTH_SHORT).show()
+        Log.i("Speech to Text", "Button Test")
         speechService.setUsernameAndPassword(StT_USERNAME, StT_PASSWORD)
         if (listening !== true) {
             capture = MicrophoneInputStream(true)
