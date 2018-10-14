@@ -3,10 +3,23 @@ package com.speakeasy.watsonbarassistant
 import kotlinx.serialization.Optional
 import java.io.Serializable
 
-@kotlinx.serialization.Serializable
+data class FireStoreRecipe(val title: String = "", val imageUrl: String = "", val reviewCount: Long = 0,
+                           val description: String = "", val recipeUrl: String = "", val ingredientList: List<String> = emptyList(),
+                           val instructionList: List<String> = emptyList(), val prepTime: String = "", val cookTime: String = "",
+                           val totalTime: String = "", val imageId: Long = 0, val googleBestImgUrl: String = "",
+                           val googleBestImgScore: Double = 0.0) {
 
-data class DiscoveryRecipe(@Optional var percentOfIngredientsOwned: Int = 0,
-                           @Optional val title: String = "",
+    fun toDiscoveryRecipe(): DiscoveryRecipe {
+        return DiscoveryRecipe(title = title, imageUrl = imageUrl, reviewCount = reviewCount.toString(),
+                description = description, recipeUrl = recipeUrl, ingredientList = ingredientList,
+                instructionList = instructionList, prepTime = prepTime, cookTime = cookTime,
+                totalTime = totalTime, imageId = imageId.toString(), googleBestImgUrl = googleBestImgUrl,
+                googleBestImgScore = googleBestImgScore)
+    }
+}
+
+@kotlinx.serialization.Serializable
+data class DiscoveryRecipe(@Optional val title: String = "",
                            @Optional val imageUrl: String = "",
                            @Optional val reviewCount: String = "",
                            @Optional val description: String = "",
@@ -18,9 +31,18 @@ data class DiscoveryRecipe(@Optional var percentOfIngredientsOwned: Int = 0,
                            @Optional val totalTime: String = "",
                            @Optional val imageId: String = "",
                            @Optional val googleBestImgUrl: String = "",
-                           @Optional val googleBestImgScore: Double = 0.0,
-                           @Optional var recipeImageUriString: String = ""): Serializable {
+                           @Optional val googleBestImgScore: Double = 0.0): Serializable {
 
+    @Optional var percentOfIngredientsOwned: Int = 0
+    @Optional var recipeImageUriString: String = ""
+
+    fun toFireStoreRecipe(): FireStoreRecipe {
+        return FireStoreRecipe(title = title, imageUrl = imageUrl, reviewCount = reviewCount.toFloat().toLong(),
+                description = description, recipeUrl = recipeUrl, ingredientList = ingredientList,
+                instructionList = instructionList, prepTime = prepTime, cookTime = cookTime,
+                totalTime = totalTime, imageId = imageId.toFloat().toLong(), googleBestImgUrl = googleBestImgUrl,
+                googleBestImgScore = googleBestImgScore)
+    }
 
     fun calculatePercentAvailable(userIngredients: Array<Ingredient>){
         var count = 0

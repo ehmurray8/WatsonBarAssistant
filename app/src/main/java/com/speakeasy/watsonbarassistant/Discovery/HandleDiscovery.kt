@@ -3,14 +3,11 @@ package com.speakeasy.watsonbarassistant.Discovery
 import com.speakeasy.watsonbarassistant.*
 
 
-class HandleDiscovery(private val overAllList: MutableList<MutableList<DiscoveryRecipe>>,
-                      private val mainMenu: MainMenu?): OnTaskCompleted {
+class HandleDiscovery(private val mainMenu: MainMenu?): OnTaskCompleted {
 
     override fun onTaskCompleted(recipes: MutableList<DiscoveryRecipe>) {
-        overAllList[0].clear()
-        overAllList[1].clear()
-        overAllList[0].addAll(recipes)
-        overAllList[1].addAll(recipes.shuffled().toMutableList())
+        BarAssistant.recipes[0].clear()
+        BarAssistant.recipes[0].addAll(recipes)
         val fragment = mainMenu?.fragment
         if(fragment as? HomeTab != null) {
             fragment.refresh()
