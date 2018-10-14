@@ -119,8 +119,8 @@ class IngredientsTab : Fragment() {
     private fun addIngredientToFireStore(ingredient: Ingredient) {
         val mainMenu = (activity as? MainMenu)
         val uid = mainMenu?.currentUser?.uid ?: return
-        fireStore.collection("app").document(uid)
-                .collection("ingredients").add(ingredient).addOnSuccessListener { _ ->
+        fireStore.collection(MAIN_COLLECTION).document(uid)
+                .collection(INGREDIENT_COLLECTION).add(ingredient).addOnSuccessListener { _ ->
                     Toast.makeText(context, "Successfully added ${ingredient.name}.", Toast.LENGTH_SHORT).show()
                     mainMenu.ingredients.add(ingredient)
                     mainMenu.ingredients.sortBy { it.name.toLowerCase().replace("\\s".toRegex(), "") }

@@ -17,7 +17,7 @@ class HomeTab : Fragment() {
     companion object {
         private var lastScrolledState = 0
         var homeScrollPositions: MutableMap<String, Int> =
-                MainMenu.homeCategories.map { it to 0 }.toMap().toMutableMap()
+                BarAssistant.homeCategories.map { it to 0 }.toMap().toMutableMap()
         var homeScrollManagers = mutableListOf<LinearLayoutManager?>(null, null)
     }
 
@@ -30,7 +30,7 @@ class HomeTab : Fragment() {
         super.onStop()
         lastScrolledState = manager?.findFirstVisibleItemPosition() ?: 0
         homeScrollManagers.forEachIndexed { i, manager ->
-            homeScrollPositions[MainMenu.homeCategories[i]] = manager?.findFirstVisibleItemPosition() ?: 0
+            homeScrollPositions[BarAssistant.homeCategories[i]] = manager?.findFirstVisibleItemPosition() ?: 0
         }
     }
 
@@ -39,7 +39,7 @@ class HomeTab : Fragment() {
 
         manager = LinearLayoutManager(activity)
         val mainMenu = activity as MainMenu
-        viewAdapter = HomeAdapter(mainMenu.recipes, MainMenu.homeCategories, mainMenu)
+        viewAdapter = HomeAdapter(mainMenu)
 
         mainRefreshLayout.setOnRefreshListener {
             mainMenu.refreshDiscovery()
