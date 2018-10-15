@@ -34,15 +34,34 @@ class RecipeDetail : AppCompatActivity() {
 
         loadImage(assets, drink_detail_image, recipe, picasso)
 
+        /* Set favorite button after checking if recipe is favorited or not */
+
+        /* NOT favorited previously */
         favorite_not_pressed.setOnClickListener{
             favorite_not_pressed.hide()
             favorite_pressed.show()
+            // Wait ~15 (?) seconds before putting on to firebase favorites list
 
             favorite_pressed.setOnClickListener{
                 favorite_pressed.hide()
                 favorite_not_pressed.show()
+                // Wait ~15 (?) seconds before deleting from firebase favorites list
             }
         }
 
+        /* Favorited previously */
+        favorite_pressed.setOnClickListener{
+            favorite_pressed.hide()
+            favorite_not_pressed.show()
+            // Wait ~15 (?) seconds before deleting from firebase favorites list
+
+            favorite_not_pressed.setOnClickListener{
+                favorite_not_pressed.hide()
+                favorite_pressed.show()
+                // Wait ~15 (?) seconds before putting on to firebase favorites list
+            }
+        }
+
+        /* Or wait until page is navigated away from/ app is closed (???) */
     }
 }
