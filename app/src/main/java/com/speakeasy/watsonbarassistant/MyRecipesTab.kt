@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.speakeasy.watsonbarassistant.GoogleVision.VisionTab
 import kotlinx.android.synthetic.main.fragment_my_recipes_tab.*
 
 class MyRecipesTab : Fragment() {
@@ -54,9 +55,11 @@ class MyRecipesTab : Fragment() {
     private fun setupOnClickListener() {
         recyclerView?.addOnItemClickListener(object : OnItemClickListener {
             override fun onItemClicked(position: Int, view: View) {
-                val intent = Intent(activity, RecipeDetail::class.java)
-                val recipes = (activity as MainMenu).recipes
-                intent.putExtra("Recipe", recipes[0][position])
+//                val intent = Intent(activity, RecipeDetail::class.java)
+//                val recipes = (activity as MainMenu).recipes
+//                intent.putExtra("Recipe", recipes[0][position])
+//                startActivity(intent)
+                val intent = Intent(activity,VisionTab::class.java)
                 startActivity(intent)
             }
         })
