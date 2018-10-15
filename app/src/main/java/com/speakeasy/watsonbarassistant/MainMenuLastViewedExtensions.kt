@@ -20,19 +20,19 @@ internal fun loadRecentlyViewedRecipesSharedPreferences(storedLastViewedTimes: A
 }
 
 internal fun MainMenu.loadRecentlyViewed() {
-        if (BarAssistant.isInternetConnected()) {
-            val uid = currentUser?.uid
-            if (uid != null) {
-                fireStore.collection(MAIN_COLLECTION).document(uid).collection(RECENTLY_VIEWED_COLLECTION)
-                        .document("main").get().addOnCompleteListener {
-                            if (it.isSuccessful) {
-                                val document = it.result ?: return@addOnCompleteListener
-                                processRecentlyViewed(document)
-                            }
+    if (BarAssistant.isInternetConnected()) {
+        val uid = currentUser?.uid
+        if (uid != null) {
+            fireStore.collection(MAIN_COLLECTION).document(uid).collection(RECENTLY_VIEWED_COLLECTION)
+                    .document("main").get().addOnCompleteListener {
+                        if (it.isSuccessful) {
+                            val document = it.result ?: return@addOnCompleteListener
+                            processRecentlyViewed(document)
                         }
-            }
+                    }
         }
     }
+}
 
 
 private fun MainMenu.processRecentlyViewed(document: DocumentSnapshot) {

@@ -63,7 +63,6 @@ class IngredientsTab : Fragment() {
             closeMenus()
             ingredientInputView.visibility = View.VISIBLE
             ingredientInputView.setOnEditorActionListener { _, actionId, _ ->
-                addMenuButton.hide()
 
                 return@setOnEditorActionListener when (actionId) {
                     EditorInfo.IME_ACTION_DONE -> {
@@ -72,13 +71,22 @@ class IngredientsTab : Fragment() {
                         addIngredient(ingredient)
                         ingredientInputView.selectAll()
                         ingredientInputView.setText("")
-                        addMenuButton.show()
                         true
                     }
                     else -> false
                 }
             }
         }
+        
+        ingredientInputView.setOnTouchListener { _, event ->
+            if(ingredientInputView.hasFocus()) {
+                addMenuButton.hide()
+            } else {
+                addMenuButton.show()
+            }
+            ingredientInputView.onTouchEvent(event)
+        }
+
         addViaCameraButton.setOnClickListener { Toast.makeText(context, "Camera support to be added!", Toast.LENGTH_SHORT).show() }
         addViaVoiceButton.setOnClickListener { Toast.makeText(context, "Voice support to be added!", Toast.LENGTH_SHORT).show() }
         val itemDecorator = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
@@ -99,19 +107,13 @@ class IngredientsTab : Fragment() {
      private fun setupSwipeHandler() {
          val context = activity?.baseContext ?: return
          val swipeHandler = object : SwipeToDeleteCallback(context) {
-             override fun onMove(p0: RecyclerView, p1: RecyclerView.ViewHolder, p2: RecyclerView.ViewHolder): Boolean {
-                 super.onMove(p0, p1, p2)
-                 p0.scrollTo(1, 1)
-                 return true
-             }
 
              override fun onSwiped(p0: RecyclerView.ViewHolder, direction: Int) {
-                 val position = p0.layoutPosition
+                 val position = p0.adapterPosition
                  viewAdapter?.removeAt(position)
              }
          }
          val itemTouchHelper = ItemTouchHelper(swipeHandler)
-
          itemTouchHelper.attachToRecyclerView(ingredients_recycler_view)
      }
 

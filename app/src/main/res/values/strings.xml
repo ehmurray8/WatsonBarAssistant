@@ -21,5 +21,7 @@
     <string name="ingredients_tab">Ingredients</string>
     <string name="description_header">Description</string>
     <string name="ingredients_header">Ingredients</string>
+    <string name="shopping_cart_header">Shopping Cart</string>
+    <string name="shopping_cart_add_hint">Add to shopping cart...</string>
 
 </resources>
