@@ -19,7 +19,7 @@
 
         <activity
             android:name=".MainMenu"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="adjustNothing" />
         <activity android:name=".RecipeDetail" />
         <activity android:name=".Login">
             <intent-filter>

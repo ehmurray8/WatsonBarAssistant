@@ -54,18 +54,17 @@ class IngredientsTab : Fragment() {
         menuAnimRotateBack = AnimationUtils.loadAnimation(context, R.anim.menu_anim_rotate_back)
 
         addMenuButton.setOnClickListener {
-            if (isAddMenuOpen) {
-                closeMenus()
-            } else {
-                openMenus()
+            when {
+                isAddMenuOpen -> closeMenus()
+                else -> openMenus()
             }
-
         }
         addViaTextButton.setOnClickListener {
             closeMenus()
             ingredientInputView.visibility = View.VISIBLE
             ingredientInputView.setOnEditorActionListener { _, actionId, _ ->
                 addMenuButton.hide()
+
                 return@setOnEditorActionListener when (actionId) {
                     EditorInfo.IME_ACTION_DONE -> {
                         val name = ingredientInputView.text.toString()
