@@ -29,19 +29,36 @@ class ShoppingCartAdapter(private val shoppingCartItems:  MutableMap<Ingredient,
         val ingredient = orderedItems[position]
         itemText.text = ingredient.name
 
+        val selected = shoppingCartItems[ingredient]
+        if(selected != null) {
+            if(selected) {
+                setNeeded(button, itemText)
+            } else {
+                setNotNeeded(button, itemText)
+            }
+        }
+
         button.setOnClickListener {
             val isSelected = shoppingCartItems[ingredient]
             if(isSelected != null) {
                 shoppingCartItems[ingredient] = !isSelected
                 if (isSelected) {
-                    button.background = activity.getDrawable(R.drawable.empty_circle)
-                    itemText.paintFlags = itemText.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
+                    setNotNeeded(button, itemText)
                 } else {
-                    button.background = activity.getDrawable(R.drawable.full_circle)
-                    itemText.paintFlags = itemText.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                    setNeeded(button, itemText)
                 }
             }
         }
+    }
+
+    private fun setNeeded(button: Button, itemText: TextView) {
+        button.background = activity.getDrawable(R.drawable.empty_circle)
+        itemText.paintFlags = itemText.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
+    }
+
+    private fun setNotNeeded(button: Button, itemText: TextView) {
+        button.background = activity.getDrawable(R.drawable.full_circle)
+        itemText.paintFlags = itemText.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
     }
 
     override fun getItemCount(): Int = orderedItems.count()

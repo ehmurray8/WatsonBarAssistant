@@ -20,7 +20,7 @@
 
         <activity
             android:name=".MainMenu"
-            android:windowSoftInputMode="adjustNothing" />
+            android:windowSoftInputMode="adjustPan" />
         <activity android:name=".RecipeDetail" />
         <activity android:name=".Login">
             <intent-filter>
@@ -31,7 +31,7 @@
         </activity>
         <activity android:name=".UserProfile" />
         <activity android:name=".RecipeCollection" />
-        <activity android:name=".ShoppingCart"></activity>
+        <activity android:name=".ShoppingCart" />
     </application>
 
 </manifest>
