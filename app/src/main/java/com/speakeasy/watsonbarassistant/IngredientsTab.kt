@@ -24,6 +24,7 @@ import com.ibm.watson.developer_cloud.android.library.audio.MicrophoneHelper
 import com.ibm.watson.developer_cloud.android.library.audio.MicrophoneInputStream
 import com.ibm.watson.developer_cloud.android.library.audio.StreamPlayer
 import com.ibm.watson.developer_cloud.android.library.audio.utils.ContentType
+import com.ibm.watson.developer_cloud.service.security.IamOptions
 import com.ibm.watson.developer_cloud.speech_to_text.v1.SpeechToText
 import com.ibm.watson.developer_cloud.speech_to_text.v1.model.RecognizeOptions
 import com.ibm.watson.developer_cloud.speech_to_text.v1.model.SpeechRecognitionResults
@@ -48,7 +49,6 @@ class IngredientsTab : Fragment() {
     //var context: com.ibm.watson.developer_cloud.conversation.v1.model.Context? = null
     var streamPlayer: StreamPlayer? = null
     private val initialRequest: Boolean = false
-    private val speechService: SpeechToText = SpeechToText()
     private var capture: MicrophoneInputStream = MicrophoneInputStream(false)
     //private val recoTokens: SpeakerLabelsDiarization.RecoTokens? = null
     private val microphoneHelper: MicrophoneHelper? = null
@@ -117,7 +117,7 @@ class IngredientsTab : Fragment() {
         addViaVoiceButton.setOnClickListener {
             Toast.makeText(context, "Voice support to be added!", Toast.LENGTH_SHORT).show()
 
-            //recordMessage()
+            recordMessage()
         }
 
 
@@ -207,9 +207,35 @@ class IngredientsTab : Fragment() {
     private fun recordMessage() {
         //mic.setEnabled(false);
         Toast.makeText(context, "In button", Toast.LENGTH_SHORT).show()
-        Log.i("Speech to Text", "Button Test")
-        speechService.setUsernameAndPassword(StT_USERNAME, StT_PASSWORD)
-        if (listening !== true) {
+        Log.i("SpeechtoText", "Button Test")
+        var options = IamOptions.Builder()
+            .apiKey(StT_API_KEY)
+            .build()
+
+        var speechService = SpeechToText(options)
+
+        speechService.setEndPoint(StT_ENDPOINT)
+
+        capture = MicrophoneInputStream(true)
+        Thread(Runnable {
+            try {
+                speechService.recognizeUsingWebSocket(getRecognizeOptions(),  MicrophoneRecognizeDelegate())
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }).start()
+
+        try {
+            capture.close()
+            listening = false
+            Toast.makeText(context, "Stopped Listening....Click to Start", Toast.LENGTH_LONG).show()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        //speechService.setUsernameAndPassword(StT_USERNAME, StT_PASSWORD)
+        /*
+        if (listening) {
             capture = MicrophoneInputStream(true)
             Thread(Runnable {
                 try {
@@ -230,6 +256,7 @@ class IngredientsTab : Fragment() {
             }
 
         }
+        */
     }
 
 

@@ -17,5 +17,5 @@ const val DEFAULT_IMAGE_URI = "file:///android_asset/$DEFAULT_RECIPE_IMAGE_NAME"
 
 const val RECORD_REQUEST_CODE = 101
 const val REQUEST_RECORD_AUDIO_PERMISSION = 200
-const val StT_USERNAME = ""
-const val StT_PASSWORD = ""
+const val StT_API_KEY = "9UzRxSxK4QeVQdPmRjSbwd74M8PApeKpMNd_Y_2TD0Gz"
+const val StT_ENDPOINT = "https://gateway-wdc.watsonplatform.net/speech-to-text/api"
