@@ -46,7 +46,8 @@ class HomeAdapter(private var activity: Activity):
         val layout = holder.layout
         val shoppingCartButton = layout.getChildAt(0)
         shoppingCartButton.setOnClickListener {
-            Log.d("TODO", "Create Shopping Cart View.")
+            val intent = Intent(activity, ShoppingCart::class.java)
+            activity.startActivity(intent)
         }
         val ingredientsButton = layout.getChildAt(1)
         ingredientsButton.setOnClickListener {
