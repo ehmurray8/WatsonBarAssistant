@@ -8,23 +8,33 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.support.annotation.RequiresApi
+import android.support.constraint.ConstraintLayout
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.FileProvider
 import android.support.v7.app.AppCompatActivity
 import android.util.AttributeSet
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.view.ViewParent
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.Toast
+import com.speakeasy.watsonbarassistant.HomeAdapter
+import com.speakeasy.watsonbarassistant.IngredientsTab
+import com.speakeasy.watsonbarassistant.MainMenu
 import com.speakeasy.watsonbarassistant.R
+import jp.wasabeef.blurry.Blurry
 import kotlinx.android.synthetic.main.test_vision.*
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -33,8 +43,10 @@ import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
 import khttp.*
+import kotlinx.android.synthetic.main.fragment_ingredient_tab.*
 import org.json.JSONArray
 import org.json.JSONObject
+import kotlin.collections.ArrayList
 
 class VisionTab : AppCompatActivity(), View.OnClickListener  {
 
@@ -44,6 +56,7 @@ class VisionTab : AppCompatActivity(), View.OnClickListener  {
     lateinit private var imageUri:Uri
     lateinit private var picture:ImageView
     lateinit private var takePhoto:Button
+    lateinit private var choices:LinearLayout
     lateinit private var mCurrentPhotoPath:String
 
     val visionAPI = "AIzaSyCTLNIEqcF99egsLSplk4Y_vucWdRd3ttQ"
@@ -54,16 +67,17 @@ class VisionTab : AppCompatActivity(), View.OnClickListener  {
 
         takePhoto = findViewById<Button>(R.id.take_photo)
         picture = findViewById<ImageView>(R.id.picture)
+        choices = findViewById<LinearLayout>(R.id.take_photo_choices)
 
         takePhoto.setOnClickListener(this)
     }
 
     override fun onClick(v: View) {
-        if (ContextCompat.checkSelfPermission(this,
+        if (ContextCompat.checkSelfPermission(v.context,
                 android.Manifest.permission_group.STORAGE)
         != PackageManager.PERMISSION_GRANTED) {
 
-                ActivityCompat.requestPermissions(this,
+                ActivityCompat.requestPermissions(v.context as Activity,
                         arrayOf(android.Manifest.permission_group.STORAGE),
                         4)
         }
@@ -170,7 +184,9 @@ class VisionTab : AppCompatActivity(), View.OnClickListener  {
         if (requestCode == REQUEST_TAKE_PHOTO){
             if (resultCode == Activity.RESULT_OK){
                 var bitmap = BitmapFactory.decodeStream(contentResolver.openInputStream(imageUri))
-                picture.setImageBitmap(bitmap)
+//                picture.setImageBitmap(bitmap)
+//                Blurry.with(picture.context).from(bitmap).into(picture)
+                Blurry.with(picture.context).radius(10).sampling(8).color(Color.argb(0.6f,0f,0f,0f)).async().from(bitmap).into(picture)
 
                 val encoded = encodeBitmapToBase64(bitmap)
 
@@ -193,13 +209,53 @@ class VisionTab : AppCompatActivity(), View.OnClickListener  {
                 var jRequest = JSONObject()
                 jRequest.put("requests",jRequestsArray)
 
-
+                var responseJson= JSONObject()
+                var responseList = ArrayList<String>()
                 khttp.async.post("https://vision.googleapis.com/v1/images:annotate?key="+visionAPI,data=jRequest, onResponse={
                     Log.i("Response","$statusCode")
                     Log.i("Response","$text")
+                    responseJson = JSONObject(text)
+                    if (responseJson.has("responses")){
+                        var responseArray = responseJson.getJSONArray("responses")
+                        var responseObject = responseArray.getJSONObject(0)
+                        var webDetectionObject = responseObject.getJSONObject("webDetection")
+                        var webEntitiesArray = webDetectionObject.getJSONArray("webEntities")
+                        for (index in 0 until webEntitiesArray.length()){
+                            var item = webEntitiesArray.getJSONObject(index)
+                            if (item.has("description")){
+                                responseList.add(item.getString("description"))
+                            }
+                        }
+                    }
+
+                    Log.i("ResponseList",responseList.toString())
+                    var size = 5
+                    if(responseList.size<5){
+                        size = responseList.size
+                    }
+                    for (i in 0 until size){
+                        var choicesContainer = findViewById<LinearLayout>(R.id.take_photo_choices)
+                        var button = choicesContainer.getChildAt(i) as Button
+
+                        runOnUiThread(Runnable {
+                            kotlin.run {
+                                button.setText(responseList.get(i))
+                                button.setOnClickListener(){
+                                    View.OnClickListener(){
+                                        fun onClick(v: View){
+                                            val resultIntent = Intent()
+                                            resultIntent.putExtra("Ingredient Selected", "tea")
+                                            setResult(Activity.RESULT_OK, resultIntent)
+                                            finish()
+                                        }
+                                }
+                                }
+                            }
+                        })
+                    }
+
+
                 })
-
-
 
 
             }
@@ -209,11 +265,14 @@ class VisionTab : AppCompatActivity(), View.OnClickListener  {
     @RequiresApi(Build.VERSION_CODES.O)
     fun encodeBitmapToBase64(bitmap: Bitmap):String{
         var byteArrayOutputStream :ByteArrayOutputStream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG,100,byteArrayOutputStream)
+        bitmap.compress(Bitmap.CompressFormat.JPEG,30,byteArrayOutputStream)
         val byteArray = byteArrayOutputStream.toByteArray()
         val encoded : String = Base64.getEncoder().encodeToString(byteArray)
 
         return encoded
     }
+
+
+
 
 }

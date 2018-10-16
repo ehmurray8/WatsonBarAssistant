@@ -1,6 +1,8 @@
 package com.speakeasy.watsonbarassistant
 
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.DividerItemDecoration
@@ -15,6 +17,7 @@ import android.view.animation.AnimationUtils
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import com.google.firebase.firestore.FirebaseFirestore
+import com.speakeasy.watsonbarassistant.GoogleVision.VisionTab
 import kotlinx.android.synthetic.main.fragment_ingredient_tab.*
 
 
@@ -80,12 +83,27 @@ class IngredientsTab : Fragment() {
                 }
             }
         }
-        addViaCameraButton.setOnClickListener { Toast.makeText(context, "Camera support to be added!", Toast.LENGTH_SHORT).show() }
+        addViaCameraButton.setOnClickListener {
+//            Toast.makeText(context, "Camera support to be added!", Toast.LENGTH_SHORT).show()
+            val intent = Intent(activity,VisionTab::class.java)
+            startActivityForResult(intent,7)
+        }
         addViaVoiceButton.setOnClickListener { Toast.makeText(context, "Voice support to be added!", Toast.LENGTH_SHORT).show() }
         val itemDecorator = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
         ingredients_recycler_view.addItemDecoration(itemDecorator)
 
         setupSwipeHandler()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode==7){
+            if(resultCode== Activity.RESULT_OK){
+                val ingredientSelected = data.getStringExtra("Ingredient Selected")
+                val ingredient = Ingredient(ingredientSelected)
+                addIngredient(ingredient = ingredient)
+            }
+        }
     }
 
     private fun addIngredient(ingredient: Ingredient) {

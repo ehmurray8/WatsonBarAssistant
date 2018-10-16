@@ -83,6 +83,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-storage:16.0.3'
 
     implementation 'com.github.jkcclemens:khttp:-SNAPSHOT'
+    implementation 'jp.wasabeef:blurry:2.1.1'
 }
 
 apply plugin: 'com.google.gms.google-services'
