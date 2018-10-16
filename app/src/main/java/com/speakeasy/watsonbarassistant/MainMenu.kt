@@ -39,7 +39,6 @@ class MainMenu : AppCompatActivity() {
 
     var permissionToRecordAccepted = false
     var ingredients = mutableListOf<Ingredient>()
-    var recipes = mutableListOf<MutableList<DiscoveryRecipe>>()
     var documentsMap = mutableMapOf<String, String>()
     var currentUser: FirebaseUser? = null
     var tabIndex = 1
@@ -47,20 +46,13 @@ class MainMenu : AppCompatActivity() {
 
     private var tabsItems: Array<TabItem>? = null
 
-    private val fireStore = FirebaseFirestore.getInstance()
+    internal val temporaryLastViewedTimes = mutableListOf<Long>()
+    internal val temporaryLastViewedRecipes = mutableListOf<DiscoveryRecipe>()
+
+    internal val fireStore = FirebaseFirestore.getInstance()
     private var authorization = FirebaseAuth.getInstance()
     private var lastDiscoveryRefreshTime = -1L
 
-
-    companion object {
-        var homeCategories = mutableListOf("Suggestions", "Recently Viewed")
-    }
-
-    init {
-        homeCategories.forEach { _ ->
-            recipes.add(mutableListOf())
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,76 +78,89 @@ class MainMenu : AppCompatActivity() {
             }
         }
     }
-        private fun loadSharedPreferences() {
-            val preferences = getSharedPreferences(SHARED_PREFERENCES_SETTINGS, Context.MODE_PRIVATE)
-            tabIndex = preferences.getInt(TAB_INDEX, 1)
-            val gson = Gson()
-            homeCategories.forEachIndexed { i, category ->
-                val recipeJson = preferences.getString(category, "")
-                val storedRecipes = gson.fromJson(recipeJson, Array<DiscoveryRecipe>::class.java)
-                val ingredientsJson = preferences.getString(INGREDIENT_PREFERENCES_ID, "")
-                val storedIngredients = gson.fromJson(ingredientsJson, Array<Ingredient>::class.java)
-                if (storedRecipes != null && storedRecipes.count() > 0) {
-                    recipes[i].addAll(storedRecipes.toList())
-                }
-                if (storedIngredients != null && storedIngredients.count() > 0) {
-                    ingredients.addAll(storedIngredients)
-                }
+
+    private fun loadSharedPreferences() {
+        val preferences = getSharedPreferences(SHARED_PREFERENCES_SETTINGS, Context.MODE_PRIVATE)
+        tabIndex = preferences.getInt(TAB_INDEX, 1)
+        val gson = Gson()
+        BarAssistant.homeCategories.forEachIndexed { i, category ->
+            val recipeJson = preferences.getString(category, "")
+            val storedRecipes = gson.fromJson(recipeJson, Array<DiscoveryRecipe>::class.java)
+            val ingredientsJson = preferences.getString(INGREDIENT_PREFERENCES_ID, "")
+            val storedIngredients = gson.fromJson(ingredientsJson, Array<Ingredient>::class.java)
+            val lastViewedTimesJson = preferences.getString(LAST_VIEWED_RECIPE_TIMES, "")
+            val storedLastViewedTimes = gson.fromJson(lastViewedTimesJson, Array<Long>::class.java)
+            if (storedRecipes != null && storedRecipes.count() > 0) {
+                BarAssistant.recipes[i].addAll(storedRecipes.toList())
             }
+            if (storedIngredients != null && storedIngredients.count() > 0) {
+                ingredients.addAll(storedIngredients)
+
+            }
+            loadRecentlyViewedRecipesSharedPreferences(storedLastViewedTimes
+                    ?: return@forEachIndexed)
         }
+    }
 
         override fun onCreateOptionsMenu(menu: Menu?): Boolean {
             menuInflater.inflate(R.menu.main_toolbar_menu, menu)
             return true
         }
 
-        override fun onPause() {
-            super.onPause()
-            val preferences = getSharedPreferences(SHARED_PREFERENCES_SETTINGS, Context.MODE_PRIVATE)
-            val editor = preferences.edit()
-            val gson = Gson()
-            homeCategories.forEachIndexed { i, category ->
-                val json = gson.toJson(recipes[i].toTypedArray())
-                editor.putString(category, json)
-            }
-            val ingredientJson = gson.toJson(ingredients.toTypedArray())
-            editor.putString(INGREDIENT_PREFERENCES_ID, ingredientJson)
-            editor.apply()
-        }
+    override fun onPause() {
+        super.onPause()
+        val barAssistant = (application as BarAssistant)
+        barAssistant.storeRecentlyViewed(authorization, fireStore)
+        val preferences = getSharedPreferences(SHARED_PREFERENCES_SETTINGS, Context.MODE_PRIVATE)
+        val editor = preferences.edit()
+        val gson = Gson()
+        val ingredientJson = gson.toJson(ingredients.toTypedArray())
+        editor.putString(INGREDIENT_PREFERENCES_ID, ingredientJson)
+        editor.apply()
+    }
 
-        private fun loadUserData() {
-            currentUser = authorization.currentUser
-            loadIngredients()
-        }
+    override fun onDestroy() {
+        super.onDestroy()
+        BarAssistant.lastViewedTimes.clear()
+        BarAssistant.lastViewedRecipes.clear()
+        BarAssistant.recipes.forEach { it.clear() }
+    }
 
-        private fun loadIngredients() {
-            if (BarAssistant.isInternetConnected()) {
-                val uid = currentUser?.uid
-                refreshDiscovery()
-                val oldIngredients = ingredients.toTypedArray()
-                if (uid != null) {
-                    fireStore.collection("app").document(uid)
-                            .collection("ingredients").get().addOnCompleteListener {
-                                ingredients.clear()
-                                if (it.isSuccessful) {
-                                    it.result?.forEach { snapshot ->
-                                        parseSnapshot(snapshot)
-                                    }
-                                    if (!oldIngredients.toMutableList().containsAll(ingredients)) {
-                                        refreshDiscovery(true)
-                                    }
+    private fun loadUserData() {
+        currentUser = authorization.currentUser
+        loadIngredients()
+        loadRecentlyViewed()
+    }
+
+    private fun loadIngredients() {
+        if (BarAssistant.isInternetConnected()) {
+            val uid = currentUser?.uid
+            refreshDiscovery()
+            val oldIngredients = ingredients.toTypedArray()
+            if (uid != null) {
+                fireStore.collection(MAIN_COLLECTION).document(uid)
+                        .collection(INGREDIENT_COLLECTION).get().addOnCompleteListener {
+                            ingredients.clear()
+                            if (it.isSuccessful) {
+                                it.result?.forEach { snapshot ->
+                                    parseSnapshot(snapshot)
+                                }
+                                if (!oldIngredients.toMutableList().containsAll(ingredients)) {
+                                    refreshDiscovery(true)
+
                                 }
                             }
                 }
             }
         }
+    }
 
         fun refreshDiscovery(forceRefresh: Boolean = false) {
             if (ingredients.count() > 0) {
                 if (forceRefresh || lastDiscoveryRefreshTime == -1L ||
                         Date().time - lastDiscoveryRefreshTime >= 60_000) {
                     lastDiscoveryRefreshTime = Date().time
-                    val discovery = SearchDiscovery(HandleDiscovery(recipes, this))
+                    val discovery = SearchDiscovery(HandleDiscovery(this))
                     discovery.execute(ingredients.toTypedArray())
                     Log.d("Discovery", "Refreshing Discovery...")
                 }
@@ -167,14 +172,13 @@ class MainMenu : AppCompatActivity() {
             showCurrentFragment()
         }
 
-        fun showCurrentFragment() {
-            when (tabIndex) {
-                0 -> fragment = IngredientsTab()
-                1 -> fragment = HomeTab()
-                2 -> fragment = MyRecipesTab()
-            }
-            replaceFragment()
+    fun showCurrentFragment() {
+        when (tabIndex) {
+            0 -> fragment = IngredientsTab()
+            1 -> fragment = HomeTab()
+            2 -> fragment = MyRecipesTab()
         }
+    }
 
         private fun replaceFragment() {
             val transaction = supportFragmentManager.beginTransaction()
@@ -182,6 +186,7 @@ class MainMenu : AppCompatActivity() {
             transaction.commit()
             tabsItems?.get(tabIndex)?.isSelected = true
         }
+
 
         private fun parseSnapshot(snapshot: QueryDocumentSnapshot) {
             val name = snapshot.get("name") as? String
@@ -194,67 +199,66 @@ class MainMenu : AppCompatActivity() {
             }
         }
 
-        override fun onOptionsItemSelected(item: MenuItem): Boolean {
-            if (item.itemId == R.id.user_profile) {
-                val intent = Intent(this, UserProfile::class.java)
-                startActivity(intent)
-                return true
+            override fun onOptionsItemSelected(item: MenuItem): Boolean {
+                if (item.itemId == R.id.user_profile) {
+                    val intent = Intent(this, UserProfile::class.java)
+                    startActivity(intent)
+                    return true
+                }
+                return super.onOptionsItemSelected(item)
             }
-            return super.onOptionsItemSelected(item)
-        }
 
-        fun showMicText(text: String) {
-            runOnUiThread {
-                fun run() {
-                    //inputMessage.setText(text)
+            fun showMicText(text: String) {
+                runOnUiThread {
+                    fun run() {
+                        //inputMessage.setText(text)
+                    }
                 }
             }
-        }
 
-        fun enableMicButton(btnRecord: ImageButton) {
-            runOnUiThread {
-                @Override
-                fun run() {
-                    btnRecord.setEnabled(true)
+            fun enableMicButton(btnRecord: ImageButton) {
+                runOnUiThread {
+                    @Override
+                    fun run() {
+                        btnRecord.setEnabled(true)
+                    }
                 }
             }
-        }
 
-        fun showError(e: Exception) {
-            runOnUiThread {
-                @Override
-                fun run() {
-                    Toast.makeText(this@MainMenu, e.message, Toast.LENGTH_SHORT).show()
-                    e.printStackTrace()
+            fun showError(e: Exception) {
+                runOnUiThread {
+                    @Override
+                    fun run() {
+                        Toast.makeText(this@MainMenu, e.message, Toast.LENGTH_SHORT).show()
+                        e.printStackTrace()
+                    }
                 }
             }
-        }
 
 
-        private fun makeRequest() {
-            var permission = Array(32) { "Manifest.permission.RECORD_AUDIO" }
-            ActivityCompat.requestPermissions(this, permission, RECORD_REQUEST_CODE)
-        }
-
-    // Speech-to-Text Record Audio permission
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
-        when (requestCode) {
-            REQUEST_RECORD_AUDIO_PERMISSION -> {
-                permissionToRecordAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED
+            private fun makeRequest() {
+                var permission = Array(32) { "Manifest.permission.RECORD_AUDIO" }
+                ActivityCompat.requestPermissions(this, permission, RECORD_REQUEST_CODE)
             }
-            RECORD_REQUEST_CODE -> {
-                if (grantResults.size == 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                    Log.i("Speech to Text", "Permission has been denied by user")
-                } else {
-                    Log.i("Speech to Text", "Permission has been granted by user")
+
+            // Speech-to-Text Record Audio permission
+            override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+                when (requestCode) {
+                    REQUEST_RECORD_AUDIO_PERMISSION -> {
+                        permissionToRecordAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED
+                    }
+                    RECORD_REQUEST_CODE -> {
+                        if (grantResults.size == 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                            Log.i("Speech to Text", "Permission has been denied by user")
+                        } else {
+                            Log.i("Speech to Text", "Permission has been granted by user")
+                        }
+                        return
+                    }
                 }
-                return
+                if (!permissionToRecordAccepted) finish()
             }
+
         }
-        if (!permissionToRecordAccepted) finish()
-    }
-
-}
-

@@ -87,18 +87,16 @@ class IngredientsTab : Fragment() {
         menuAnimRotateBack = AnimationUtils.loadAnimation(context, R.anim.menu_anim_rotate_back)
 
         addMenuButton.setOnClickListener {
-            if (isAddMenuOpen) {
-                closeMenus()
-            } else {
-                openMenus()
+            when {
+                isAddMenuOpen -> closeMenus()
+                else -> openMenus()
             }
-
         }
         addViaTextButton.setOnClickListener {
             closeMenus()
             ingredientInputView.visibility = View.VISIBLE
             ingredientInputView.setOnEditorActionListener { _, actionId, _ ->
-                addMenuButton.hide()
+
                 return@setOnEditorActionListener when (actionId) {
                     EditorInfo.IME_ACTION_DONE -> {
                         val name = ingredientInputView.text.toString()
@@ -106,13 +104,22 @@ class IngredientsTab : Fragment() {
                         addIngredient(ingredient)
                         ingredientInputView.selectAll()
                         ingredientInputView.setText("")
-                        addMenuButton.show()
                         true
                     }
                     else -> false
                 }
             }
         }
+        
+        ingredientInputView.setOnTouchListener { _, event ->
+            if(ingredientInputView.hasFocus()) {
+                addMenuButton.hide()
+            } else {
+                addMenuButton.show()
+            }
+            ingredientInputView.onTouchEvent(event)
+        }
+
         addViaCameraButton.setOnClickListener { Toast.makeText(context, "Camera support to be added!", Toast.LENGTH_SHORT).show() }
         addViaVoiceButton.setOnClickListener {
             Toast.makeText(context, "Voice support to be added!", Toast.LENGTH_SHORT).show()
@@ -139,27 +146,21 @@ class IngredientsTab : Fragment() {
      private fun setupSwipeHandler() {
          val context = activity?.baseContext ?: return
          val swipeHandler = object : SwipeToDeleteCallback(context) {
-             override fun onMove(p0: RecyclerView, p1: RecyclerView.ViewHolder, p2: RecyclerView.ViewHolder): Boolean {
-                 super.onMove(p0, p1, p2)
-                 p0.scrollTo(1, 1)
-                 return true
-             }
 
              override fun onSwiped(p0: RecyclerView.ViewHolder, direction: Int) {
-                 val position = p0.layoutPosition
+                 val position = p0.adapterPosition
                  viewAdapter?.removeAt(position)
              }
          }
          val itemTouchHelper = ItemTouchHelper(swipeHandler)
-
          itemTouchHelper.attachToRecyclerView(ingredients_recycler_view)
      }
 
     private fun addIngredientToFireStore(ingredient: Ingredient) {
         val mainMenu = (activity as? MainMenu)
         val uid = mainMenu?.currentUser?.uid ?: return
-        fireStore.collection("app").document(uid)
-                .collection("ingredients").add(ingredient).addOnSuccessListener { _ ->
+        fireStore.collection(MAIN_COLLECTION).document(uid)
+                .collection(INGREDIENT_COLLECTION).add(ingredient).addOnSuccessListener { _ ->
                     Toast.makeText(context, "Successfully added ${ingredient.name}.", Toast.LENGTH_SHORT).show()
                     mainMenu.ingredients.add(ingredient)
                     mainMenu.ingredients.sortBy { it.name.toLowerCase().replace("\\s".toRegex(), "") }

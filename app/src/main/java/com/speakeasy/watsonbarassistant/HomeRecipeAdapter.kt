@@ -11,7 +11,6 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import com.facebook.drawee.view.SimpleDraweeView
 
-
 const val MAX_RECIPES = 15
 
 class HomeRecipeAdapter(private val recipes: MutableList<DiscoveryRecipe>,
@@ -35,11 +34,11 @@ class HomeRecipeAdapter(private val recipes: MutableList<DiscoveryRecipe>,
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if(position == getLastPosition()) 1 else 0
+        return if(position == MAX_HOME_RECIPES) 1 else 0
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if(position == getLastPosition()) {
+        if(position == MAX_HOME_RECIPES) {
             if(holder as? ViewHolderSeeAll != null) {
                 holder.card.setOnClickListener {
                     RecipeCollection.recipesList = recipes
@@ -76,15 +75,8 @@ class HomeRecipeAdapter(private val recipes: MutableList<DiscoveryRecipe>,
     override fun getItemCount(): Int {
         return when {
             recipes.count() == 0 -> 0
-            recipes.count() <= MAX_RECIPES -> recipes.count() + 1
-            else -> MAX_RECIPES + 1
+            recipes.count() <= MAX_HOME_RECIPES -> recipes.count()
+            else -> MAX_HOME_RECIPES + 1
         }
-    }
-
-    private fun getLastPosition(): Int {
-        if(recipes.count() <= MAX_RECIPES) {
-            return recipes.count()
-        }
-        return MAX_RECIPES
     }
 }

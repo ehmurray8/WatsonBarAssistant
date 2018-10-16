@@ -36,7 +36,7 @@ class MyRecipesTab : Fragment() {
 
         manager = LinearLayoutManager(activity?.baseContext)
         val mainMenu = activity as MainMenu
-        viewAdapter = MyRecipeAdapter(mainMenu.recipes[0], mainMenu)
+        viewAdapter = MyRecipeAdapter(BarAssistant.recipes[0], mainMenu)
 
         recyclerView = recipes_list.apply {
             setHasFixedSize(true)
@@ -56,7 +56,7 @@ class MyRecipesTab : Fragment() {
         recyclerView?.addOnItemClickListener(object : OnItemClickListener {
             override fun onItemClicked(position: Int, view: View) {
                 val intent = Intent(activity, RecipeDetail::class.java)
-                val recipes = (activity as MainMenu).recipes
+                val recipes = BarAssistant.recipes
                 intent.putExtra("Recipe", recipes[0][position])
                 startActivity(intent)
             }

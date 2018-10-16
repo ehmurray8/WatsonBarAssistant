@@ -13,8 +13,7 @@ import com.speakeasy.watsonbarassistant.DiscoveryRecipe
 import com.speakeasy.watsonbarassistant.RecipeCollection
 
 
-class HomeAdapter(private var dataSet: MutableList<MutableList<DiscoveryRecipe>>,
-                  private var categories: MutableList<String>, private var activity: Activity):
+class HomeAdapter(private var activity: Activity):
         RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     class RecipeViewHolder(val layout: LinearLayout) : RecyclerView.ViewHolder(layout)
@@ -49,7 +48,8 @@ class HomeAdapter(private var dataSet: MutableList<MutableList<DiscoveryRecipe>>
         val layout = holder.layout
         val shoppingCartButton = layout.getChildAt(0)
         shoppingCartButton.setOnClickListener {
-            Log.d("TODO", "Create Shopping Cart View.")
+            val intent = Intent(activity, ShoppingCart::class.java)
+            activity.startActivity(intent)
         }
         val ingredientsButton = layout.getChildAt(1)
         ingredientsButton.setOnClickListener {
@@ -64,12 +64,13 @@ class HomeAdapter(private var dataSet: MutableList<MutableList<DiscoveryRecipe>>
     private fun bindRecipeViewHolder(recipeHolder: RecipeViewHolder, position: Int) {
         val layout = recipeHolder.layout
         val headerView = layout.getChildAt(0) as Button
-        headerView.text = activity.resources.getString(R.string.collection_name, categories[position])
-        val category = categories[position]
+        val category = BarAssistant.homeCategories[position]
+        headerView.text = activity.resources.getString(R.string.collection_name, category)
+        val recipes = BarAssistant.recipes[position]
         headerView.setOnClickListener {
             val intent = Intent(activity.applicationContext, RecipeCollection::class.java)
             intent.putExtra("Collection Name", category)
-            RecipeCollection.recipesList = dataSet[position]
+            RecipeCollection.recipesList = recipes
             activity.startActivity(intent)
         }
         val recipesList = layout.getChildAt(1) as RecyclerView
@@ -78,7 +79,7 @@ class HomeAdapter(private var dataSet: MutableList<MutableList<DiscoveryRecipe>>
                 LinearLayoutManager.HORIZONTAL, false)
 
         HomeTab.homeScrollManagers[position] = viewManager
-        val viewAdapter = HomeRecipeAdapter(dataSet[position], activity, category)
+        val viewAdapter = HomeRecipeAdapter(recipes, activity, category)
 
         recipesList.apply {
             setHasFixedSize(true)
@@ -89,5 +90,5 @@ class HomeAdapter(private var dataSet: MutableList<MutableList<DiscoveryRecipe>>
         viewManager.scrollToPosition(HomeTab.homeScrollPositions[category] ?: 0)
     }
 
-    override fun getItemCount(): Int = dataSet.count() + 1
+    override fun getItemCount(): Int = BarAssistant.recipes.count() + 1
 }
