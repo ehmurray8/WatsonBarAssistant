@@ -1,6 +1,9 @@
 package com.speakeasy.watsonbarassistant.Discovery
 
 import com.speakeasy.watsonbarassistant.*
+import com.speakeasy.watsonbarassistant.DiscoveryRecipe
+import com.speakeasy.watsonbarassistant.Recipe.MyRecipesTab
+
 
 
 class HandleDiscovery(private val mainMenu: MainMenu?): OnTaskCompleted {

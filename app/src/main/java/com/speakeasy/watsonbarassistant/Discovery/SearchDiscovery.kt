@@ -48,4 +48,12 @@ class SearchDiscovery(private val inputListener: OnTaskCompleted):
         return ingredients.asSequence().filter { it.name != "" }
                 .joinToString("|", "ingredientList:") { it.name }
     }
+
+
+    fun buildPowerSet(ingredients: Array<Ingredient>, length: Int): String{
+        var query = ""
+
+
+        return query
+    }
 }

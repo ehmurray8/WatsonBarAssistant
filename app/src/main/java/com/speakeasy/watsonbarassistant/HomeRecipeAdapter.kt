@@ -11,6 +11,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import com.facebook.drawee.view.SimpleDraweeView
 
+const val MAX_RECIPES = 15
 
 class HomeRecipeAdapter(private val recipes: MutableList<DiscoveryRecipe>,
                         private val activity: Activity, private val collectionName: String):

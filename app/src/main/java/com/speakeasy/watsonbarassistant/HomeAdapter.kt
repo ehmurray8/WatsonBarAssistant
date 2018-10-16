@@ -9,6 +9,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
+import com.speakeasy.watsonbarassistant.DiscoveryRecipe
+import com.speakeasy.watsonbarassistant.RecipeCollection
 
 
 class HomeAdapter(private var activity: Activity):

@@ -16,8 +16,15 @@ const val GROCERY_NEEDED_PREFERENCES = "GroceryNeeded"
 
 const val TAB_INDEX = "TabIndex"
 const val INGREDIENT_PREFERENCES_ID = "Ingredient"
+const val DIS_COUNT = 50L
 
 const val DEFAULT_IMAGE_URI = "file:///android_asset/$DEFAULT_RECIPE_IMAGE_NAME"
+
+//STT consts
+const val RECORD_REQUEST_CODE = 101
+const val REQUEST_RECORD_AUDIO_PERMISSION = 200
+const val StT_API_KEY = "9UzRxSxK4QeVQdPmRjSbwd74M8PApeKpMNd_Y_2TD0Gz"
+const val StT_ENDPOINT = "https://gateway-wdc.watsonplatform.net/speech-to-text/api"
 
 const val MAX_LAST_VIEWED = 50
 const val MAX_HOME_RECIPES = 15
