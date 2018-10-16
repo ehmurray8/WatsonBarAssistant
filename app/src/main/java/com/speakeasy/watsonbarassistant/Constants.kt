@@ -37,3 +37,8 @@ const val FAVORITES_COLLECTION = "favorites"
 
 const val GROCERY_INGREDIENTS = "ingredients"
 const val GROCERY_NEEDED = "needed"
+
+const val RECORD_REQUEST_CODE = 1122
+
+const val StT_API_KEY = "9UzRxSxK4QeVQdPmRjSbwd74M8PApeKpMNd_Y_2TD0Gz"
+const val StT_ENDPOINT = "https://gateway-wdc.watsonplatform.net/speech-to-text/api"
