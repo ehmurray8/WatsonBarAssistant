@@ -40,6 +40,8 @@ before_install:
   -in travis-files.tar.enc -out travis-files.tar -d
 - tar xvf travis-files.tar
 - ls
+- ls app
+- ls app/src/main/java/com/speakeasy/watsonbarassistant/
 - mv google-services.json ./app/
 - mv travis.keystore.jks ./app/
   mv Keys.kt ./app/src/main/java/com/speakeasy/watsonbarassistant/
