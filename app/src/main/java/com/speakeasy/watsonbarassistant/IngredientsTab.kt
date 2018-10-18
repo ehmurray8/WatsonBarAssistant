@@ -18,8 +18,6 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import com.google.firebase.firestore.FirebaseFirestore
-import com.ibm.watson.developer_cloud.service.security.IamOptions
-import com.ibm.watson.developer_cloud.speech_to_text.v1.SpeechToText
 import kotlinx.android.synthetic.main.fragment_ingredient_tab.*
 
 class IngredientsTab : Fragment() {
@@ -33,19 +31,6 @@ class IngredientsTab : Fragment() {
 
     private var isAddMenuOpen: Boolean = false
     private var viewAdapter: IngredientsAdapter? = null
-    private var speechService: SpeechToText
-
-    private var listening = false
-
-    init {
-        val options = IamOptions.Builder().apiKey(StT_API_KEY).build()
-        speechService = SpeechToText(options)
-        speechService.endPoint = StT_ENDPOINT
-    }
-
-    fun setStopListening() {
-        listening = false
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
