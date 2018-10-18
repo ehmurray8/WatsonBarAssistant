@@ -7,10 +7,16 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import java.util.*
 
-class IngredientsAdapter(private var dataSet: MutableList<Ingredient>,
+class IngredientsAdapter(private var ingredientsSet: TreeSet<Ingredient>,
                          private var documentsMap: MutableMap<String, String>):
         RecyclerView.Adapter<IngredientsAdapter.ViewHolder>() {
+
+    private val ingredientsList: MutableList<Ingredient>
+    get() {
+        return ingredientsSet.toMutableList()
+    }
 
     class ViewHolder(val textView: TextView) : RecyclerView.ViewHolder(textView)
 
@@ -24,13 +30,14 @@ class IngredientsAdapter(private var dataSet: MutableList<Ingredient>,
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.textView.text = dataSet[position].name.capitalize()
+        holder.textView.text = ingredientsList[position].name.capitalize()
     }
 
-    override fun getItemCount(): Int = dataSet.count()
+    override fun getItemCount(): Int = ingredientsSet.count()
 
     fun removeAt(position: Int) {
-        val ingredient = dataSet.removeAt(position)
+        val ingredient = ingredientsList[position]
+        ingredientsSet.remove(ingredient)
         notifyItemRemoved(position)
         val uid = authorization.currentUser?.uid ?: return
         val documentId = documentsMap[ingredient.name] ?: return
