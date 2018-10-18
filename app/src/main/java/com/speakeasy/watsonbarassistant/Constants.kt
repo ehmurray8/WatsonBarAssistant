@@ -8,6 +8,12 @@ const val URL_MIKE_DIS = "https://gateway.watsonplatform.net/discovery/api"
 const val VERSION_DIS = "2018-08-01"
 const val DEFAULT_RECIPE_IMAGE_NAME = "alcohol_tall.jpg"
 
+
+var permissionToRecordAccepted = false
+val mFileName = "/storage/emulated/0/Android/data/com.speakeasy.watsonbarassistant/cache/audiorecordtest.3gp"
+const val StT_API_KEY = "9UzRxSxK4QeVQdPmRjSbwd74M8PApeKpMNd_Y_2TD0Gz"
+const val StT_URL = "https://gateway-wdc.watsonplatform.net/speech-to-text/api"
+
 const val SHARED_PREFERENCES_SETTINGS = "Settings"
 const val SHARED_PREFERENCES_GROCERY = "Grocery"
 

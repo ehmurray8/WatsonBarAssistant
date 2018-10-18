@@ -8,7 +8,7 @@ import com.ibm.watson.developer_cloud.service.exception.NotFoundException
 import com.speakeasy.watsonbarassistant.*
 import kotlinx.serialization.json.JSON
 
-class SearchDiscovery(private val inputListener: OnTaskCompleted):
+class SearchDiscovery(private val inputListener: CompletedDiscovery):
         AsyncTask<Array<Ingredient>, Void, MutableList<DiscoveryRecipe>>() {
 
     override fun doInBackground(vararg args: Array<Ingredient>): MutableList<DiscoveryRecipe> {

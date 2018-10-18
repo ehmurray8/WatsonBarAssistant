@@ -3,6 +3,6 @@ package com.speakeasy.watsonbarassistant.Discovery
 import com.speakeasy.watsonbarassistant.DiscoveryRecipe
 
 
-interface OnTaskCompleted {
+interface CompletedDiscovery {
     fun onTaskCompleted(recipes: MutableList<DiscoveryRecipe>)
 }

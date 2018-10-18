@@ -1,12 +1,16 @@
 package com.speakeasy.watsonbarassistant
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.design.widget.TabItem
+import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -37,6 +41,11 @@ class MainMenu : AppCompatActivity() {
     private var authorization = FirebaseAuth.getInstance()
     private var lastDiscoveryRefreshTime = -1L
 
+    private var permissions: Array<String> = arrayOf(Manifest.permission.RECORD_AUDIO)
+    private val REQUEST_RECORD_AUDIO_PERMISSION = 200
+    private val mFileName = "/storage/emulated/0/Android/data/com.speakeasy.watsonbarassistant/cache/audiorecordtest.3gp"
+    //var permissionToRecordAccepted = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,6 +58,27 @@ class MainMenu : AppCompatActivity() {
         if (!BarAssistant.isInternetConnected()) {
             Toast.makeText(baseContext, "Failed to download user data from the internet.", Toast.LENGTH_SHORT).show()
         }
+
+
+        //mFileName = "${externalCacheDir.absolutePath}/audiorecordtest.3gp"
+        Log.i("PathAudio: ", mFileName)
+
+        ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION)
+    }
+
+    override fun onRequestPermissionsResult(
+            requestCode: Int,
+            permissions: Array<String>,
+            grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        permissionToRecordAccepted = if (requestCode == REQUEST_RECORD_AUDIO_PERMISSION) {
+            grantResults[0] == PackageManager.PERMISSION_GRANTED
+        } else {
+            false
+        }
+        Log.i("main perms", permissionToRecordAccepted.toString())
+        if (!permissionToRecordAccepted) finish()
     }
 
     private fun loadSharedPreferences() {

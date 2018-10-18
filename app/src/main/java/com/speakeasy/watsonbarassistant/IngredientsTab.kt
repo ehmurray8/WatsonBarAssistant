@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
@@ -15,6 +16,10 @@ import android.view.animation.AnimationUtils
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import com.google.firebase.firestore.FirebaseFirestore
+import com.speakeasy.watsonbarassistant.SpeechandText.AudioHandler
+import com.speakeasy.watsonbarassistant.SpeechandText.CompletedStT
+import com.speakeasy.watsonbarassistant.SpeechandText.HandleStT
+import com.speakeasy.watsonbarassistant.SpeechandText.SpeechToText
 import kotlinx.android.synthetic.main.fragment_ingredient_tab.*
 
 
@@ -26,6 +31,10 @@ class IngredientsTab : Fragment() {
     private lateinit var menuAnimClose: Animation
     private lateinit var menuAnimRotateOut: Animation
     private lateinit var menuAnimRotateBack: Animation
+
+    companion object {
+        var words = mutableListOf<String>()
+    }
 
     private var isAddMenuOpen: Boolean = false
     private var viewAdapter: IngredientsAdapter? = null
@@ -39,6 +48,7 @@ class IngredientsTab : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val viewManager = LinearLayoutManager(activity)
+        var speechToText = SpeechToText(HandleStT())
         val mainMenu = activity as MainMenu
         viewAdapter = IngredientsAdapter(mainMenu.ingredients, mainMenu.documentsMap)
 
@@ -87,8 +97,42 @@ class IngredientsTab : Fragment() {
             ingredientInputView.onTouchEvent(event)
         }
 
-        addViaCameraButton.setOnClickListener { Toast.makeText(context, "Camera support to be added!", Toast.LENGTH_SHORT).show() }
-        addViaVoiceButton.setOnClickListener { Toast.makeText(context, "Voice support to be added!", Toast.LENGTH_SHORT).show() }
+        addViaCameraButton.setOnClickListener { Toast.makeText(context, words.toString(), Toast.LENGTH_SHORT).show() }
+        /*
+        addViaCameraButton.setOnTouchListener(View.OnTouchListener { view, motionEvent ->
+            when (motionEvent.getAction()) {
+                MotionEvent.ACTION_DOWN -> {
+                    Toast.makeText(context, "Pressed", Toast.LENGTH_SHORT).show()
+                    speechToText.startPlaying()
+                }
+                MotionEvent.ACTION_UP -> {
+                    Toast.makeText(context, "Released", Toast.LENGTH_SHORT).show()
+                    speechToText.stopPlaying()
+                }
+            }
+
+            return@OnTouchListener true
+        })
+        */
+
+        //addViaVoiceButton.setOnClickListener { Toast.makeText(context, "Voice support to be added!", Toast.LENGTH_SHORT).show() }
+
+        addViaVoiceButton.setOnTouchListener(View.OnTouchListener { view, motionEvent ->
+            when (motionEvent.getAction()) {
+                MotionEvent.ACTION_DOWN -> {
+                    Toast.makeText(context, "Pressed", Toast.LENGTH_SHORT).show()
+                    speechToText.startRecording()
+                }
+                MotionEvent.ACTION_UP -> {
+                    Toast.makeText(context, "Released", Toast.LENGTH_SHORT).show()
+                    speechToText.stopRecording()
+                    speechToText.execute(mFileName)
+                }
+            }
+
+            return@OnTouchListener true
+        })
+
         val itemDecorator = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
         ingredients_recycler_view.addItemDecoration(itemDecorator)
 
