@@ -139,8 +139,7 @@ class ShoppingCart : AppCompatActivity() {
          val swipeHandler = object : SwipeToDeleteCallback(baseContext) {
 
              override fun getMovementFlags(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?): Int {
-                return makeMovementFlags(ItemTouchHelper.UP or ItemTouchHelper.DOWN or
-                        ItemTouchHelper.LEFT, 0)
+                return makeMovementFlags(ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.LEFT)
              }
 
              override fun isLongPressDragEnabled(): Boolean {

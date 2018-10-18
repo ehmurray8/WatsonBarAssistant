@@ -27,7 +27,7 @@ class ShoppingCartAdapter(private val shoppingCartItems:  MutableMap<Ingredient,
         val itemText = holder.layout.getChildAt(1) as TextView
 
         val ingredient = orderedItems[position]
-        itemText.text = ingredient.name
+        itemText.text = ingredient.name.capitalize()
 
         val selected = shoppingCartItems[ingredient]
         if(selected != null) {

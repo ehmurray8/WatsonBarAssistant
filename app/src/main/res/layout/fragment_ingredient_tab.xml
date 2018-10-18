@@ -6,6 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="bottom"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:fitsSystemWindows="false"
     tools:context=".IngredientsTab">
 
@@ -50,6 +52,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            android:focusableInTouchMode="true"
             android:focusable="true" />
 
         <android.support.design.widget.FloatingActionButton
