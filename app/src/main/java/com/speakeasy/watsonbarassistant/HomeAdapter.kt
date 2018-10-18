@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Button
@@ -49,13 +48,10 @@ class HomeAdapter(private var activity: Activity):
             val intent = Intent(activity, ShoppingCart::class.java)
             activity.startActivity(intent)
         }
-        val ingredientsButton = layout.getChildAt(1)
-        ingredientsButton.setOnClickListener {
-            Log.d("TODO", "Create Ingredients View.")
-        }
-        val addView = layout.getChildAt(2)
-        addView.setOnClickListener {
-            Log.d("TODO", "Create Add View.")
+        val searchButton = layout.getChildAt(1)
+        searchButton.setOnClickListener {
+            val intent = Intent(activity, SearchActivity::class.java)
+            activity.startActivity(intent)
         }
     }
 

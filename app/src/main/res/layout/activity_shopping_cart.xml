@@ -21,6 +21,7 @@
 
     <EditText
         android:id="@+id/addShoppingCartInput"
+        android:textColor="@color/primaryText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="16sp"

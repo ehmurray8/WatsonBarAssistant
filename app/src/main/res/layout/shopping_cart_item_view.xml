@@ -8,6 +8,7 @@
 
     <Button
         android:id="@+id/circleButton"
+        android:textColor="@color/primaryText"
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:layout_marginTop="5dp"
@@ -19,6 +20,7 @@
 
     <TextView
         android:id="@+id/shoppingItemText"
+        android:textColor="@color/primaryText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
