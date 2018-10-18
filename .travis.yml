@@ -42,7 +42,4 @@ before_install:
 - ls
 - ls app
 - ls app/src/main/java/com/speakeasy/watsonbarassistant/
-- mv google-services.json ./app/
-- mv travis.keystore.jks ./app/
-  mv Keys.kt ./app/src/main/java/com/speakeasy/watsonbarassistant/
 - chmod +x gradlew
