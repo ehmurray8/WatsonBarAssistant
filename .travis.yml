@@ -38,8 +38,7 @@ script:
 before_install:
 - openssl aes-256-cbc -K $encrypted_71632d04a37f_key -iv $encrypted_71632d04a37f_iv
   -in travis-files.tar.enc -out travis-files.tar -d
-- openssl aes-256-cbc -K $encrypted_71632d04a37f_key -iv $encrypted_71632d04a37f_iv
-  -in travis-files.tar.enc -out app/travis-files.tar -d
+- ls
 - tar xvf travis-files.tar
 - mv google-services.json ./app/
 - mv travis.keystore.jks ./app/
