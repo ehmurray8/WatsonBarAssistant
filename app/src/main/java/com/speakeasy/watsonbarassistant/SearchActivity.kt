@@ -33,7 +33,7 @@ class SearchActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
         setSupportActionBar(toolbar as Toolbar)
-        (toolbar as? Toolbar)?.title = "Search Recipes"
+        supportActionBar?.title = "Search Recipes"
         val manager = LinearLayoutManager(baseContext)
         viewAdapter = MyRecipeAdapter(searchRecipes, this)
 
