@@ -16,6 +16,7 @@ import android.view.View
 import android.widget.SearchView
 import com.algolia.search.saas.Client
 import com.algolia.search.saas.Query
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_search.*
 import kotlinx.serialization.json.JSON
 
@@ -28,6 +29,7 @@ class SearchActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
     private var recyclerView: RecyclerView? = null
     private var viewAdapter: MyRecipeAdapter? = null
     private val searchRecipes: MutableList<DiscoveryRecipe> = mutableListOf()
+    private val fireStore = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,7 +72,31 @@ class SearchActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
         searchView?.setSearchableInfo(searchManager?.getSearchableInfo(componentName))
         searchView?.isSubmitButtonEnabled = true
         searchView?.setOnQueryTextListener(this)
+
+        val randomMenuItem = menu?.findItem(R.id.randomRecipe)
+        randomMenuItem?.setOnMenuItemClickListener {
+            getRandomRecipe()
+            true
+        }
         return true
+    }
+
+    private fun getRandomRecipe() {
+        fireStore.collection(RECIPE_COLLECTION).document(getRandom()).get().addOnCompleteListener { task ->
+                if(task.isSuccessful) {
+                    val recipe = task.result?.toObject(FireStoreRecipe::class.java)
+                    val discoveryRecipe = recipe?.toDiscoveryRecipe()
+                    val intent = Intent(baseContext, RecipeDetail::class.java)
+                    intent.putExtra("Recipe", discoveryRecipe)
+                    startActivity(intent)
+                } else {
+                    getRandomRecipe()
+                }
+            }
+    }
+
+    private fun getRandom(): String {
+        return (1..1038).shuffled().first().toString()
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
@@ -79,15 +105,15 @@ class SearchActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
                 Log.d("Algolia", "Error Code: ${error.statusCode}, Message: ${error.message}")
             }
 
+            val response = content.getJSONArray("hits")
+            searchRecipes.clear()
+            for (i in 0 until response.length()) {
+                val recipe = JSON.nonstrict.parse<DiscoveryRecipe>(response.getJSONObject(i).toString())
+                searchRecipes.add(recipe)
+            }
+
             runOnUiThread {
-                val response = content.getJSONArray("hits")
-                searchRecipes.clear()
-                for (i in 0 until response.length()) {
-                    val recipe = JSON.nonstrict.parse<DiscoveryRecipe>(response.getJSONObject(i).toString())
-                    searchRecipes.add(recipe)
-                }
                 viewAdapter?.notifyDataSetChanged()
-                Log.d("Algolia", "Recipe Count: ${searchRecipes.count()}")
             }
         }
         return true
