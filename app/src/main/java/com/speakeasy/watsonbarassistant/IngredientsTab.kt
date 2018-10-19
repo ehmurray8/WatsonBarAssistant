@@ -96,8 +96,9 @@ class IngredientsTab : Fragment() {
             ingredientInputView.onTouchEvent(event)
         }
 
-        //addViaCameraButton.setOnClickListener { Toast.makeText(context, words.toString(), Toast.LENGTH_SHORT).show() }
+        addViaCameraButton.setOnClickListener { Toast.makeText(context, words.toString(), Toast.LENGTH_SHORT).show() }
 
+        /*
         addViaCameraButton.setOnTouchListener(View.OnTouchListener { view, motionEvent ->
             when (motionEvent.getAction()) {
                 MotionEvent.ACTION_DOWN -> {
@@ -111,28 +112,11 @@ class IngredientsTab : Fragment() {
             }
 
             return@OnTouchListener true
-        })
+        })*/
 
 
         //addViaVoiceButton.setOnClickListener { Toast.makeText(context, "Voice support to be added!", Toast.LENGTH_SHORT).show() }
         addViaVoiceButton.setOnClickListener { textToSpeech.execute("Hello this is our first test.") }
-
-        /*
-        addViaVoiceButton.setOnTouchListener(View.OnTouchListener { view, motionEvent ->
-            when (motionEvent.getAction()) {
-                MotionEvent.ACTION_DOWN -> {
-                    Toast.makeText(context, "Pressed", Toast.LENGTH_SHORT).show()
-                    speechToText.startRecording()
-                }
-                MotionEvent.ACTION_UP -> {
-                    Toast.makeText(context, "Released", Toast.LENGTH_SHORT).show()
-                    speechToText.stopRecording()
-                    speechToText.execute(mFileName)
-                }
-            }
-            return@OnTouchListener true
-        })
-        */
 
         val itemDecorator = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
         ingredients_recycler_view.addItemDecoration(itemDecorator)

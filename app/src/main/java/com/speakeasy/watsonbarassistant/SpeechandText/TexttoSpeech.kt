@@ -35,7 +35,7 @@ class TextToSpeech(private val inputListener: CompletedTtS):
                 val synthesizeOptions = SynthesizeOptions.Builder()
                         .text(input)
                         .accept("audio/wav")
-                        .voice("en-US_AllisonVoice")
+                        .voice("en-GB_KateVoice")
                         .build()
 
 
