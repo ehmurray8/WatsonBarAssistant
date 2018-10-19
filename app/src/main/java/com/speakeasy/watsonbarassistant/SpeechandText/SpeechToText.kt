@@ -1,6 +1,7 @@
 package com.speakeasy.watsonbarassistant.SpeechandText
 
 import android.os.AsyncTask
+import android.util.Log
 import com.speakeasy.watsonbarassistant.*
 import com.ibm.watson.developer_cloud.service.security.IamOptions
 import com.ibm.watson.developer_cloud.speech_to_text.v1.SpeechToText
@@ -30,13 +31,13 @@ class SpeechToText(private val inputListener: CompletedStT):
 
                 val recognizeOptions = RecognizeOptions.Builder()
                         .audio(File(file))
-                        .contentType("audio/mpeg")
+                        .contentType("audio/flac; rate=16000")
                         .timestamps(true)
-                        .wordAlternativesThreshold(0.9.toFloat())
+                        .model("en-US_BroadbandModel")
                         .build()
 
                 val speechRecognitionResults = speechToText.recognize(recognizeOptions).execute()
-                println(speechRecognitionResults)
+                Log.i("SpeechRecognition Answer: ", speechRecognitionResults.toString())
 
                 return speechRecognitionResults.results
             } catch (e: Exception) {
@@ -61,7 +62,7 @@ class SpeechToText(private val inputListener: CompletedStT):
     }
 
     fun startPlaying(){
-        audioHandler.startPlaying()
+        audioHandler.startPlaying(mFileName)
     }
 
     fun stopPlaying(){

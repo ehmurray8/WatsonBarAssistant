@@ -7,6 +7,9 @@ import android.util.Log
 import com.speakeasy.watsonbarassistant.mFileName
 import com.speakeasy.watsonbarassistant.permissionToRecordAccepted
 import java.io.IOException
+import android.media.MediaPlayer.OnCompletionListener
+
+
 
 private const val LOG_TAG = "AudioHandler"
 
@@ -15,11 +18,18 @@ class AudioHandler : AppCompatActivity() {
     private var mRecorder: MediaRecorder? = null
     private var mPlayer: MediaPlayer? = null
 
-    fun startPlaying() {
+
+    fun startPlaying(inputFile: String) {
 
         mPlayer = MediaPlayer().apply {
             try {
-                setDataSource(mFileName)
+                setDataSource(inputFile)
+                /*
+                setOnCompletionListener {
+                    mPlayer?.release()
+                    mPlayer = null
+                }
+                */
                 prepare()
                 start()
             } catch (e: IOException) {

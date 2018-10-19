@@ -2,6 +2,7 @@ package com.speakeasy.watsonbarassistant
 
 
 import android.os.Bundle
+import android.speech.tts.TextToSpeech
 import android.support.v4.app.Fragment
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
@@ -16,10 +17,7 @@ import android.view.animation.AnimationUtils
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import com.google.firebase.firestore.FirebaseFirestore
-import com.speakeasy.watsonbarassistant.SpeechandText.AudioHandler
-import com.speakeasy.watsonbarassistant.SpeechandText.CompletedStT
-import com.speakeasy.watsonbarassistant.SpeechandText.HandleStT
-import com.speakeasy.watsonbarassistant.SpeechandText.SpeechToText
+import com.speakeasy.watsonbarassistant.SpeechandText.*
 import kotlinx.android.synthetic.main.fragment_ingredient_tab.*
 
 
@@ -49,6 +47,7 @@ class IngredientsTab : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val viewManager = LinearLayoutManager(activity)
         var speechToText = SpeechToText(HandleStT())
+        var textToSpeech = TextToSpeech(HandleTtS())
         val mainMenu = activity as MainMenu
         viewAdapter = IngredientsAdapter(mainMenu.ingredients, mainMenu.documentsMap)
 
@@ -97,8 +96,8 @@ class IngredientsTab : Fragment() {
             ingredientInputView.onTouchEvent(event)
         }
 
-        addViaCameraButton.setOnClickListener { Toast.makeText(context, words.toString(), Toast.LENGTH_SHORT).show() }
-        /*
+        //addViaCameraButton.setOnClickListener { Toast.makeText(context, words.toString(), Toast.LENGTH_SHORT).show() }
+
         addViaCameraButton.setOnTouchListener(View.OnTouchListener { view, motionEvent ->
             when (motionEvent.getAction()) {
                 MotionEvent.ACTION_DOWN -> {
@@ -113,10 +112,12 @@ class IngredientsTab : Fragment() {
 
             return@OnTouchListener true
         })
-        */
+
 
         //addViaVoiceButton.setOnClickListener { Toast.makeText(context, "Voice support to be added!", Toast.LENGTH_SHORT).show() }
+        addViaVoiceButton.setOnClickListener { textToSpeech.execute("Hello this is our first test.") }
 
+        /*
         addViaVoiceButton.setOnTouchListener(View.OnTouchListener { view, motionEvent ->
             when (motionEvent.getAction()) {
                 MotionEvent.ACTION_DOWN -> {
@@ -129,9 +130,9 @@ class IngredientsTab : Fragment() {
                     speechToText.execute(mFileName)
                 }
             }
-
             return@OnTouchListener true
         })
+        */
 
         val itemDecorator = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
         ingredients_recycler_view.addItemDecoration(itemDecorator)
