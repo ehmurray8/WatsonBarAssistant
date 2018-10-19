@@ -11,7 +11,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.facebook.drawee.view.SimpleDraweeView
 
-class MyRecipeAdapter(private var recipes: MutableList<DiscoveryRecipe>, private val activity: Activity):
+class MyRecipeAdapter(private val recipes: MutableList<DiscoveryRecipe>, private val activity: Activity):
         RecyclerView.Adapter<MyRecipeAdapter.ViewHolder>() {
 
     class ViewHolder(val layout: ConstraintLayout) : RecyclerView.ViewHolder(layout)

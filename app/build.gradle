@@ -83,6 +83,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-storage:16.0.3'
     implementation 'com.facebook.fresco:fresco:1.10.0'
     implementation 'com.ibm.watson.developer_cloud:java-sdk:6.5.1'
+    implementation 'com.algolia:algoliasearch-android:3.26.1'
 }
 
 apply plugin: 'com.google.gms.google-services'

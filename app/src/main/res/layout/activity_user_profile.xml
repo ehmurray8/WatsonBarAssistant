@@ -28,6 +28,7 @@
         android:id="@+id/add_email"
         android:text="@string/add_email"
         android:visibility="invisible"
+        android:textColor="@color/primaryText"
         android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
         android:layout_above="@+id/change_password"
@@ -38,6 +39,7 @@
         android:id="@+id/change_password"
         android:text="@string/change_password"
         android:layout_centerHorizontal="true"
+        android:textColor="@color/primaryText"
         android:layout_width="wrap_content"
         android:layout_above="@+id/sign_out"
         android:layout_marginBottom="20dp"
@@ -46,6 +48,7 @@
     <Button
         android:id="@+id/sign_out"
         android:layout_centerHorizontal="true"
+        android:textColor="@color/primaryText"
         android:layout_marginBottom="45dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
