@@ -3,7 +3,6 @@
     package="com.speakeasy.watsonbarassistant">
 
     <uses-feature android:name="android.hardware.camera" />
-
     <uses-permission android:name="android.permission.INTERNET" />
 
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
@@ -34,7 +33,7 @@
         </activity>
         <activity android:name=".UserProfile" />
         <activity android:name=".RecipeCollection" />
-        <activity android:name=".ShoppingCart" />
+        <activity android:name=".ShoppingCart"></activity>
     </application>
 
 </manifest>

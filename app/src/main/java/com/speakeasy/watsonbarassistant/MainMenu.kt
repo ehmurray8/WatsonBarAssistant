@@ -18,6 +18,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QueryDocumentSnapshot
+import com.google.firebase.storage.FirebaseStorage
 import com.google.gson.Gson
 import com.speakeasy.watsonbarassistant.Discovery.HandleDiscovery
 import com.speakeasy.watsonbarassistant.Discovery.SearchDiscovery
@@ -26,7 +27,7 @@ import java.util.*
 
 class MainMenu : AppCompatActivity() {
 
-    var ingredients = mutableListOf<Ingredient>()
+    var ingredients = sortedSetOf<Ingredient>(kotlin.Comparator { o1, o2 -> if (o1.compareName() > o2.compareName()) 1 else -1 })
     var documentsMap = mutableMapOf<String, String>()
     var currentUser: FirebaseUser? = null
     var tabIndex = 1
@@ -59,8 +60,6 @@ class MainMenu : AppCompatActivity() {
             Toast.makeText(baseContext, "Failed to download user data from the internet.", Toast.LENGTH_SHORT).show()
         }
 
-
-        //mFileName = "${externalCacheDir.absolutePath}/audiorecordtest.3gp"
         Log.i("PathAudio: ", mFileName)
 
         ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION)
@@ -79,6 +78,8 @@ class MainMenu : AppCompatActivity() {
         }
         Log.i("main perms", permissionToRecordAccepted.toString())
         if (!permissionToRecordAccepted) finish()
+
+        BarAssistant.storageReference = FirebaseStorage.getInstance().reference
     }
 
     private fun loadSharedPreferences() {
@@ -96,6 +97,7 @@ class MainMenu : AppCompatActivity() {
                 BarAssistant.recipes[i].addAll(storedRecipes.toList())
             }
             if (storedIngredients != null && storedIngredients.count() > 0) {
+                ingredients.clear()
                 ingredients.addAll(storedIngredients)
             }
             loadRecentlyViewedRecipesSharedPreferences(storedLastViewedTimes
@@ -131,6 +133,7 @@ class MainMenu : AppCompatActivity() {
         currentUser = authorization.currentUser
         loadIngredients()
         loadRecentlyViewed()
+        (fragment as? IngredientsTab)?.refresh()
     }
 
     private fun loadIngredients() {
@@ -194,15 +197,16 @@ class MainMenu : AppCompatActivity() {
             documentsMap[name] = id
             val ingredient = Ingredient(name)
             ingredients.add(ingredient)
-            ingredients.sortBy { it.name.toLowerCase().replace("\\s".toRegex(), "") }
         }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.user_profile) {
-            val intent = Intent(this, UserProfile::class.java)
-            startActivity(intent)
-            return true
+        when(item.itemId) {
+            R.id.user_profile -> {
+                val intent = Intent(this, UserProfile::class.java)
+                startActivity(intent)
+                return true
+            }
         }
         return super.onOptionsItemSelected(item)
     }
