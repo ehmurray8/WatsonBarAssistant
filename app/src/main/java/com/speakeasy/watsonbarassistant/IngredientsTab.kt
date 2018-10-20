@@ -48,8 +48,6 @@ class IngredientsTab : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val viewManager = LinearLayoutManager(activity)
-        var speechToText = SpeechToText(HandleStT())
-        var textToSpeech = TextToSpeech(HandleTtS())
         val mainMenu = activity as MainMenu
         viewAdapter = IngredientsAdapter(mainMenu.ingredients, mainMenu.documentsMap)
 
@@ -121,8 +119,8 @@ class IngredientsTab : Fragment() {
         })*/
 
 
-        //addViaVoiceButton.setOnClickListener { Toast.makeText(context, "Voice support to be added!", Toast.LENGTH_SHORT).show() }
-        addViaVoiceButton.setOnClickListener { textToSpeech.execute("Hello this is our first test.") }
+        addViaVoiceButton.setOnClickListener { Toast.makeText(context, "Voice support to be added!", Toast.LENGTH_SHORT).show() }
+        //addViaVoiceButton.setOnClickListener { textToSpeech.execute("Hello this is our first test.") }
 
         val itemDecorator = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
         ingredients_recycler_view.addItemDecoration(itemDecorator)

@@ -4,9 +4,10 @@ import android.os.AsyncTask
 import android.util.Log
 import com.ibm.watson.developer_cloud.discovery.v1.Discovery
 import com.ibm.watson.developer_cloud.discovery.v1.model.QueryOptions
-import com.ibm.watson.developer_cloud.service.exception.NotFoundException
 import com.speakeasy.watsonbarassistant.*
 import kotlinx.serialization.json.JSON
+import java.lang.Exception
+import java.util.*
 
 class SearchDiscovery(private val inputListener: CompletedDiscovery):
         AsyncTask<Array<Ingredient>, Void, MutableList<DiscoveryRecipe>>() {
@@ -32,7 +33,7 @@ class SearchDiscovery(private val inputListener: CompletedDiscovery):
                     it.title != "" && it.ingredientList.count() > 0
                 }
                 return recipes.sortedBy { it.percentOfIngredientsOwned }.reversed().toMutableList()
-            } catch (exception: NotFoundException) {
+            } catch (exception: Exception) {
                 Log.d("Discovery Down", "Discovery service is not working.")
             }
         }
@@ -45,7 +46,26 @@ class SearchDiscovery(private val inputListener: CompletedDiscovery):
     }
 
     private fun buildIngredientQuery(ingredients: Array<Ingredient>): String{
-        return ingredients.asSequence().filter { it.name != "" }
-                .joinToString("|", "ingredientList:") { it.name }
+        var depth = 3
+        var ans = "ingredientList:"
+
+        if (depth > ingredients.count()){
+            depth = ingredients.count()
+        }
+        
+        for (i in 0..ingredients.count() - 1){
+            var pos = i % ingredients.count()
+            ans += "(" + ingredients[pos].name
+
+            for (extra in 1..depth){
+                ans += "," + ingredients[(pos + extra) % ingredients.count()].name
+            }
+            ans += ")|"
+        }
+
+        ans = ans.dropLast(1)
+        Log.i("DiscoveryString", ans)
+        return ans
     }
+
 }

@@ -2,12 +2,16 @@ package com.speakeasy.watsonbarassistant
 
 import android.content.Context
 import android.graphics.drawable.GradientDrawable
+import android.nfc.Tag
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.widget.TextView
+import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.speakeasy.watsonbarassistant.SpeechandText.HandleTtS
+import com.speakeasy.watsonbarassistant.SpeechandText.TextToSpeech
 import kotlinx.android.synthetic.main.activity_recipe_detail.*
 
 class RecipeDetail : AppCompatActivity() {
@@ -35,6 +39,12 @@ class RecipeDetail : AppCompatActivity() {
 
             loadImage(baseContext, drink_detail_image, recipe)
             addTags(recipe)
+
+            readDescriptionButton.setOnClickListener {
+
+                var textToSpeech = TextToSpeech(HandleTtS())
+                textToSpeech.execute(recipe.title + ". " + recipe.description)
+            }
         }
     }
 
