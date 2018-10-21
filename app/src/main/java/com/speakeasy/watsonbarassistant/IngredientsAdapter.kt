@@ -37,8 +37,9 @@ class IngredientsAdapter(private var ingredientsSet: TreeSet<Ingredient>,
 
     fun removeAt(position: Int) {
         val ingredient = ingredientsList[position]
+        ingredientsSet.removeIf { it.name == ingredient.name }
         ingredientsSet.remove(ingredient)
-        notifyItemRemoved(position)
+        notifyDataSetChanged()
         val uid = authorization.currentUser?.uid ?: return
         val documentId = documentsMap[ingredient.name] ?: return
 
