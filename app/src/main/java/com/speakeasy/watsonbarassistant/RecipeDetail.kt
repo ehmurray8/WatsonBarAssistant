@@ -2,6 +2,10 @@ package com.speakeasy.watsonbarassistant
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
+import android.view.animation.BounceInterpolator
+import android.view.animation.ScaleAnimation
 import android.widget.TextView
 import android.widget.Toast
 import com.speakeasy.watsonbarassistant.R.layout.activity_recipe_detail
@@ -13,6 +17,7 @@ class RecipeDetail : AppCompatActivity() {
 
     private val picasso = Picasso.get()
     private var favorited: Boolean = false
+    private lateinit var favoriteAnim: Animation
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,20 +41,23 @@ class RecipeDetail : AppCompatActivity() {
 
         loadImage(assets, drink_detail_image, recipe, picasso)
 
+
         /* Set favorite button after checking if recipe is favorited or not */
 
+        favoriteAnim = AnimationUtils.loadAnimation(baseContext, R.anim.anim_favorite)
+
         /* NOT favorited previously */
-        if(button_favorite.isActivated)
-        {
-            Toast.makeText(baseContext, "REEEEEE", Toast.LENGTH_SHORT).show()
-        }
+
         button_favorite.setOnClickListener{
             if (!favorited){
                 favorited = true
+                button_favorite.startAnimation(favoriteAnim)
+                Toast.makeText(baseContext, "Added to Favorites", Toast.LENGTH_SHORT).show()
 
             }
             else{
                 favorited = false
+                Toast.makeText(baseContext, "Removed from Favorites", Toast.LENGTH_SHORT).show()
 
             }
             // Wait ~15 (?) seconds before putting on to firebase favorites list
@@ -57,4 +65,6 @@ class RecipeDetail : AppCompatActivity() {
 
         /* Or wait until page is navigated away from/ app is closed (???) */
     }
+
+
 }
