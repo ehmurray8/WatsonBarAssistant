@@ -44,39 +44,6 @@ class SearchDiscovery(private val inputListener: CompletedDiscovery):
         inputListener.onTaskCompleted(result)
     }
 
-    /*
-    private fun buildIngredientQuery(ingredients: Array<Ingredient>): String{
-        var extension = 3
-        var ans = "ingredientList:"
-        var evenOffset = 0
-
-        if (ingredients.count() % 2 == 0){
-            evenOffset = 1
-        }
-
-        if (extension > ingredients.count()/2 - evenOffset){
-            extension = ingredients.count()/2 - evenOffset
-        }
-        
-        for (i in 0..ingredients.count() - 1){
-            var pos = i % ingredients.count()
-            ans += "(" + ingredients[pos].name
-
-            for (extra in 1..extension){
-                ans += "," + ingredients[(pos + extra) % ingredients.count()].name
-            }
-            ans += ")|"
-        }
-        var size = 1
-        Log.i("CreateAndSets", createAndSets(ingredients,0,size - 1).toString())
-
-        ans = ans.dropLast(1)
-        Log.i("DiscoveryString", ans)
-        return ans
-    }
-    */
-
-
     fun buildIngredientQuery(ingredients: Array<Ingredient>): String {
         var ans = "ingredientList:"
         var queryString = buildAndString(createAndSets(ingredients,0,0))
@@ -101,10 +68,15 @@ class SearchDiscovery(private val inputListener: CompletedDiscovery):
 
         for (set in sets){
             ans += "("
+
             for (element in set){
                 ans += element + ","
             }
-            ans = ans.dropLast(1)
+
+            if (set.count() > 0){
+                ans = ans.dropLast(1)
+            }
+
             ans += ")|"
         }
 

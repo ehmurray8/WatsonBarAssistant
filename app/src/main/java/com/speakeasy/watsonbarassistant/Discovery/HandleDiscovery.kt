@@ -3,7 +3,7 @@ package com.speakeasy.watsonbarassistant.Discovery
 import com.speakeasy.watsonbarassistant.*
 
 
-class HandleDiscovery(private val mainMenu: MainMenu?): CompletedDiscovery {
+open class HandleDiscovery(private val mainMenu: MainMenu?): CompletedDiscovery {
 
     override fun onTaskCompleted(recipes: MutableList<DiscoveryRecipe>) {
         BarAssistant.recipes[0].clear()
