@@ -24,7 +24,7 @@ class MainMenu : AppCompatActivity() {
 
     var ingredients = mutableListOf<Ingredient>()
     var recipes = mutableListOf<MutableList<DiscoveryRecipe>>()
-    var favorites = mutableListOf<Int>()
+    var favorites = mutableListOf<Favorite>()
     var documentsMap = mutableMapOf<String, String>()
     var currentUser: FirebaseUser? = null
     var tabIndex = 1
@@ -97,6 +97,7 @@ class MainMenu : AppCompatActivity() {
     private fun loadUserData() {
         currentUser = authorization.currentUser
         loadIngredients()
+        loadFavorites()
     }
 
     private fun loadIngredients() {
@@ -116,6 +117,26 @@ class MainMenu : AppCompatActivity() {
                     }
                 }
             }
+        }
+    }
+
+    private fun loadFavorites() {
+        val uid = currentUser?.uid
+        refreshDiscovery()
+        val oldFavorites = favorites.toTypedArray()
+        if(uid != null) {
+            fireStore.collection("app").document(uid)
+                    .collection("favorites").get().addOnCompleteListener {
+                        favorites.clear()
+                        if (it.isSuccessful) {
+                            it.result?.forEach { snapshot ->
+                                parseSnapshot(snapshot)
+                            }
+                            if(!oldFavorites.toMutableList().containsAll(favorites)) {
+                                refreshDiscovery(true)
+                            }
+                        }
+                    }
         }
     }
 

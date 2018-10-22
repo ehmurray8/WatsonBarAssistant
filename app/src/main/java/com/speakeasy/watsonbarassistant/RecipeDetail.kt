@@ -1,16 +1,20 @@
 package com.speakeasy.watsonbarassistant
 
+import android.app.Activity
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.text.method.TextKeyListener.clear
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.view.animation.BounceInterpolator
-import android.view.animation.ScaleAnimation
 import android.widget.TextView
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.FirebaseFirestore
+import com.speakeasy.watsonbarassistant.R.id.button_favorite
 import com.speakeasy.watsonbarassistant.R.layout.activity_recipe_detail
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_recipe_detail.*
@@ -20,40 +24,52 @@ import java.util.ArrayList
 class RecipeDetail : AppCompatActivity() {
 
     private val picasso = Picasso.get()
-    private var favorited: Boolean = false
-    private lateinit var favoriteAnim: Animation
-    private val favoritedItems = mutableListOf<DiscoveryRecipe>()
+    var favorited: Boolean = false
+    lateinit var favoriteAnim: Animation
 
-    private var viewAdapter: MyRecipeAdapter? = null
-    private var authorization = FirebaseAuth.getInstance()
-    private var fireStore = FirebaseFirestore.getInstance()
+    var viewAdapter: MyRecipeAdapter? = null
+    var authorization = FirebaseAuth.getInstance()
+    var fireStore = FirebaseFirestore.getInstance()
+    lateinit var favorite: Favorite
+    var favorites = mutableListOf<Favorite>()
 
     @Override
     override fun onPause() {
         super.onPause()
-        updateFirebaseFavoriteStatus()
+        updateFirebaseFavoriteStatus(favorite)
     }
 
     @Override
     override fun onStop() {
         super.onStop()
-        updateFirebaseFavoriteStatus()
+        updateFirebaseFavoriteStatus(favorite)
+    }
+
+    @Override
+    override fun onDestroy() {
+        super.onDestroy()
+        updateFirebaseFavoriteStatus(favorite)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
         setContentView(R.layout.activity_recipe_detail)
 
         activity_recipe_detail.apply{
 
         }
-        val viewManager = LinearLayoutManager(activity)
-        //loadFromFireStore()
+
+        loadFavoritesFromFireStore()
+        checkIfFavorited(favorite.name)
 
         val recipe = intent.getSerializableExtra("Recipe") as? DiscoveryRecipe
 
         val recipeTitle = findViewById<TextView>(R.id.recipe_title)
         recipeTitle.text = recipe?.title
+
+        favorite.name = recipeTitle.text.toString()
 
         var recipeIngredientsString = ""
         recipe?.ingredientList?.forEachIndexed { i, element ->
@@ -65,14 +81,9 @@ class RecipeDetail : AppCompatActivity() {
         loadImage(assets, drink_detail_image, recipe, picasso)
 
         favoriteAnim = AnimationUtils.loadAnimation(baseContext, R.anim.anim_favorite)
-        //recipe.queueValue
+
         /* Set favorite button after checking if recipe is favorited or not */
-        for (item: DiscoveryRecipe in favoritedItems) {
-            if (recipeTitle.text == item.title) { // If drink name on list, set button_favorite to favorited
-                button_favorite.startAnimation(favoriteAnim)
-                favorited = true
-            }
-        }
+        checkIfFavorited(favorite.name)
 
         /* NOT favorited previously */
         button_favorite.setOnClickListener{
@@ -91,37 +102,62 @@ class RecipeDetail : AppCompatActivity() {
         /* Or wait until page is navigated away from/ app is closed (???) */
     }
 
-   private fun updateFirebaseFavoriteStatus(recipe: Int){
+   private fun updateFirebaseFavoriteStatus(favorite: Favorite){
 
         //Send to firebase
-       val mainMenu = (activity as? MainMenu)
-       val uid = mainMenu?.currentUser?.uid ?: return
+
+       val uid = authorization.currentUser?.uid ?: return
        fireStore.collection("app").document(uid)
-               .collection("favorites").add(recipe).addOnSuccessListener { _ ->
-                   mainMenu.favorites.add(recipe)
-                   mainMenu.favorites.sortBy { it.number) }
+               .collection("favorites").add(favorite).addOnSuccessListener { _ ->
+                   favorites.add(favorite)
+                   favorites.sortBy { it.name }
                    //refresh()
                }
 
     }
 
 
-    /*private fun loadFromFireStore() {
+    private fun loadFavoritesFromFireStore() {
         val uid = authorization.currentUser?.uid
         if(uid != null) {
-            fireStore.collection(MAIN_COLLECTION).document(uid).collection(FAVORITES_COLLECTION)
+            fireStore.collection("app").document(uid).collection("favorites")
                     .document("main").get().addOnSuccessListener {
-                        val favorites = it.get(FAVORITES) as? ArrayList<*>
-                        favorites?.forEachIndexed { i, element ->
-                            val favorite = DiscoveryRecipe(element as String)
-                            if(!orderedItems.contains(favorite)) {
-                                orderedItems.add(favorite)
-                                shoppingCartItems[favorite] = (neededList?.get(i) as? Boolean) ?: true
+                        val favorites = it.get("favorites") as? MutableList<Favorite>
+                        favorites?.forEachIndexed { _, element ->
+                            favorite = Favorite(element as String)
+                            if(!favorites.contains(favorite)) {
+                                favorites.add(favorite)
                             }
                         }
                         viewAdapter?.notifyDataSetChanged()
                     }
         }
+    }
+
+    private fun checkIfFavorited(recipeName: String){
+
+
+        for (item: Favorite in favorites) {
+            if (recipeName.equals(item.name)) { // If drink name on list, set button_favorite to favorited
+                button_favorite.startAnimation(favoriteAnim)
+                favorited = true
+            }
+        }
+
+    }
+
+    /*private fun loadFavorites(favorites: ) {
+        val favoritesListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                favorites.clear()
+                dataSnapshot.children.mapNotNullTo(favorites) { it.getValue<Favorite>(Favorite::class.java) }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                println("loadPost:onCancelled ${databaseError.toException()}")
+            }
+        }
+        fireStore.child("favorites").addListenerForSingleValueEvent(favoritesListener)
     }*/
 
 }

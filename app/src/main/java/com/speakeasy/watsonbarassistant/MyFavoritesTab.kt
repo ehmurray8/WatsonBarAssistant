@@ -55,8 +55,8 @@ class MyFavoritesTab : Fragment() {
         recyclerView?.addOnItemClickListener(object : OnItemClickListener {
             override fun onItemClicked(position: Int, view: View) {
                 val intent = Intent(activity, RecipeDetail::class.java)
-                val recipes = (activity as MainMenu).recipes
-                intent.putExtra("Recipe", recipes[0][position])
+                val ingredients = (activity as MainMenu).ingredients
+                intent.putExtra("Ingredients", ingredients[0])
                 startActivity(intent)
             }
         })
