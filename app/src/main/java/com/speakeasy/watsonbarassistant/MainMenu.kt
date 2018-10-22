@@ -24,6 +24,7 @@ class MainMenu : AppCompatActivity() {
 
     var ingredients = mutableListOf<Ingredient>()
     var recipes = mutableListOf<MutableList<DiscoveryRecipe>>()
+    var favorites = mutableListOf<Int>()
     var documentsMap = mutableMapOf<String, String>()
     var currentUser: FirebaseUser? = null
     var tabIndex = 1

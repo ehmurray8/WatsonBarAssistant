@@ -2,6 +2,7 @@ package com.speakeasy.watsonbarassistant
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.view.animation.BounceInterpolator
@@ -46,8 +47,8 @@ class RecipeDetail : AppCompatActivity() {
         activity_recipe_detail.apply{
 
         }
-
-        loadFromFireStore()
+        val viewManager = LinearLayoutManager(activity)
+        //loadFromFireStore()
 
         val recipe = intent.getSerializableExtra("Recipe") as? DiscoveryRecipe
 
@@ -64,7 +65,7 @@ class RecipeDetail : AppCompatActivity() {
         loadImage(assets, drink_detail_image, recipe, picasso)
 
         favoriteAnim = AnimationUtils.loadAnimation(baseContext, R.anim.anim_favorite)
-
+        //recipe.queueValue
         /* Set favorite button after checking if recipe is favorited or not */
         for (item: DiscoveryRecipe in favoritedItems) {
             if (recipeTitle.text == item.title) { // If drink name on list, set button_favorite to favorited
@@ -90,14 +91,22 @@ class RecipeDetail : AppCompatActivity() {
         /* Or wait until page is navigated away from/ app is closed (???) */
     }
 
-   private fun updateFirebaseFavoriteStatus(){
+   private fun updateFirebaseFavoriteStatus(recipe: Int){
 
         //Send to firebase
+       val mainMenu = (activity as? MainMenu)
+       val uid = mainMenu?.currentUser?.uid ?: return
+       fireStore.collection("app").document(uid)
+               .collection("favorites").add(recipe).addOnSuccessListener { _ ->
+                   mainMenu.favorites.add(recipe)
+                   mainMenu.favorites.sortBy { it.number) }
+                   //refresh()
+               }
 
     }
 
 
-    private fun loadFromFireStore() {
+    /*private fun loadFromFireStore() {
         val uid = authorization.currentUser?.uid
         if(uid != null) {
             fireStore.collection(MAIN_COLLECTION).document(uid).collection(FAVORITES_COLLECTION)
@@ -113,6 +122,6 @@ class RecipeDetail : AppCompatActivity() {
                         viewAdapter?.notifyDataSetChanged()
                     }
         }
-    }
+    }*/
 
 }
