@@ -6,6 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="bottom"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:fitsSystemWindows="false"
     tools:context=".IngredientsTab">
 
@@ -21,19 +23,19 @@
             android:id="@+id/ingredient"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:layout_margin="15dp"
             android:text="@string/ingredients_header"
             android:textSize="25sp"
             android:textColor="@color/primaryText"
             android:layout_gravity="start"
             android:gravity="center"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
             android:id="@+id/ingredientInputView"
+            android:textColor="@color/primaryText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
@@ -51,6 +53,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            android:focusableInTouchMode="true"
             android:focusable="true" />
 
         <android.support.design.widget.FloatingActionButton
@@ -115,15 +118,11 @@
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="12dp"
             android:scrollbars="vertical"
             app:layout_constraintBottom_toTopOf="@+id/ingredientInputView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/ingredient" />
-
-
     </android.support.constraint.ConstraintLayout>
-
-
 </android.support.design.widget.CoordinatorLayout>

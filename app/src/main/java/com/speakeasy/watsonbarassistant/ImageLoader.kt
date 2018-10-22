@@ -1,28 +1,36 @@
 package com.speakeasy.watsonbarassistant
 
-import android.content.res.AssetManager
-import android.graphics.drawable.Drawable
-import android.widget.ImageView
-import com.google.firebase.storage.FirebaseStorage
-import com.squareup.picasso.Picasso
+import android.content.Context
+import android.net.Uri
+import com.facebook.drawee.view.SimpleDraweeView
 
-private val storageReference = FirebaseStorage.getInstance().reference
 
-fun loadImage(assets: AssetManager, imageView: ImageView, recipe: DiscoveryRecipe?, picasso: Picasso) {
+fun loadImage(context: Context, imageView: SimpleDraweeView, recipe: DiscoveryRecipe?) {
+    imageView.hierarchy.setFailureImage(BarAssistant.defaultImage)
+    imageView.hierarchy.setRetryImage(BarAssistant.defaultImage)
     if(recipe != null) {
-        val imageReference = storageReference.child(recipe.getImageName())
-        val drawable = Drawable.createFromStream(assets.open(DEFAULT_RECIPE_IMAGE_NAME), null)
-        imageReference.downloadUrl.addOnSuccessListener {
-            picasso.load(it).error(drawable).into(imageView)
-        }.addOnFailureListener {
-            loadFailImage(picasso, imageView)
+        val imageUriString = recipe.recipeImageUriString
+        if(imageUriString == "") {
+            val imageReference = BarAssistant.storageReference?.child(recipe.getImageName())
+            imageReference?.downloadUrl?.addOnSuccessListener {
+                setImage(imageView, recipe, context, it)
+                recipe.recipeImageUriString = it.toString()
+            }
+        } else {
+            setImage(imageView, recipe, context)
         }
     } else {
-        loadFailImage(picasso, imageView)
+        loadFailImage(context, imageView)
     }
 }
 
 
-private fun loadFailImage(picasso: Picasso, imageView: ImageView) {
-    picasso.load(DEFAULT_IMAGE_URI).into(imageView)
+private fun setImage(imageView: SimpleDraweeView, recipe: DiscoveryRecipe, context: Context,
+                     recipeUri: Uri? = null) {
+    imageView.setImageURI(recipeUri ?: Uri.parse(recipe.recipeImageUriString), context)
+}
+
+
+private fun loadFailImage(context: Context, imageView: SimpleDraweeView) {
+    imageView.setImageURI(DEFAULT_IMAGE_URI, context)
 }
