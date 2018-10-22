@@ -7,12 +7,10 @@ import android.support.v7.widget.CardView
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
-import com.squareup.picasso.Picasso
+import com.facebook.drawee.view.SimpleDraweeView
 
-const val MAX_RECIPES = 15
 
 class HomeRecipeAdapter(private val recipes: MutableList<DiscoveryRecipe>,
                         private val activity: Activity, private val collectionName: String):
@@ -21,8 +19,6 @@ class HomeRecipeAdapter(private val recipes: MutableList<DiscoveryRecipe>,
     class ViewHolder(val card: CardView) : RecyclerView.ViewHolder(card)
 
     class ViewHolderSeeAll(val card: CardView) : RecyclerView.ViewHolder(card)
-
-    private val picasso: Picasso = Picasso.get()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if(viewType == 0) {
@@ -37,11 +33,11 @@ class HomeRecipeAdapter(private val recipes: MutableList<DiscoveryRecipe>,
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if(position == getLastPosition()) 1 else 0
+        return if(position == MAX_HOME_RECIPES) 1 else 0
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if(position == getLastPosition()) {
+        if(position == MAX_HOME_RECIPES) {
             if(holder as? ViewHolderSeeAll != null) {
                 holder.card.setOnClickListener {
                     RecipeCollection.recipesList = recipes
@@ -70,23 +66,16 @@ class HomeRecipeAdapter(private val recipes: MutableList<DiscoveryRecipe>,
 
     private fun setupImageView(mainLayout: RelativeLayout, recipe: DiscoveryRecipe,
                                textView: TextView) {
-        val imageView = mainLayout.getChildAt(0) as ImageView
+        val imageView = mainLayout.getChildAt(0) as SimpleDraweeView
         textView.setTypeface(textView.typeface, Typeface.BOLD)
-        loadImage(activity.assets, imageView, recipe, picasso)
+        loadImage(activity.baseContext, imageView, recipe)
     }
 
     override fun getItemCount(): Int {
         return when {
             recipes.count() == 0 -> 0
-            recipes.count() <= MAX_RECIPES -> recipes.count() + 1
-            else -> MAX_RECIPES + 1
+            recipes.count() <= MAX_HOME_RECIPES -> recipes.count()
+            else -> MAX_HOME_RECIPES + 1
         }
-    }
-
-    private fun getLastPosition(): Int {
-        if(recipes.count() <= MAX_RECIPES) {
-            return recipes.count()
-        }
-        return MAX_RECIPES
     }
 }

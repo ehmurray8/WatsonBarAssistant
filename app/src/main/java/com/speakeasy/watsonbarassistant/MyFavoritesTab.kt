@@ -9,9 +9,9 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import kotlinx.android.synthetic.main.fragment_my_favorites_tab.*
+import kotlinx.android.synthetic.main.fragment_my_recipes_tab.*
 
-class MyFavoritesTab : Fragment() {
+class MyRecipesTab : Fragment() {
 
     private var viewAdapter: MyRecipeAdapter? = null
     private var recyclerView: RecyclerView? = null
@@ -22,7 +22,7 @@ class MyFavoritesTab : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?):View? {
-        return inflater.inflate(R.layout.fragment_my_favorites_tab, container, false)
+        return inflater.inflate(R.layout.fragment_my_recipes_tab, container, false)
     }
 
     override fun onStop() {
@@ -35,7 +35,7 @@ class MyFavoritesTab : Fragment() {
 
         manager = LinearLayoutManager(activity?.baseContext)
         val mainMenu = activity as MainMenu
-        viewAdapter = MyRecipeAdapter(mainMenu.recipes[0], mainMenu.assets)
+        viewAdapter = MyRecipeAdapter(BarAssistant.recipes[0], mainMenu)
 
         recyclerView = recipes_list.apply {
             setHasFixedSize(true)
@@ -55,8 +55,8 @@ class MyFavoritesTab : Fragment() {
         recyclerView?.addOnItemClickListener(object : OnItemClickListener {
             override fun onItemClicked(position: Int, view: View) {
                 val intent = Intent(activity, RecipeDetail::class.java)
-                val ingredients = (activity as MainMenu).ingredients
-                intent.putExtra("Ingredients", ingredients[0])
+                val recipes = BarAssistant.recipes
+                intent.putExtra("Recipe", recipes[0][position])
                 startActivity(intent)
             }
         })
