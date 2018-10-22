@@ -41,6 +41,11 @@ class BarAssistant: Application() {
                 recipes.add(mutableListOf())
             }
         }
+        if(favorites.isEmpty()) {
+            homeCategories.forEach { _ ->
+                favorites.add(mutableListOf())
+            }
+        }
     }
 
     override fun onCreate() {
@@ -116,10 +121,10 @@ class BarAssistant: Application() {
                             val recipe = BarAssistant.lastViewedFavorites[it]
                             if(recipe != null) favorites.add(recipe.imageId.toFloat().toInt())
                         }
-                val recentlyViewedMap = mapOf(LAST_VIEWED_RECIPE_TIMES to BarAssistant.lastViewedTimes,
-                        LAST_VIEWED_RECIPES to recipes)
-                fireStore.collection(MAIN_COLLECTION).document(uid).collection(FAVORITES_COLLECTION)
-                        .document("main").set(recentlyViewedMap)
+                //val favoritesMap = mapOf(LAST_VIEWED_RECIPE_TIMES to BarAssistant.lastViewedTimes,
+                 //       LAST_VIEWED_RECIPES to recipes)
+                //fireStore.collection(MAIN_COLLECTION).document(uid).collection(FAVORITES_COLLECTION)
+                //        .document("main").set(recentlyViewedMap)
             }
         }
     }

@@ -16,13 +16,15 @@ import android.view.View
 import android.widget.SearchView
 import com.algolia.search.saas.Client
 import com.algolia.search.saas.Query
+import com.algolia.search.saas.android.BuildConfig.ALGOLIA_API_KEY
+import com.algolia.search.saas.android.BuildConfig.ALGOLIA_APPLICATION_ID
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_search.*
 import kotlinx.serialization.json.JSON
 
 class SearchActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
 
-    private val client = Client(ALGOLIA_APP_ID, ALGOLIA_API_KEY)
+    private val client = Client(ALGOLIA_APPLICATION_ID, ALGOLIA_API_KEY)
     private val recipeIndex = client.getIndex("Recipe")
     private var searchMenuItem: MenuItem? = null
     private var searchView: SearchView? = null

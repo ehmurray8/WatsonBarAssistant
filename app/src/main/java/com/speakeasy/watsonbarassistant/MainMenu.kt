@@ -84,7 +84,7 @@ class MainMenu : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         val barAssistant = (application as BarAssistant)
-        barAssistant.storeRecentlyViewed(authorization, fireStore)
+        //barAssistant.storeRecentlyViewed(authorization, fireStore)
         barAssistant.storeFavorite(authorization, fireStore)
         val preferences = getSharedPreferences(SHARED_PREFERENCES_SETTINGS, Context.MODE_PRIVATE)
         val editor = preferences.edit()

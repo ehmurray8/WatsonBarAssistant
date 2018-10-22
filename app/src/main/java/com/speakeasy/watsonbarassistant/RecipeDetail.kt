@@ -16,21 +16,20 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.FirebaseFirestore
 import com.speakeasy.watsonbarassistant.R.id.button_favorite
 import com.speakeasy.watsonbarassistant.R.layout.activity_recipe_detail
-import com.squareup.picasso.Picasso
+//import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_recipe_detail.*
 import kotlinx.android.synthetic.main.activity_recipe_detail.view.*
 import java.util.ArrayList
 
 class RecipeDetail : AppCompatActivity() {
 
-    private val picasso = Picasso.get()
+    //private val picasso = Picasso.get()
     var favorited: Boolean = false
     lateinit var favoriteAnim: Animation
 
     var viewAdapter: MyRecipeAdapter? = null
     var authorization = FirebaseAuth.getInstance()
     var fireStore = FirebaseFirestore.getInstance()
-    lateinit var favorite: Favorite
     var favorites = mutableListOf<Favorite>()
 
     @Override
@@ -84,7 +83,7 @@ class RecipeDetail : AppCompatActivity() {
             recipe_ingredients.text = recipeIngredientsString
             description_content.text = recipe?.description
 
-            loadImage(assets, drink_detail_image, recipe, picasso)
+            //loadImage(assets, drink_detail_image, recipe, picasso)
 
             favoriteAnim = AnimationUtils.loadAnimation(baseContext, R.anim.anim_favorite)
 
