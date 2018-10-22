@@ -23,8 +23,10 @@ class BarAssistant: Application() {
         var networkInfo: NetworkInfo? = null
         var storageReference: StorageReference? = null
         var recipes = mutableListOf<MutableList<DiscoveryRecipe>>()
+        var favorites = mutableListOf<MutableList<DiscoveryRecipe>>()
 
         val lastViewedRecipes: MutableMap<Long, DiscoveryRecipe> = mutableMapOf()
+        val lastViewedFavorites: MutableMap<Long, DiscoveryRecipe> = mutableMapOf()
         val lastViewedTimes: MutableList<Long> = mutableListOf()
         val homeCategories = mutableListOf(SUGGESTIONS_CATEGORY, RECENTLY_VIEWED_CATEGORY)
 
@@ -85,6 +87,38 @@ class BarAssistant: Application() {
                 val recentlyViewedMap = mapOf(LAST_VIEWED_RECIPE_TIMES to BarAssistant.lastViewedTimes,
                         LAST_VIEWED_RECIPES to recipes)
                 fireStore.collection(MAIN_COLLECTION).document(uid).collection(RECENTLY_VIEWED_COLLECTION)
+                        .document("main").set(recentlyViewedMap)
+            }
+        }
+    }
+
+    fun storeFavorite(authorization: FirebaseAuth, fireStore: FirebaseFirestore) {
+        storeFavoriteFireStore(authorization, fireStore)
+        val preferences = getSharedPreferences(SHARED_PREFERENCES_SETTINGS, Context.MODE_PRIVATE)
+        val editor = preferences.edit()
+        val gson = Gson()
+        BarAssistant.homeCategories.forEachIndexed { i, category ->
+            val json = gson.toJson(BarAssistant.favorites[i].toTypedArray())
+            editor.putString(category, json)
+        }
+        //val lastViewedTimesJson = gson.toJson(BarAssistant.lastViewedTimes.sortedByDescending { it -> it })
+        //editor.putString(LAST_VIEWED_RECIPE_TIMES, lastViewedTimesJson)
+        editor.apply()
+    }
+
+    private fun storeFavoriteFireStore(authorization: FirebaseAuth, fireStore: FirebaseFirestore) {
+        if (BarAssistant.isInternetConnected()) {
+            val uid = authorization.currentUser?.uid
+            if (uid != null) {
+                val favorites = mutableListOf<Int>()
+                BarAssistant.lastViewedFavorites.keys.sortedByDescending { it -> it }
+                        .forEach {
+                            val recipe = BarAssistant.lastViewedFavorites[it]
+                            if(recipe != null) favorites.add(recipe.imageId.toFloat().toInt())
+                        }
+                val recentlyViewedMap = mapOf(LAST_VIEWED_RECIPE_TIMES to BarAssistant.lastViewedTimes,
+                        LAST_VIEWED_RECIPES to recipes)
+                fireStore.collection(MAIN_COLLECTION).document(uid).collection(FAVORITES_COLLECTION)
                         .document("main").set(recentlyViewedMap)
             }
         }

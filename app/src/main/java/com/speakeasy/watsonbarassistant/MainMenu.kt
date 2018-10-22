@@ -85,6 +85,7 @@ class MainMenu : AppCompatActivity() {
         super.onPause()
         val barAssistant = (application as BarAssistant)
         barAssistant.storeRecentlyViewed(authorization, fireStore)
+        barAssistant.storeFavorite(authorization, fireStore)
         val preferences = getSharedPreferences(SHARED_PREFERENCES_SETTINGS, Context.MODE_PRIVATE)
         val editor = preferences.edit()
         val gson = Gson()
@@ -97,6 +98,7 @@ class MainMenu : AppCompatActivity() {
         super.onDestroy()
         BarAssistant.lastViewedTimes.clear()
         BarAssistant.lastViewedRecipes.clear()
+        BarAssistant.lastViewedFavorites.clear()
         BarAssistant.recipes.forEach { it.clear() }
     }
 
@@ -149,7 +151,7 @@ class MainMenu : AppCompatActivity() {
         when (tabIndex) {
             0 -> fragment = IngredientsTab()
             1 -> fragment = HomeTab()
-            2 -> fragment = MyRecipesTab()
+            2 -> fragment = MyFavoritesTab()
         }
         replaceFragment()
     }

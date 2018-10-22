@@ -9,9 +9,10 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import kotlinx.android.synthetic.main.fragment_my_recipes_tab.*
+import kotlinx.android.synthetic.main.activity_recipe_collection.*
+import kotlinx.android.synthetic.main.fragment_my_favorites_tab.*
 
-class MyRecipesTab : Fragment() {
+class MyFavoritesTab : Fragment() {
 
     private var viewAdapter: MyRecipeAdapter? = null
     private var recyclerView: RecyclerView? = null
@@ -22,7 +23,7 @@ class MyRecipesTab : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?):View? {
-        return inflater.inflate(R.layout.fragment_my_recipes_tab, container, false)
+        return inflater.inflate(R.layout.fragment_my_favorites_tab, container, false)
     }
 
     override fun onStop() {
@@ -35,9 +36,9 @@ class MyRecipesTab : Fragment() {
 
         manager = LinearLayoutManager(activity?.baseContext)
         val mainMenu = activity as MainMenu
-        viewAdapter = MyRecipeAdapter(BarAssistant.recipes[0], mainMenu)
+        viewAdapter = MyRecipeAdapter(BarAssistant.favorites[0], mainMenu)
 
-        recyclerView = recipes_list.apply {
+        recyclerView = recipes_collection_list.apply {
             setHasFixedSize(true)
             layoutManager = manager
             adapter = viewAdapter
@@ -55,8 +56,8 @@ class MyRecipesTab : Fragment() {
         recyclerView?.addOnItemClickListener(object : OnItemClickListener {
             override fun onItemClicked(position: Int, view: View) {
                 val intent = Intent(activity, RecipeDetail::class.java)
-                val recipes = BarAssistant.recipes
-                intent.putExtra("Recipe", recipes[0][position])
+                val favorite = BarAssistant.favorites
+                intent.putExtra("Favorite", favorite[0][position])
                 startActivity(intent)
             }
         })
