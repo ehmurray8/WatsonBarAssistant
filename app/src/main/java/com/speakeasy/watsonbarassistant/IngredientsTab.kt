@@ -9,6 +9,7 @@ import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -99,7 +100,7 @@ class IngredientsTab : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode==7){
             if(resultCode== Activity.RESULT_OK){
-                val ingredientSelected = data.getStringExtra("Ingredient Selected")
+                val ingredientSelected = data.getStringExtra("Selected")
                 val ingredient = Ingredient(ingredientSelected)
                 addIngredient(ingredient = ingredient)
             }
@@ -139,12 +140,12 @@ class IngredientsTab : Fragment() {
         val uid = mainMenu?.currentUser?.uid ?: return
         fireStore.collection("app").document(uid)
                 .collection("ingredients").add(ingredient).addOnSuccessListener { _ ->
-                    Toast.makeText(context, "Successfully added ${ingredient.name}.", Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(activity?.applicationContext, "Successfully added ${ingredient.name}.", Toast.LENGTH_SHORT).show()
                     mainMenu.ingredients.add(ingredient)
                     mainMenu.ingredients.sortBy { it.name.toLowerCase().replace("\\s".toRegex(), "") }
                     refresh()
                 }.addOnFailureListener {
-                    Toast.makeText(context, "Failed to add ${ingredient.name}.", Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(activity?.applicationContext, "Failed to add ${ingredient.name}.", Toast.LENGTH_SHORT).show()
                 }
     }
 

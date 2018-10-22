@@ -240,18 +240,16 @@ class VisionTab : AppCompatActivity(), View.OnClickListener  {
                         runOnUiThread(Runnable {
                             kotlin.run {
                                 button.setText(responseList.get(i))
-                                button.setOnClickListener(){
-                                    View.OnClickListener(){
-                                        fun onClick(v: View){
-                                            val resultIntent = Intent()
-                                            resultIntent.putExtra("Ingredient Selected", "tea")
-                                            setResult(Activity.RESULT_OK, resultIntent)
-                                            finish()
-                                        }
-                                }
+                                button.setOnClickListener{
+                                    val resultIntent = Intent()
+                                    resultIntent.putExtra("Selected", responseList.get(i))
+                                    setResult(Activity.RESULT_OK, resultIntent)
+                                    finish()
                                 }
                             }
                         })
+
+
                     }
 
 
@@ -265,14 +263,11 @@ class VisionTab : AppCompatActivity(), View.OnClickListener  {
     @RequiresApi(Build.VERSION_CODES.O)
     fun encodeBitmapToBase64(bitmap: Bitmap):String{
         var byteArrayOutputStream :ByteArrayOutputStream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG,30,byteArrayOutputStream)
+        bitmap.compress(Bitmap.CompressFormat.JPEG,100,byteArrayOutputStream)
         val byteArray = byteArrayOutputStream.toByteArray()
         val encoded : String = Base64.getEncoder().encodeToString(byteArray)
 
         return encoded
     }
-
-
-
 
 }
