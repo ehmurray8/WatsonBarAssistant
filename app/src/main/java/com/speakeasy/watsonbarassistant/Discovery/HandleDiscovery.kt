@@ -14,7 +14,7 @@ class HandleDiscovery(private val overAllList: MutableList<MutableList<Discovery
         val fragment = mainMenu?.fragment
         if(fragment as? HomeTab != null) {
             fragment.refresh()
-        } else if(fragment as? MyRecipesTab != null) {
+        } else if(fragment as? MyFavoritesTab != null) {
             fragment.refresh()
         }
     }

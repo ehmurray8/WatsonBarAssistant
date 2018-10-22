@@ -139,7 +139,7 @@ class MainMenu : AppCompatActivity() {
         when(tabIndex) {
             0 -> fragment = IngredientsTab()
             1 -> fragment = HomeTab()
-            2 -> fragment = MyRecipesTab()
+            2 -> fragment = MyFavoritesTab()
         }
         replaceFragment()
     }
