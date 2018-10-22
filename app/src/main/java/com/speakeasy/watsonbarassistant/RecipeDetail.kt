@@ -21,9 +21,9 @@ class RecipeDetail : AppCompatActivity() {
     private val picasso = Picasso.get()
     private var favorited: Boolean = false
     private lateinit var favoriteAnim: Animation
-    private val favoritedItems = mutableListOf<Favorite>()
+    private val favoritedItems = mutableListOf<DiscoveryRecipe>()
 
-    private var viewAdapter: ShoppingCartAdapter? = null
+    private var viewAdapter: MyRecipeAdapter? = null
     private var authorization = FirebaseAuth.getInstance()
     private var fireStore = FirebaseFirestore.getInstance()
 
@@ -47,7 +47,7 @@ class RecipeDetail : AppCompatActivity() {
 
         }
 
-        //loadFromFireStore()
+        loadFromFireStore()
 
         val recipe = intent.getSerializableExtra("Recipe") as? DiscoveryRecipe
 
@@ -63,28 +63,26 @@ class RecipeDetail : AppCompatActivity() {
 
         loadImage(assets, drink_detail_image, recipe, picasso)
 
-
-        /* Set favorite button after checking if recipe is favorited or not */
-
         favoriteAnim = AnimationUtils.loadAnimation(baseContext, R.anim.anim_favorite)
 
+        /* Set favorite button after checking if recipe is favorited or not */
+        for (item: DiscoveryRecipe in favoritedItems) {
+            if (recipeTitle.text == item.title) { // If drink name on list, set button_favorite to favorited
+                button_favorite.startAnimation(favoriteAnim)
+                favorited = true
+            }
+        }
+
         /* NOT favorited previously */
-
-        /*if (keybind == ){
-            onPause()
-        }*/
-
         button_favorite.setOnClickListener{
             if (!favorited){
                 favorited = true
                 button_favorite.startAnimation(favoriteAnim)
                 Toast.makeText(baseContext, "Added to Favorites", Toast.LENGTH_SHORT).show()
-
             }
             else{
                 favorited = false
                 Toast.makeText(baseContext, "Removed from Favorites", Toast.LENGTH_SHORT).show()
-
             }
             // Wait ~15 (?) seconds before putting on to firebase favorites list
         }
@@ -92,29 +90,29 @@ class RecipeDetail : AppCompatActivity() {
         /* Or wait until page is navigated away from/ app is closed (???) */
     }
 
-    fun updateFirebaseFavoriteStatus(){
+   private fun updateFirebaseFavoriteStatus(){
 
         //Send to firebase
 
     }
 
-/*    private fun loadFromFireStore() {
+
+    private fun loadFromFireStore() {
         val uid = authorization.currentUser?.uid
         if(uid != null) {
-            fireStore.collection(MAIN_COLLECTION).document(uid).collection(SHOPPING_CART_COLLECTION)
+            fireStore.collection(MAIN_COLLECTION).document(uid).collection(FAVORITES_COLLECTION)
                     .document("main").get().addOnSuccessListener {
-                        val ingredients = it.get(GROCERY_INGREDIENTS) as? ArrayList<*>
-                        val neededList = it.get(GROCERY_NEEDED) as? ArrayList<*>
-                        ingredients?.forEachIndexed { i, element ->
-                            val ingredient = Ingredient(element as String)
-                            if(!orderedItems.contains(ingredient)) {
-                                orderedItems.add(ingredient)
-                                shoppingCartItems[ingredient] = (neededList?.get(i) as? Boolean) ?: true
+                        val favorites = it.get(FAVORITES) as? ArrayList<*>
+                        favorites?.forEachIndexed { i, element ->
+                            val favorite = DiscoveryRecipe(element as String)
+                            if(!orderedItems.contains(favorite)) {
+                                orderedItems.add(favorite)
+                                shoppingCartItems[favorite] = (neededList?.get(i) as? Boolean) ?: true
                             }
                         }
                         viewAdapter?.notifyDataSetChanged()
                     }
         }
-    }*/
+    }
 
 }
