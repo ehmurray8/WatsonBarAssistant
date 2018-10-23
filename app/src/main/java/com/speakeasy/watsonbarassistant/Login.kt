@@ -15,7 +15,6 @@ const val RC_SIGN_IN = 123
 
 class Login : AppCompatActivity() {
 
-
     private var authorization = FirebaseAuth.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {

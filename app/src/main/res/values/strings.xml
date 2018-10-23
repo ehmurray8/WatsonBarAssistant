@@ -24,5 +24,10 @@
     <string name="vision_image">Image from camera</string>
     <string name="button_placeholder">Button</string>
     <string name="take_photo">Take Photo</string>
+    <string name="shopping_cart_header">Shopping Cart</string>
+    <string name="shopping_cart_add_hint">Add to shopping cart…</string>
+    <string name="ingredient_page_description">Ingredients Page</string>
+    <string name="search_title">Search</string>
+    <string name="random_title">Random</string>
 
 </resources>

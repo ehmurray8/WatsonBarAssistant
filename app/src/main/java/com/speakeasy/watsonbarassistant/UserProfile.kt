@@ -101,6 +101,9 @@ class UserProfile : AppCompatActivity() {
     }
 
     private fun signOut() {
+        BarAssistant.recipes.forEach { it.clear() }
+        BarAssistant.lastViewedRecipes.clear()
+        BarAssistant.lastViewedTimes.clear()
         AuthUI.getInstance().signOut(this).addOnCompleteListener {
             val intent = Intent(this, Login::class.java)
             val preferences = getSharedPreferences(SHARED_PREFERENCES_SETTINGS, Context.MODE_PRIVATE)

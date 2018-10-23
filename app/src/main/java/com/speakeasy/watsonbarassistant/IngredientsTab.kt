@@ -1,7 +1,9 @@
 package com.speakeasy.watsonbarassistant
 
 
+import android.content.Context
 import android.content.Intent
+import android.graphics.Rect
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.DividerItemDecoration
@@ -14,6 +16,7 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import com.google.firebase.firestore.FirebaseFirestore
 import com.speakeasy.watsonbarassistant.vision.VisionActivity
@@ -56,29 +59,39 @@ class IngredientsTab : Fragment(), IngredientDelegate {
         menuAnimRotateBack = AnimationUtils.loadAnimation(context, R.anim.menu_anim_rotate_back)
 
         addMenuButton.setOnClickListener {
-            if (isAddMenuOpen) {
-                closeMenus()
-            } else {
-                openMenus()
+            when {
+                isAddMenuOpen -> closeMenus()
+                else -> openMenus()
             }
-
         }
         addViaTextButton.setOnClickListener {
             closeMenus()
             ingredientInputView.visibility = View.VISIBLE
             ingredientInputView.setOnEditorActionListener { _, actionId, _ ->
-                addMenuButton.hide()
+
                 return@setOnEditorActionListener when (actionId) {
                     EditorInfo.IME_ACTION_DONE -> {
                         val name = ingredientInputView.text.toString()
                         addIngredient(name)
                         ingredientInputView.selectAll()
                         ingredientInputView.setText("")
-                        addMenuButton.show()
                         true
                     }
                     else -> false
                 }
+            }
+            ingredientInputView.post {
+                val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+                ingredientInputView.requestFocus()
+                imm?.showSoftInput(ingredientInputView, InputMethodManager.SHOW_IMPLICIT)
+            }
+        }
+        
+        ingredientInputView.setOnFocusChangeListener { _, hasFocus ->
+            if(hasFocus) {
+                addMenuButton.hide()
+            } else {
+                addMenuButton.show()
             }
         }
         addViaCameraButton.setOnClickListener {
@@ -91,6 +104,8 @@ class IngredientsTab : Fragment(), IngredientDelegate {
         ingredients_recycler_view.addItemDecoration(itemDecorator)
 
         setupSwipeHandler()
+        setupKeyboardListener()
+        refresh()
     }
 
     override fun addIngredient(name: String) {
@@ -106,38 +121,33 @@ class IngredientsTab : Fragment(), IngredientDelegate {
      private fun setupSwipeHandler() {
          val context = activity?.baseContext ?: return
          val swipeHandler = object : SwipeToDeleteCallback(context) {
-             override fun onMove(p0: RecyclerView, p1: RecyclerView.ViewHolder, p2: RecyclerView.ViewHolder): Boolean {
-                 super.onMove(p0, p1, p2)
-                 p0.scrollTo(1, 1)
-                 return true
-             }
 
              override fun onSwiped(p0: RecyclerView.ViewHolder, direction: Int) {
-                 val position = p0.layoutPosition
+                 val position = p0.adapterPosition
                  viewAdapter?.removeAt(position)
              }
          }
          val itemTouchHelper = ItemTouchHelper(swipeHandler)
-
          itemTouchHelper.attachToRecyclerView(ingredients_recycler_view)
      }
 
     private fun addIngredientToFireStore(ingredient: Ingredient) {
         val mainMenu = (activity as? MainMenu)
         val uid = mainMenu?.currentUser?.uid ?: return
-        fireStore.collection("app").document(uid)
-                .collection("ingredients").add(ingredient).addOnSuccessListener { _ ->
+        fireStore.collection(MAIN_COLLECTION).document(uid)
+                .collection(INGREDIENT_COLLECTION).add(ingredient).addOnSuccessListener { _ ->
                     Toast.makeText(context, "Successfully added ${ingredient.name}.", Toast.LENGTH_SHORT).show()
                     mainMenu.ingredients.add(ingredient)
-                    mainMenu.ingredients.sortBy { it.name.toLowerCase().replace("\\s".toRegex(), "") }
                     refresh()
                 }.addOnFailureListener {
                     Toast.makeText(context, "Failed to add ${ingredient.name}.", Toast.LENGTH_SHORT).show()
                 }
     }
 
-    private fun refresh() {
-        viewAdapter?.notifyDataSetChanged()
+    fun refresh() {
+        activity?.runOnUiThread {
+            viewAdapter?.notifyDataSetChanged()
+        }
     }
 
     private fun closeMenus(){
@@ -167,5 +177,22 @@ class IngredientsTab : Fragment(), IngredientDelegate {
         addViaVoiceButton.isClickable = true
         addViaVoiceButton.show()
         isAddMenuOpen = true
+    }
+
+    private fun setupKeyboardListener() {
+        coordinateLayout.viewTreeObserver.addOnGlobalLayoutListener {
+            val rect = Rect()
+            if(coordinateLayout != null && ingredientInputView.hasFocus()) {
+                coordinateLayout.getWindowVisibleDisplayFrame(rect)
+                val screenHeight = coordinateLayout.rootView.height
+
+                val keypadHeight = screenHeight - rect.bottom
+
+                if (keypadHeight <= screenHeight * 0.15) {
+                    ingredientInputView.clearFocus()
+                    ingredientInputView.visibility = View.GONE
+                }
+            }
+        }
     }
 }
