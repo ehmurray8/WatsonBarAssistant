@@ -1,4 +1,4 @@
-package com.speakeasy.watsonbarassistant.Discovery
+package com.speakeasy.watsonbarassistant.discovery
 
 import android.os.AsyncTask
 import android.util.Log
@@ -6,7 +6,6 @@ import com.ibm.watson.developer_cloud.discovery.v1.Discovery
 import com.ibm.watson.developer_cloud.discovery.v1.model.QueryOptions
 import com.speakeasy.watsonbarassistant.*
 import kotlinx.serialization.json.JSON
-import java.lang.Exception
 
 class SearchDiscovery(private val inputListener: CompletedDiscovery):
         AsyncTask<Array<Ingredient>, Void, MutableList<DiscoveryRecipe>>() {
@@ -44,17 +43,17 @@ class SearchDiscovery(private val inputListener: CompletedDiscovery):
         inputListener.onTaskCompleted(result)
     }
 
-    fun buildIngredientQuery(ingredients: Array<Ingredient>): String {
-        var ans = "ingredientList:"
+    private fun buildIngredientQuery(ingredients: Array<Ingredient>): String {
+        val ans = "ingredientList:"
         var queryString = buildAndString(createAndSets(ingredients,0,0))
-        var threshold = 5
-        var optimalSetSize = 4
+        val threshold = 5
+        val optimalSetSize = 4
 
 
         if (ingredients.count() > threshold){
             queryString = buildAndString(createAndSets(ingredients,0,optimalSetSize - 1)) + "|" + queryString
         } else {
-            for (size in 1..ingredients.count() - 1){
+            for (size in 1 until ingredients.count()){
                 queryString = buildAndString(createAndSets(ingredients,0,size)) + "|" + queryString
             }
         }
@@ -70,7 +69,7 @@ class SearchDiscovery(private val inputListener: CompletedDiscovery):
             ans += "("
 
             for (element in set){
-                ans += element + ","
+                ans += "$element,"
             }
 
             if (set.count() > 0){
@@ -86,18 +85,18 @@ class SearchDiscovery(private val inputListener: CompletedDiscovery):
 
 
     fun createAndSets(ingredients: Array<Ingredient>, start: Int, size: Int): MutableList<MutableSet<String>>{
-        var ans = mutableListOf<MutableSet<String>>()
+        val ans = mutableListOf<MutableSet<String>>()
 
-        for (pos in start..ingredients.count() - size - 1){
-            var subSet = mutableSetOf<String>()
+        for (pos in start until ingredients.count() - size){
+            val subSet = mutableSetOf<String>()
             subSet.add(ingredients[pos].name)
             ans.add(subSet)
         }
 
         if (size > 0){
-            var count = ans.count() - 1
+            val count = ans.count() - 1
             for (element in 0..count){
-                var superElement = ans.removeAt(0)
+                val superElement = ans.removeAt(0)
                 for (subSet in createAndSets(ingredients, start + 1 + element, size - 1)){
                     ans.add(ans.count(), subSet.union(superElement).toMutableSet())
                 }

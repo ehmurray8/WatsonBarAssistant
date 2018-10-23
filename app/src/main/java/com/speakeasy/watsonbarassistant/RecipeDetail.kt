@@ -2,27 +2,29 @@ package com.speakeasy.watsonbarassistant
 
 import android.content.Context
 import android.graphics.drawable.GradientDrawable
-import android.nfc.Tag
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.widget.TextView
-import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.speakeasy.watsonbarassistant.SpeechandText.HandleTtS
-import com.speakeasy.watsonbarassistant.SpeechandText.TextToSpeech
+import com.speakeasy.watsonbarassistant.speech.HandleTtS
+import com.speakeasy.watsonbarassistant.speech.TextToSpeech
 import kotlinx.android.synthetic.main.activity_recipe_detail.*
 
 class RecipeDetail : AppCompatActivity() {
 
     private var authorization = FirebaseAuth.getInstance()
     private var fireStore = FirebaseFirestore.getInstance()
+    private var mediaPlayer: MediaPlayer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recipe_detail)
         val recipe = intent.getSerializableExtra("Recipe") as? DiscoveryRecipe
+
+        mediaPlayer = MediaPlayer()
 
         if(recipe != null) {
             addToRecentlyViewed(recipe)
@@ -41,8 +43,7 @@ class RecipeDetail : AppCompatActivity() {
             addTags(recipe)
 
             readDescriptionButton.setOnClickListener {
-
-                var textToSpeech = TextToSpeech(HandleTtS())
+                val textToSpeech = TextToSpeech(HandleTtS(), mediaPlayer ?: return@setOnClickListener)
                 textToSpeech.execute(recipe.title + ". " + recipe.description)
             }
         }
@@ -87,5 +88,7 @@ class RecipeDetail : AppCompatActivity() {
         super.onPause()
         val barAssistant = application as BarAssistant
         barAssistant.storeRecentlyViewed(authorization, fireStore)
+        mediaPlayer?.release()
+        mediaPlayer = null
     }
 }

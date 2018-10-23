@@ -1,23 +1,15 @@
-package com.speakeasy.watsonbarassistant.SpeechandText
+package com.speakeasy.watsonbarassistant.speech
 
+import android.media.MediaPlayer
 import android.os.AsyncTask
 import android.util.Log
 import com.ibm.watson.developer_cloud.android.library.audio.StreamPlayer
-import com.ibm.watson.developer_cloud.service.security.IamOptions
-import com.ibm.watson.developer_cloud.speech_to_text.v1.SpeechToText
-import com.ibm.watson.developer_cloud.speech_to_text.v1.model.RecognizeOptions
-import com.ibm.watson.developer_cloud.speech_to_text.v1.model.SpeechRecognitionResult
 import com.ibm.watson.developer_cloud.text_to_speech.v1.TextToSpeech
-import java.io.File
-import java.lang.Exception
-import com.ibm.watson.developer_cloud.text_to_speech.v1.util.WaveUtils
 import com.ibm.watson.developer_cloud.text_to_speech.v1.model.SynthesizeOptions
 import com.speakeasy.watsonbarassistant.*
-import kotlinx.io.IOException
-import java.io.FileOutputStream
 
 
-class TextToSpeech(private val inputListener: CompletedTtS):
+class TextToSpeech(private val inputListener: CompletedTtS, private val mediaPlayer: MediaPlayer):
         AsyncTask<String, Void, String>() {
 
     override fun doInBackground(vararg args: String): String {
@@ -44,13 +36,12 @@ class TextToSpeech(private val inputListener: CompletedTtS):
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-
         }
         return outFile
     }
 
     override fun onPostExecute(result: String){
         super.onPostExecute(result)
-        inputListener.onTaskCompleted(result)
+        inputListener.onTaskCompleted(result, mediaPlayer)
     }
 }

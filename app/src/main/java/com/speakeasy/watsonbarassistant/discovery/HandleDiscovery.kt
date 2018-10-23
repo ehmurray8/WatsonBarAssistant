@@ -1,4 +1,4 @@
-package com.speakeasy.watsonbarassistant.Discovery
+package com.speakeasy.watsonbarassistant.discovery
 
 import com.speakeasy.watsonbarassistant.*
 

@@ -1,24 +1,18 @@
-package com.speakeasy.watsonbarassistant.Discovery
+package com.speakeasy.watsonbarassistant.discovery
 
-import com.ibm.watson.developer_cloud.discovery.v1.model.QueryResponse
 import com.speakeasy.watsonbarassistant.Ingredient
-import com.speakeasy.watsonbarassistant.MainMenu
 import junit.framework.TestCase
-import kotlinx.serialization.stringFromUtf8Bytes
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
-import org.mockito.Mockito.mock
 import org.mockito.MockitoAnnotations
 
 class SearchDiscoveryTest: TestCase() {
 
-    lateinit var searchDiscovery: SearchDiscovery
+    private lateinit var searchDiscovery: SearchDiscovery
     @Mock
     lateinit var handleDiscovery: HandleDiscovery
-    @Mock
-    lateinit var queryResponse: QueryResponse
 
     @Before
     override fun setUp(){
@@ -29,7 +23,7 @@ class SearchDiscoveryTest: TestCase() {
 
     @Test
     fun testCreateAndSetsBasic() {
-        var ingredients = mutableListOf<Ingredient>()
+        val ingredients = mutableListOf<Ingredient>()
         ingredients.add(Ingredient("a"))
 
         Assert.assertEquals("[[a]]", searchDiscovery.createAndSets(ingredients.toTypedArray(), 0, 0).toString())
@@ -37,11 +31,11 @@ class SearchDiscoveryTest: TestCase() {
 
     @Test
     fun testCreateAndSetsMulti() {
-        var ingredients = mutableListOf<Ingredient>()
-        var expected = mutableListOf<MutableSet<String>>()
-        var set1 = mutableSetOf<String>()
-        var set2 = mutableSetOf<String>()
-        var set3 = mutableSetOf<String>()
+        val ingredients = mutableListOf<Ingredient>()
+        val expected = mutableListOf<MutableSet<String>>()
+        val set1 = mutableSetOf<String>()
+        val set2 = mutableSetOf<String>()
+        val set3 = mutableSetOf<String>()
 
         ingredients.add(Ingredient("a"))
         ingredients.add(Ingredient("b"))
@@ -60,11 +54,11 @@ class SearchDiscoveryTest: TestCase() {
 
     @Test
     fun testCreateAndSetsMultiSizeTwo() {
-        var ingredients = mutableListOf<Ingredient>()
-        var expected = mutableListOf<MutableSet<String>>()
-        var set1 = mutableSetOf<String>()
-        var set2 = mutableSetOf<String>()
-        var set3 = mutableSetOf<String>()
+        val ingredients = mutableListOf<Ingredient>()
+        val expected = mutableListOf<MutableSet<String>>()
+        val set1 = mutableSetOf<String>()
+        val set2 = mutableSetOf<String>()
+        val set3 = mutableSetOf<String>()
 
         ingredients.add(Ingredient("a"))
         ingredients.add(Ingredient("b"))
@@ -88,9 +82,9 @@ class SearchDiscoveryTest: TestCase() {
 
     @Test
     fun testCreateAndSetsMultiSizeThree() {
-        var ingredients = mutableListOf<Ingredient>()
-        var expected = mutableListOf<MutableSet<String>>()
-        var set1 = mutableSetOf<String>()
+        val ingredients = mutableListOf<Ingredient>()
+        val expected = mutableListOf<MutableSet<String>>()
+        val set1 = mutableSetOf<String>()
 
         ingredients.add(Ingredient("a"))
         ingredients.add(Ingredient("b"))
@@ -107,9 +101,9 @@ class SearchDiscoveryTest: TestCase() {
 
     @Test
     fun testBuildAndString() {
-        var input = mutableListOf<MutableSet<String>>()
-        var expected = "(a)"
-        var subSet1 = mutableSetOf<String>()
+        val input = mutableListOf<MutableSet<String>>()
+        val expected = "(a)"
+        val subSet1 = mutableSetOf<String>()
 
         subSet1.add("a")
 
@@ -120,10 +114,10 @@ class SearchDiscoveryTest: TestCase() {
 
     @Test
     fun testBuildAndStringTwo() {
-        var input = mutableListOf<MutableSet<String>>()
-        var expected = "(a,b)|(c)"
-        var subSet1 = mutableSetOf<String>()
-        var subSet2 = mutableSetOf<String>()
+        val input = mutableListOf<MutableSet<String>>()
+        val expected = "(a,b)|(c)"
+        val subSet1 = mutableSetOf<String>()
+        val subSet2 = mutableSetOf<String>()
 
         subSet1.add("a")
         subSet1.add("b")
@@ -138,11 +132,11 @@ class SearchDiscoveryTest: TestCase() {
 
     @Test
     fun testBuildAndStringMany() {
-        var input = mutableListOf<MutableSet<String>>()
-        var expected = "(a,b)|(c)|(d,e,f)"
-        var subSet1 = mutableSetOf<String>()
-        var subSet2 = mutableSetOf<String>()
-        var subSet3 = mutableSetOf<String>()
+        val input = mutableListOf<MutableSet<String>>()
+        val expected = "(a,b)|(c)|(d,e,f)"
+        val subSet1 = mutableSetOf<String>()
+        val subSet2 = mutableSetOf<String>()
+        val subSet3 = mutableSetOf<String>()
 
         subSet1.add("a")
         subSet1.add("b")
@@ -162,17 +156,17 @@ class SearchDiscoveryTest: TestCase() {
 
     @Test
     fun testBuildAndStringZero() {
-        var input = mutableListOf<MutableSet<String>>()
-        var expected = ""
+        val input = mutableListOf<MutableSet<String>>()
+        val expected = ""
 
         Assert.assertEquals(expected, searchDiscovery.buildAndString(input))
     }
 
     @Test
     fun testBuildAndStringZeroMany() {
-        var input = mutableListOf<MutableSet<String>>()
-        var expected = "()|()"
-        var subSet = mutableSetOf<String>()
+        val input = mutableListOf<MutableSet<String>>()
+        val expected = "()|()"
+        val subSet = mutableSetOf<String>()
 
         input.add(subSet)
         input.add(subSet)
