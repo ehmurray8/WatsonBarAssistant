@@ -23,14 +23,13 @@ class MyFavoritesTab : Fragment() {
 
     private var authorization = FirebaseAuth.getInstance()
     private var fireStore = FirebaseFirestore.getInstance()
-    private val favoritesList = mutableListOf<String>()
 
     companion object {
         var lastScrolledPosition: Int = 0
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?):View? {
-        return inflater.inflate(R.layout.fragment_my_favorites_tab, container, false)
+        return inflater.inflate(R.layout.activity_recipe_collection, container, false)
     }
 
     override fun onStop() {
@@ -40,12 +39,12 @@ class MyFavoritesTab : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?){
         super.onViewCreated(view, savedInstanceState)
-
+        var favoritesList = BarAssistant.favoritesRecipes
         manager = LinearLayoutManager(activity?.baseContext)
         val mainMenu = activity as MainMenu
-        viewAdapter = MyRecipeAdapter(BarAssistant.favoritesRecipes, mainMenu)
+        viewAdapter = MyRecipeAdapter(favoritesList, mainMenu)
 
-        recyclerView = favorites_collection_list.apply {
+        favorites_collection_list.apply {
             setHasFixedSize(true)
             layoutManager = manager
             adapter = viewAdapter
@@ -61,10 +60,11 @@ class MyFavoritesTab : Fragment() {
     }
 
     private fun setupOnClickListener() {
+        var favoritesList = BarAssistant.favoritesRecipes
         recyclerView?.addOnItemClickListener(object : OnItemClickListener {
             override fun onItemClicked(position: Int, view: View) {
                 val intent = Intent(activity, RecipeDetail::class.java)
-                //intent.putExtra("Favorite", favorite[0][position])
+                intent.putExtra("Favorite", favoritesList[position])
                 startActivity(intent)
             }
         })

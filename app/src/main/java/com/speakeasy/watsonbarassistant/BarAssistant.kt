@@ -108,7 +108,14 @@ class BarAssistant: Application() {
         if(uid != null) {
             fireStore.collection(MAIN_COLLECTION).document(uid).collection(FAVORITES_COLLECTION)
                     .document("main").get().addOnSuccessListener {
+
                         favorites = it.get(FAVORITES_LIST) as MutableList<String>
+                        favorites.forEachIndexed { index, s ->
+                            //var currentFavorite = favorites[index].toInt()
+                            //var recipesList = fireStore.collection(MAIN_COLLECTION).document(uid).collection(FAVORITES_COLLECTION)
+                                    //.document("main").id[currentFavorite]
+                            //favoritesRecipes.add(
+                        }
                     }
         }
     }

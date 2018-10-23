@@ -125,6 +125,8 @@ class RecipeDetail : AppCompatActivity() {
 
         if (uid != null && !favorites.contains(recipeId)) {
             BarAssistant.favorites.add(recipeId)
+            BarAssistant.favoritesRecipes.add(recipe)
+            Toast.makeText(baseContext, "Added ${BarAssistant.favoritesRecipes[1].title}.", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -134,6 +136,7 @@ class RecipeDetail : AppCompatActivity() {
 
         if (uid != null && favorites.contains(recipeId)) {
             BarAssistant.favorites.remove(recipeId)
+            BarAssistant.favoritesRecipes.remove(recipe)
         }
     }
 
