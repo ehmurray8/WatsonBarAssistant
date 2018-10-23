@@ -1,8 +1,8 @@
-package com.speakeasy.watsonbarassistant.Discovery
+package com.speakeasy.watsonbarassistant.discovery
 
 import com.speakeasy.watsonbarassistant.DiscoveryRecipe
 
 
-interface OnTaskCompleted {
+interface CompletedDiscovery {
     fun onTaskCompleted(recipes: MutableList<DiscoveryRecipe>)
 }
