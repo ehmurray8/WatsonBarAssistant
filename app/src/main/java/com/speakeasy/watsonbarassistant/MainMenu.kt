@@ -44,6 +44,8 @@ class MainMenu : AppCompatActivity() {
         setContentView(R.layout.activity_main_menu)
         loadSharedPreferences()
         loadUserData()
+        val barAssistant = application as BarAssistant
+        barAssistant.loadFavoritesFromFireStore(authorization, fireStore)
         tabs.getTabAt(tabIndex)?.select()
         tabs.addOnTabSelectedListener(MainMenuTabListener(this))
         setSupportActionBar(toolbar as Toolbar)
@@ -71,6 +73,9 @@ class MainMenu : AppCompatActivity() {
                 ingredients.clear()
                 ingredients.addAll(storedIngredients)
             }
+            /*if (storedFavorites != null && storedFavorites.count() > 0) {
+                BarAssistant.favorites[i].addAll(storedFavorites.toList())
+            }*/
             loadRecentlyViewedRecipesSharedPreferences(storedLastViewedTimes
                     ?: return@forEachIndexed)
         }
@@ -83,9 +88,6 @@ class MainMenu : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        val barAssistant = (application as BarAssistant)
-        //barAssistant.storeRecentlyViewed(authorization, fireStore)
-        barAssistant.storeFavorite(authorization, fireStore)
         val preferences = getSharedPreferences(SHARED_PREFERENCES_SETTINGS, Context.MODE_PRIVATE)
         val editor = preferences.edit()
         val gson = Gson()
@@ -98,7 +100,6 @@ class MainMenu : AppCompatActivity() {
         super.onDestroy()
         BarAssistant.lastViewedTimes.clear()
         BarAssistant.lastViewedRecipes.clear()
-        BarAssistant.lastViewedFavorites.clear()
         BarAssistant.recipes.forEach { it.clear() }
     }
 

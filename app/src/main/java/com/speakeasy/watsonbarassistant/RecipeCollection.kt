@@ -23,7 +23,7 @@ class RecipeCollection : AppCompatActivity() {
         setContentView(R.layout.activity_recipe_collection)
 
         collectionName = intent.getStringExtra("Collection Name")
-        recipe_collection_title.text = collectionName
+        favorites_collection_title.text = collectionName
         setupListView()
     }
 
@@ -31,7 +31,7 @@ class RecipeCollection : AppCompatActivity() {
         val viewManager = LinearLayoutManager(this)
         val viewAdapter = MyRecipeAdapter(recipesList, this)
 
-        recyclerView = recipes_collection_list.apply {
+        recyclerView = favorites_collection_list.apply {
             setHasFixedSize(true)
             layoutManager = viewManager
             adapter = viewAdapter

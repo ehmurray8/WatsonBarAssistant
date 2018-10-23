@@ -13,6 +13,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.StorageReference
 import com.google.gson.Gson
+import java.util.ArrayList
 
 
 class BarAssistant: Application() {
@@ -23,10 +24,10 @@ class BarAssistant: Application() {
         var networkInfo: NetworkInfo? = null
         var storageReference: StorageReference? = null
         var recipes = mutableListOf<MutableList<DiscoveryRecipe>>()
-        var favorites = mutableListOf<MutableList<DiscoveryRecipe>>()
+        var favorites = mutableListOf<String>()
+        var favoritesRecipes = mutableListOf<DiscoveryRecipe>()
 
         val lastViewedRecipes: MutableMap<Long, DiscoveryRecipe> = mutableMapOf()
-        val lastViewedFavorites: MutableMap<Long, DiscoveryRecipe> = mutableMapOf()
         val lastViewedTimes: MutableList<Long> = mutableListOf()
         val homeCategories = mutableListOf(SUGGESTIONS_CATEGORY, RECENTLY_VIEWED_CATEGORY)
 
@@ -43,7 +44,12 @@ class BarAssistant: Application() {
         }
         if(favorites.isEmpty()) {
             homeCategories.forEach { _ ->
-                favorites.add(mutableListOf())
+                favorites = mutableListOf()
+            }
+        }
+        if(favoritesRecipes.isEmpty()) {
+            homeCategories.forEach { _ ->
+                favoritesRecipes.add(DiscoveryRecipe())
             }
         }
     }
@@ -97,36 +103,23 @@ class BarAssistant: Application() {
         }
     }
 
-    fun storeFavorite(authorization: FirebaseAuth, fireStore: FirebaseFirestore) {
-        storeFavoriteFireStore(authorization, fireStore)
-        val preferences = getSharedPreferences(SHARED_PREFERENCES_SETTINGS, Context.MODE_PRIVATE)
-        val editor = preferences.edit()
-        val gson = Gson()
-        BarAssistant.homeCategories.forEachIndexed { i, category ->
-            val json = gson.toJson(BarAssistant.favorites[i].toTypedArray())
-            editor.putString(category, json)
+    fun loadFavoritesFromFireStore(authorization: FirebaseAuth, fireStore: FirebaseFirestore) {
+        val uid = authorization.currentUser?.uid
+        if(uid != null) {
+            fireStore.collection(MAIN_COLLECTION).document(uid).collection(FAVORITES_COLLECTION)
+                    .document("main").get().addOnSuccessListener {
+                        favorites = it.get(FAVORITES_LIST) as MutableList<String>
+                    }
         }
-        //val lastViewedTimesJson = gson.toJson(BarAssistant.lastViewedTimes.sortedByDescending { it -> it })
-        //editor.putString(LAST_VIEWED_RECIPE_TIMES, lastViewedTimesJson)
-        editor.apply()
     }
 
-    private fun storeFavoriteFireStore(authorization: FirebaseAuth, fireStore: FirebaseFirestore) {
+    fun updateFavoriteFireStore(authorization: FirebaseAuth, fireStore: FirebaseFirestore) {
         if (BarAssistant.isInternetConnected()) {
             val uid = authorization.currentUser?.uid
+            val favoritesMap = mapOf(FAVORITES_LIST to favorites)
             if (uid != null) {
-                val favorites = mutableListOf<Int>()
-                BarAssistant.lastViewedFavorites.keys.sortedByDescending { it -> it }
-                        .forEach {
-                            val recipe = BarAssistant.lastViewedFavorites[it]
-                            if(recipe != null) favorites.add(recipe.imageId.toFloat().toInt())
-                        }
-                //val favoritesMap = mapOf(LAST_VIEWED_RECIPE_TIMES to BarAssistant.lastViewedTimes,
-                 //       LAST_VIEWED_RECIPES to recipes)
-                //fireStore.collection(MAIN_COLLECTION).document(uid).collection(FAVORITES_COLLECTION)
-                //        .document("main").set(recentlyViewedMap)
+                fireStore.collection(MAIN_COLLECTION).document(uid).collection(FAVORITES_COLLECTION).document("main").set(favoritesMap)
             }
         }
     }
-
 }

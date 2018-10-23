@@ -9,14 +9,21 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_recipe_collection.*
 import kotlinx.android.synthetic.main.fragment_my_favorites_tab.*
+import java.util.ArrayList
 
 class MyFavoritesTab : Fragment() {
 
     private var viewAdapter: MyRecipeAdapter? = null
     private var recyclerView: RecyclerView? = null
     private var manager: LinearLayoutManager? = null
+
+    private var authorization = FirebaseAuth.getInstance()
+    private var fireStore = FirebaseFirestore.getInstance()
+    private val favoritesList = mutableListOf<String>()
 
     companion object {
         var lastScrolledPosition: Int = 0
@@ -36,9 +43,9 @@ class MyFavoritesTab : Fragment() {
 
         manager = LinearLayoutManager(activity?.baseContext)
         val mainMenu = activity as MainMenu
-        viewAdapter = MyRecipeAdapter(BarAssistant.favorites[0], mainMenu)
+        viewAdapter = MyRecipeAdapter(BarAssistant.favoritesRecipes, mainMenu)
 
-        recyclerView = recipes_collection_list.apply {
+        recyclerView = favorites_collection_list.apply {
             setHasFixedSize(true)
             layoutManager = manager
             adapter = viewAdapter
@@ -49,6 +56,7 @@ class MyFavoritesTab : Fragment() {
         val itemDecorator = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
         recyclerView?.addItemDecoration(itemDecorator)
 
+        //loadFromFireStore()
         setupOnClickListener()
     }
 
@@ -56,12 +64,29 @@ class MyFavoritesTab : Fragment() {
         recyclerView?.addOnItemClickListener(object : OnItemClickListener {
             override fun onItemClicked(position: Int, view: View) {
                 val intent = Intent(activity, RecipeDetail::class.java)
-                val favorite = BarAssistant.favorites
-                intent.putExtra("Favorite", favorite[0][position])
+                //intent.putExtra("Favorite", favorite[0][position])
                 startActivity(intent)
             }
         })
     }
+
+    /*private fun loadFromFireStore() {
+        val uid = authorization.currentUser?.uid
+        if(uid != null) {
+            fireStore.collection(MAIN_COLLECTION).document(uid).collection(SHOPPING_CART_COLLECTION)
+                    .document("main").get().addOnSuccessListener {
+                        val favorites = it.get(FAVORITES_COLLECTION) as? ArrayList<*>
+
+                        favorites?.forEachIndexed { i, element ->
+                            val favorite = DiscoveryRecipe(element as String)
+                            if(!favoritesList.contains(favorite)) {
+                                favoritesList.add(favorite)
+                            }
+                        }
+                        viewAdapter?.notifyDataSetChanged()
+                    }
+        }
+    }*/
 
     fun refresh() {
         viewAdapter?.notifyDataSetChanged()
