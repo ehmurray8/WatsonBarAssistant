@@ -58,6 +58,8 @@ class MyRecipesTab : Fragment() {
                 val recipes = BarAssistant.recipes
                 intent.putExtra("Recipe", recipes[0][position])
                 startActivity(intent)
+//                val intent = Intent(activity,VisionTab::class.java)
+                startActivity(intent)
             }
         })
     }

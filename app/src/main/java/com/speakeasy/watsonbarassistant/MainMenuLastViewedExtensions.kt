@@ -59,7 +59,7 @@ private fun MainMenu.processRecentlyViewed(document: DocumentSnapshot) {
     }
 }
 
-private fun MainMenu.addLastViewedRecipe(recipeDocument: DocumentSnapshot, index: Int, count: Int) {
+@Synchronized private fun MainMenu.addLastViewedRecipe(recipeDocument: DocumentSnapshot, index: Int, count: Int) {
     val recipe = recipeDocument.toObject(FireStoreRecipe::class.java)
     temporaryLastViewedRecipes[index] = recipe?.toDiscoveryRecipe()
     if (count == temporaryLastViewedRecipes.count()) {
