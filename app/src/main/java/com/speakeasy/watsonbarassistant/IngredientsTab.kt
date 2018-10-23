@@ -1,8 +1,9 @@
 package com.speakeasy.watsonbarassistant
 
 
-import android.content.Context
+import android.app.Activity
 import android.content.Intent
+import android.content.Context
 import android.graphics.Rect
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -134,13 +135,14 @@ class IngredientsTab : Fragment(), IngredientDelegate {
     private fun addIngredientToFireStore(ingredient: Ingredient) {
         val mainMenu = (activity as? MainMenu)
         val uid = mainMenu?.currentUser?.uid ?: return
+
         fireStore.collection(MAIN_COLLECTION).document(uid)
                 .collection(INGREDIENT_COLLECTION).add(ingredient).addOnSuccessListener { _ ->
                     Toast.makeText(context, "Successfully added ${ingredient.name}.", Toast.LENGTH_SHORT).show()
                     mainMenu.ingredients.add(ingredient)
                     refresh()
                 }.addOnFailureListener {
-                    Toast.makeText(context, "Failed to add ${ingredient.name}.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity?.applicationContext, "Failed to add ${ingredient.name}.", Toast.LENGTH_SHORT).show()
                 }
     }
 
