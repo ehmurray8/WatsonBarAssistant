@@ -6,6 +6,7 @@ import com.ibm.watson.developer_cloud.discovery.v1.Discovery
 import com.ibm.watson.developer_cloud.discovery.v1.model.QueryOptions
 import com.speakeasy.watsonbarassistant.*
 import kotlinx.serialization.json.JSON
+import java.net.URLEncoder
 
 class SearchDiscovery(private val inputListener: CompletedDiscovery):
         AsyncTask<Array<Ingredient>, Void, MutableList<DiscoveryRecipe>>() {
@@ -69,7 +70,7 @@ class SearchDiscovery(private val inputListener: CompletedDiscovery):
             ans += "("
 
             for (element in set){
-                ans += "$element,"
+                ans += "${URLEncoder.encode(element, "UTF-8")},"
             }
 
             if (set.count() > 0){
