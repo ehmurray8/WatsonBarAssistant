@@ -16,8 +16,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.google.firebase.storage.FirebaseStorage
 import com.google.gson.Gson
-import com.speakeasy.watsonbarassistant.Discovery.HandleDiscovery
-import com.speakeasy.watsonbarassistant.Discovery.SearchDiscovery
+import com.speakeasy.watsonbarassistant.discovery.HandleDiscovery
+import com.speakeasy.watsonbarassistant.discovery.SearchDiscovery
 import kotlinx.android.synthetic.main.activity_main_menu.*
 import java.util.*
 
@@ -42,6 +42,8 @@ class MainMenu : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_menu)
+        BarAssistant.storageReference = FirebaseStorage.getInstance().reference
+
         loadSharedPreferences()
         loadUserData()
         tabs.getTabAt(tabIndex)?.select()
@@ -50,7 +52,6 @@ class MainMenu : AppCompatActivity() {
         if (!BarAssistant.isInternetConnected()) {
             Toast.makeText(baseContext, "Failed to download user data from the internet.", Toast.LENGTH_SHORT).show()
         }
-        BarAssistant.storageReference = FirebaseStorage.getInstance().reference
     }
 
     private fun loadSharedPreferences() {

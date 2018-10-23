@@ -86,7 +86,7 @@ data class DiscoveryRecipe(@Optional val title: String = "",
     }
 
     private fun checkTequilaTag(): Boolean {
-        return ingredientList.any() {
+        return ingredientList.any {
             it.contains("Tequila", true)
         }
     }

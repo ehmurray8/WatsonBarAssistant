@@ -25,6 +25,7 @@
     <string name="ingredient_page_description">Ingredients Page</string>
     <string name="search_title">Search</string>
     <string name="random_title">Random</string>
+    <string name="speech_button">Read for Me</string>
     <string name="vision_button_placeholder">Button</string>
 
 </resources>

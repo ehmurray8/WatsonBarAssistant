@@ -10,6 +10,11 @@ const val URL_MIKE_DIS = "https://gateway.watsonplatform.net/discovery/api"
 const val VERSION_DIS = "2018-08-01"
 const val DEFAULT_RECIPE_IMAGE_NAME = "alcohol_tall.jpg"
 
+const val TtS_USERNAME = "b2cbb090-c89d-4549-8472-6a5faabfe233"
+const val TtS_PASSWORD = "4whWDHnVsGDE"
+const val ERROR_FILE_NAME = "Error file for text to speech"
+const val OUTPUT_FILE_NAME = "/storage/emulated/0/Android/data/com.speakeasy.watsonbarassistant/cache/audiorecordtest.wav"
+
 const val SHARED_PREFERENCES_SETTINGS = "Settings"
 const val SHARED_PREFERENCES_GROCERY = "Grocery"
 

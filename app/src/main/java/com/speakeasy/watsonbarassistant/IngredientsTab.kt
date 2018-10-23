@@ -1,8 +1,8 @@
 package com.speakeasy.watsonbarassistant
 
 
-import android.content.Intent
 import android.content.Context
+import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -100,6 +100,7 @@ class IngredientsTab : Fragment(), IngredientDelegate {
             startActivity(intent)
         }
         addViaVoiceButton.setOnClickListener { Toast.makeText(context, "Voice support to be added!", Toast.LENGTH_SHORT).show() }
+
         val itemDecorator = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
         ingredients_recycler_view.addItemDecoration(itemDecorator)
 
