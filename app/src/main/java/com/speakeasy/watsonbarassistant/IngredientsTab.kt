@@ -1,7 +1,6 @@
 package com.speakeasy.watsonbarassistant
 
 
-import android.app.Activity
 import android.content.Intent
 import android.content.Context
 import android.graphics.Rect
