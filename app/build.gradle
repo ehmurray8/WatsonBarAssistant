@@ -82,8 +82,7 @@ dependencies {
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.5'
     implementation 'com.google.firebase:firebase-storage:16.0.3'
 
-    implementation 'com.github.jkcclemens:khttp:-SNAPSHOT'
-    implementation 'jp.wasabeef:blurry:2.1.1'
+    implementation 'com.github.jkcclemens:khttp:master-SNAPSHOT'
 }
 
 apply plugin: 'com.google.gms.google-services'

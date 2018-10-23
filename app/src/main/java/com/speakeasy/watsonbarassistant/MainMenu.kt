@@ -83,6 +83,7 @@ class MainMenu : AppCompatActivity() {
         super.onPause()
         val preferences = getSharedPreferences(SHARED_PREFERENCES_SETTINGS, Context.MODE_PRIVATE)
         val editor = preferences.edit()
+        editor.putInt(TAB_INDEX, tabIndex)
         val gson = Gson()
         homeCategories.forEachIndexed { i, category ->
             val json = gson.toJson(recipes[i].toTypedArray())

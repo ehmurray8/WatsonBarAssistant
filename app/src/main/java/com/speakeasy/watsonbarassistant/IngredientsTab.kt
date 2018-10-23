@@ -1,7 +1,6 @@
 package com.speakeasy.watsonbarassistant
 
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -17,11 +16,11 @@ import android.view.animation.AnimationUtils
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import com.google.firebase.firestore.FirebaseFirestore
-import com.speakeasy.watsonbarassistant.GoogleVision.VisionTab
+import com.speakeasy.watsonbarassistant.vision.VisionActivity
 import kotlinx.android.synthetic.main.fragment_ingredient_tab.*
 
 
-class IngredientsTab : Fragment() {
+class IngredientsTab : Fragment(), IngredientDelegate {
 
     private val fireStore = FirebaseFirestore.getInstance()
 
@@ -72,8 +71,7 @@ class IngredientsTab : Fragment() {
                 return@setOnEditorActionListener when (actionId) {
                     EditorInfo.IME_ACTION_DONE -> {
                         val name = ingredientInputView.text.toString()
-                        val ingredient = Ingredient(name)
-                        addIngredient(ingredient)
+                        addIngredient(name)
                         ingredientInputView.selectAll()
                         ingredientInputView.setText("")
                         addMenuButton.show()
@@ -84,9 +82,9 @@ class IngredientsTab : Fragment() {
             }
         }
         addViaCameraButton.setOnClickListener {
-//            Toast.makeText(context, "Camera support to be added!", Toast.LENGTH_SHORT).show()
-            val intent = Intent(activity,VisionTab::class.java)
-            startActivityForResult(intent,7)
+            val intent = Intent(activity,VisionActivity::class.java)
+            VisionActivity.ingredientDelegate = this
+            startActivity(intent)
         }
         addViaVoiceButton.setOnClickListener { Toast.makeText(context, "Voice support to be added!", Toast.LENGTH_SHORT).show() }
         val itemDecorator = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
@@ -95,18 +93,8 @@ class IngredientsTab : Fragment() {
         setupSwipeHandler()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode==7){
-            if(resultCode== Activity.RESULT_OK){
-                val ingredientSelected = data.getStringExtra("Ingredient Selected")
-                val ingredient = Ingredient(ingredientSelected)
-                addIngredient(ingredient = ingredient)
-            }
-        }
-    }
-
-    private fun addIngredient(ingredient: Ingredient) {
+    override fun addIngredient(name: String) {
+        val ingredient = Ingredient(name)
         val ingredients = (activity as MainMenu).ingredients
         if(ingredients.any { it.name.toLowerCase() == ingredient.name.toLowerCase() }) {
             Toast.makeText(activity, "${ingredient.name} is already stored as an ingredient.", Toast.LENGTH_SHORT).show()

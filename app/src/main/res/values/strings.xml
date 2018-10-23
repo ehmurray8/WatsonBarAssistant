@@ -21,5 +21,8 @@
     <string name="ingredients_tab">Ingredients</string>
     <string name="description_header">Description</string>
     <string name="ingredients_header">Ingredients</string>
+    <string name="vision_image">Image from camera</string>
+    <string name="button_placeholder">Button</string>
+    <string name="take_photo">Take Photo</string>
 
 </resources>
