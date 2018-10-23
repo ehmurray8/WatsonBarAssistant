@@ -2,6 +2,7 @@ package com.speakeasy.watsonbarassistant
 
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -18,9 +19,11 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import com.google.firebase.firestore.FirebaseFirestore
+import com.speakeasy.watsonbarassistant.vision.VisionActivity
 import kotlinx.android.synthetic.main.fragment_ingredient_tab.*
 
-class IngredientsTab : Fragment() {
+
+class IngredientsTab : Fragment(), IngredientDelegate {
 
     private val fireStore = FirebaseFirestore.getInstance()
 
@@ -69,8 +72,7 @@ class IngredientsTab : Fragment() {
                 return@setOnEditorActionListener when (actionId) {
                     EditorInfo.IME_ACTION_DONE -> {
                         val name = ingredientInputView.text.toString()
-                        val ingredient = Ingredient(name)
-                        addIngredient(ingredient)
+                        addIngredient(name)
                         ingredientInputView.selectAll()
                         ingredientInputView.setText("")
                         true
@@ -92,9 +94,11 @@ class IngredientsTab : Fragment() {
                 addMenuButton.show()
             }
         }
-
-        addViaCameraButton.setOnClickListener { Toast.makeText(context, "Camera support to be added!", Toast.LENGTH_SHORT).show() }
-
+        addViaCameraButton.setOnClickListener {
+            val intent = Intent(activity,VisionActivity::class.java)
+            VisionActivity.ingredientDelegate = this
+            startActivity(intent)
+        }
         addViaVoiceButton.setOnClickListener { Toast.makeText(context, "Voice support to be added!", Toast.LENGTH_SHORT).show() }
 
         val itemDecorator = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
@@ -102,9 +106,11 @@ class IngredientsTab : Fragment() {
 
         setupSwipeHandler()
         setupKeyboardListener()
+        refresh()
     }
 
-    private fun addIngredient(ingredient: Ingredient) {
+    override fun addIngredient(name: String) {
+        val ingredient = Ingredient(name)
         val ingredients = (activity as MainMenu).ingredients
         if(ingredients.any { it.name.toLowerCase() == ingredient.name.toLowerCase() }) {
             Toast.makeText(activity, "${ingredient.name} is already stored as an ingredient.", Toast.LENGTH_SHORT).show()
@@ -129,18 +135,21 @@ class IngredientsTab : Fragment() {
     private fun addIngredientToFireStore(ingredient: Ingredient) {
         val mainMenu = (activity as? MainMenu)
         val uid = mainMenu?.currentUser?.uid ?: return
+
         fireStore.collection(MAIN_COLLECTION).document(uid)
                 .collection(INGREDIENT_COLLECTION).add(ingredient).addOnSuccessListener { _ ->
                     Toast.makeText(context, "Successfully added ${ingredient.name}.", Toast.LENGTH_SHORT).show()
                     mainMenu.ingredients.add(ingredient)
                     refresh()
                 }.addOnFailureListener {
-                    Toast.makeText(context, "Failed to add ${ingredient.name}.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity?.applicationContext, "Failed to add ${ingredient.name}.", Toast.LENGTH_SHORT).show()
                 }
     }
 
     fun refresh() {
-        viewAdapter?.notifyDataSetChanged()
+        activity?.runOnUiThread {
+            viewAdapter?.notifyDataSetChanged()
+        }
     }
 
     private fun closeMenus(){

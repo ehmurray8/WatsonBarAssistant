@@ -49,7 +49,7 @@ class RecipeDetail : AppCompatActivity() {
         }
     }
 
-    private fun addToRecentlyViewed(recipe: DiscoveryRecipe) {
+     @Synchronized private fun addToRecentlyViewed(recipe: DiscoveryRecipe) {
         val currentTime = System.currentTimeMillis()
         if(BarAssistant.lastViewedRecipes.values.map { it.toFireStoreRecipe() }.contains(recipe.toFireStoreRecipe())) {
             val keysToRemove = BarAssistant.lastViewedRecipes.filter { it.value.toFireStoreRecipe() == recipe.toFireStoreRecipe() }.map { it.key }

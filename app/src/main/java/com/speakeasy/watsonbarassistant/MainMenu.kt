@@ -88,6 +88,7 @@ class MainMenu : AppCompatActivity() {
         barAssistant.storeRecentlyViewed(authorization, fireStore)
         val preferences = getSharedPreferences(SHARED_PREFERENCES_SETTINGS, Context.MODE_PRIVATE)
         val editor = preferences.edit()
+        editor.putInt(TAB_INDEX, tabIndex)
         val gson = Gson()
         val ingredientJson = gson.toJson(ingredients.toTypedArray())
         editor.putString(INGREDIENT_PREFERENCES_ID, ingredientJson)
