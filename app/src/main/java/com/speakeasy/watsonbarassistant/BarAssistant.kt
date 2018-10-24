@@ -25,7 +25,6 @@ class BarAssistant: Application() {
         var storageReference: StorageReference? = null
         var recipes = mutableListOf<MutableList<DiscoveryRecipe>>()
         var favorites = mutableListOf<String>()
-        var favoritesRecipes = mutableListOf<DiscoveryRecipe>()
 
         val lastViewedRecipes: MutableMap<Long, DiscoveryRecipe> = mutableMapOf()
         val lastViewedTimes: MutableList<Long> = mutableListOf()
@@ -47,11 +46,7 @@ class BarAssistant: Application() {
                 favorites = mutableListOf()
             }
         }
-        if(favoritesRecipes.isEmpty()) {
-            homeCategories.forEach { _ ->
-                favoritesRecipes.add(DiscoveryRecipe())
-            }
-        }
+
     }
 
     override fun onCreate() {
