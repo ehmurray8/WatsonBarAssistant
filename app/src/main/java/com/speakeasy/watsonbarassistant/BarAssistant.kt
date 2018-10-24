@@ -25,6 +25,7 @@ class BarAssistant: Application() {
         var storageReference: StorageReference? = null
         var recipes = mutableListOf<MutableList<DiscoveryRecipe>>()
         var favorites = mutableListOf<String>()
+        var favoritesList = mutableListOf<DiscoveryRecipe?>()
 
         val lastViewedRecipes: MutableMap<Long, DiscoveryRecipe> = mutableMapOf()
         val lastViewedTimes: MutableList<Long> = mutableListOf()
@@ -105,12 +106,7 @@ class BarAssistant: Application() {
                     .document("main").get().addOnSuccessListener {
 
                         favorites = it.get(FAVORITES_LIST) as MutableList<String>
-                        favorites.forEachIndexed { index, s ->
-                            //var currentFavorite = favorites[index].toInt()
-                            //var recipesList = fireStore.collection(MAIN_COLLECTION).document(uid).collection(FAVORITES_COLLECTION)
-                                    //.document("main").id[currentFavorite]
-                            //favoritesRecipes.add(
-                        }
+
                     }
         }
     }

@@ -9,22 +9,15 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.FirebaseFirestore
-import com.speakeasy.watsonbarassistant.BarAssistant.Companion.favorites
-import com.speakeasy.watsonbarassistant.BarAssistant.Companion.favoritesList
-import com.speakeasy.watsonbarassistant.BarAssistant.Companion.recipes
+import kotlinx.android.synthetic.main.activity_recipe_collection.*
 import kotlinx.android.synthetic.main.fragment_my_favorites_tab.*
 
 
-class MyFavoritesTab : Fragment() {
+class MyRecipesTab : Fragment() {
 
-    private var viewAdapter: MyFavoritesAdapter? = null
+    private var viewAdapter: MyRecipeAdapter? = null
     private var recyclerView: RecyclerView? = null
     private var manager: LinearLayoutManager? = null
-
-    private var fireStore = FirebaseFirestore.getInstance()
 
     companion object {
         var lastScrolledPosition: Int = 0
@@ -44,12 +37,9 @@ class MyFavoritesTab : Fragment() {
 
         manager = LinearLayoutManager(activity?.baseContext)
         val mainMenu = activity as MainMenu
+        viewAdapter = MyRecipeAdapter(BarAssistant.recipes[0], mainMenu)
 
-        convertIdListToDiscoveryRecipeList(BarAssistant.favorites)
-
-        viewAdapter = MyFavoritesAdapter(BarAssistant.favoritesList, mainMenu)
-
-        favorites_list.apply {
+        recyclerView = favorites_list.apply {
             setHasFixedSize(true)
             layoutManager = manager
             adapter = viewAdapter
@@ -64,39 +54,16 @@ class MyFavoritesTab : Fragment() {
     }
 
     private fun setupOnClickListener() {
-
         recyclerView?.addOnItemClickListener(object : OnItemClickListener {
             override fun onItemClicked(position: Int, view: View) {
                 val intent = Intent(activity, RecipeDetail::class.java)
-                val favoritesList = BarAssistant.favoritesList
-                intent.putExtra("Favorite", favoritesList[position])
+                val recipes = BarAssistant.recipes
+                intent.putExtra("Recipe", recipes[0][position])
                 startActivity(intent)
-
+//                val intent = Intent(activity,VisionTab::class.java)
+                //startActivity(intent)
             }
         })
-    }
-
-    private fun convertIdListToDiscoveryRecipeList(favorites: MutableList<String>) {
-
-
-        favoritesList.clear()
-        favorites.forEach { _ -> favoritesList.add(null) }
-        favorites.forEachIndexed { index, recipeId ->
-            //Toast.makeText(context, "Bing! ${index}.", Toast.LENGTH_SHORT).show()
-            fireStore.collection(RECIPE_COLLECTION).document(recipeId.substringBefore('.')).get().addOnCompleteListener { snapShotRecipe ->
-            if (snapShotRecipe.isSuccessful) {
-                val recipeDocument = snapShotRecipe.result ?: return@addOnCompleteListener
-                addFavoritesRecipe(recipeDocument, index)
-            }
-        }
-    }
-}
-
-    private fun addFavoritesRecipe(recipeDocument: DocumentSnapshot, index: Int) {
-        val favorite = recipeDocument.toObject(FireStoreRecipe::class.java)
-        favoritesList[index] = favorite!!.toDiscoveryRecipe()
-        //Toast.makeText(context, "Added ${favoritesList[index]?.title}.", Toast.LENGTH_SHORT).show()
-
     }
 
     fun refresh() {
