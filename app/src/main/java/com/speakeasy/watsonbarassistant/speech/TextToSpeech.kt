@@ -7,6 +7,9 @@ import com.ibm.watson.developer_cloud.android.library.audio.StreamPlayer
 import com.ibm.watson.developer_cloud.text_to_speech.v1.TextToSpeech
 import com.ibm.watson.developer_cloud.text_to_speech.v1.model.SynthesizeOptions
 import com.speakeasy.watsonbarassistant.*
+import com.ibm.watson.developer_cloud.service.security.IamOptions
+
+
 
 
 class TextToSpeech(private val inputListener: CompletedTtS, private val mediaPlayer: MediaPlayer):
@@ -17,10 +20,14 @@ class TextToSpeech(private val inputListener: CompletedTtS, private val mediaPla
 
         if(BarAssistant.isInternetConnected()) {
             val input = args[0]
-            Log.i("TextToSpeech", input)
-            val textToSpeech = TextToSpeech()
 
-            textToSpeech.setUsernameAndPassword(TtS_USERNAME, TtS_PASSWORD)
+            val options = IamOptions.Builder()
+                    .apiKey(TtS_API_KEY)
+                    .build()
+
+            val textToSpeech = TextToSpeech(options)
+
+            textToSpeech.endPoint = TtS_URL
 
             try {
                 outFile = OUTPUT_FILE_NAME
