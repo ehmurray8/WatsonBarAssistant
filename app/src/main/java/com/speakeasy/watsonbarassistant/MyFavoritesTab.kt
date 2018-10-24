@@ -10,19 +10,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.speakeasy.watsonbarassistant.BarAssistant.Companion.lastViewedTimes
 import kotlinx.android.synthetic.main.activity_recipe_collection.*
-import kotlinx.android.synthetic.main.fragment_my_favorites_tab.*
-import java.util.ArrayList
 
 class MyFavoritesTab : Fragment() {
 
-    private var viewAdapter: MyRecipeAdapter? = null
+    private var viewAdapter: MyFavoritesAdapter? = null
     private var recyclerView: RecyclerView? = null
     private var manager: LinearLayoutManager? = null
 
     private var authorization = FirebaseAuth.getInstance()
     private var fireStore = FirebaseFirestore.getInstance()
+    internal val favoritesList = mutableListOf<DiscoveryRecipe?>()
 
     companion object {
         var lastScrolledPosition: Int = 0
@@ -39,10 +40,11 @@ class MyFavoritesTab : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?){
         super.onViewCreated(view, savedInstanceState)
-        var favoritesList = BarAssistant.favoritesRecipes
+        var favorites = BarAssistant.favorites
+        //favoritesList =
         manager = LinearLayoutManager(activity?.baseContext)
         val mainMenu = activity as MainMenu
-        viewAdapter = MyRecipeAdapter(favoritesList, mainMenu)
+        //viewAdapter = MyRecipeAdapter(favoritesList, mainMenu)
 
         favorites_collection_list.apply {
             setHasFixedSize(true)
@@ -55,38 +57,39 @@ class MyFavoritesTab : Fragment() {
         val itemDecorator = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
         recyclerView?.addItemDecoration(itemDecorator)
 
-        //loadFromFireStore()
+        convertIdListToDiscoveryRecipeList(favorites)
         setupOnClickListener()
     }
 
     private fun setupOnClickListener() {
-        var favoritesList = BarAssistant.favoritesRecipes
+        //var favoritesList =
         recyclerView?.addOnItemClickListener(object : OnItemClickListener {
             override fun onItemClicked(position: Int, view: View) {
                 val intent = Intent(activity, RecipeDetail::class.java)
-                intent.putExtra("Favorite", favoritesList[position])
+                //intent.putExtra("Favorite", favoritesList[position])
                 startActivity(intent)
             }
         })
     }
 
-    /*private fun loadFromFireStore() {
-        val uid = authorization.currentUser?.uid
-        if(uid != null) {
-            fireStore.collection(MAIN_COLLECTION).document(uid).collection(SHOPPING_CART_COLLECTION)
-                    .document("main").get().addOnSuccessListener {
-                        val favorites = it.get(FAVORITES_COLLECTION) as? ArrayList<*>
+    private fun convertIdListToDiscoveryRecipeList(favorites: MutableList<String>) {
 
-                        favorites?.forEachIndexed { i, element ->
-                            val favorite = DiscoveryRecipe(element as String)
-                            if(!favoritesList.contains(favorite)) {
-                                favoritesList.add(favorite)
+        favoritesList.clear()
+        favorites?.forEach { _ -> favoritesList.add(null) }
+        //var count = 0
+        favorites?.forEachIndexed { index, recipeId ->
+            if (recipeId != null) {
+                fireStore.collection(RECIPE_COLLECTION).document(recipeId.toString())
+                        .get().addOnCompleteListener { snapShotRecipe ->
+                            if (snapShotRecipe.isSuccessful) {
+                                val recipeDocument = snapShotRecipe.result
+                                        ?: return@addOnCompleteListener
+                                //favoritesList.add(snapShotRecipe)
                             }
                         }
-                        viewAdapter?.notifyDataSetChanged()
-                    }
+            }
         }
-    }*/
+    }
 
     fun refresh() {
         viewAdapter?.notifyDataSetChanged()
