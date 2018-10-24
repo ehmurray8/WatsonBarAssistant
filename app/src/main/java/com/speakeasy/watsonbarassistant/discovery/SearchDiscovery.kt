@@ -19,8 +19,10 @@ class SearchDiscovery(private val inputListener: CompletedDiscovery):
             discovery.endPoint = URL_MIKE_DIS
 
             val queryBuilder = QueryOptions.Builder(ENV_ID_MIKE_DIS, COL_ID_MIKE_DIS)
+            val queryString = buildIngredientQuery(ingredients)
 
-            queryBuilder.query(buildIngredientQuery(ingredients)).count(50)
+            Log.i("DiscoveryString", queryString)
+            queryBuilder.query(queryString).count(50)
             try {
                 val queryResponse = discovery.query(queryBuilder.build()).execute()
                 for (response in queryResponse.results) {
@@ -44,33 +46,33 @@ class SearchDiscovery(private val inputListener: CompletedDiscovery):
         inputListener.onTaskCompleted(result)
     }
 
-    private fun buildIngredientQuery(ingredients: Array<Ingredient>): String {
+    fun buildIngredientQuery(ingredients: Array<Ingredient>): String {
         val ans = "ingredientList:"
-        var queryString = buildAndString(createAndSets(ingredients,0,0))
+        var queryString = buildAndString(createAndSets(ingredients,0,0), ans.length)
         val threshold = 5
         val optimalSetSize = 4
 
 
         if (ingredients.count() > threshold){
-            queryString = buildAndString(createAndSets(ingredients,0,optimalSetSize - 1)) + "|" + queryString
+            queryString = buildAndString(createAndSets(ingredients,0,optimalSetSize - 1), queryString.length + ans.length) + "|" + queryString
         } else {
             for (size in 1 until ingredients.count()){
-                queryString = buildAndString(createAndSets(ingredients,0,size)) + "|" + queryString
+                queryString = buildAndString(createAndSets(ingredients,0,size), queryString.length + ans.length) + "|" + queryString
             }
         }
 
-        Log.i("DiscoveryString", ans + queryString)
         return ans + queryString
     }
 
-    fun buildAndString(sets: MutableList<MutableSet<String>>): String{
+    fun buildAndString(sets: MutableList<MutableSet<String>>, capReducer: Int): String{
         var ans = ""
 
-        for (set in sets){
+        loop@ for (set in sets){
+            if (2000 - capReducer <= ans.length + set.toString().length) break@loop
             ans += "("
 
             for (element in set){
-                ans += "${URLEncoder.encode(element, "UTF-8")},"
+                ans += element + ","
             }
 
             if (set.count() > 0){

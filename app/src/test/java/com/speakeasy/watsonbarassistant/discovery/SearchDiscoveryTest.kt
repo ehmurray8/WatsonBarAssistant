@@ -109,7 +109,7 @@ class SearchDiscoveryTest: TestCase() {
 
         input.add(subSet1)
 
-        Assert.assertEquals(expected, searchDiscovery.buildAndString(input))
+        Assert.assertEquals(expected, searchDiscovery.buildAndString(input, 0))
     }
 
     @Test
@@ -127,7 +127,7 @@ class SearchDiscoveryTest: TestCase() {
         input.add(subSet1)
         input.add(subSet2)
 
-        Assert.assertEquals(expected, searchDiscovery.buildAndString(input))
+        Assert.assertEquals(expected, searchDiscovery.buildAndString(input,0))
     }
 
     @Test
@@ -151,7 +151,7 @@ class SearchDiscoveryTest: TestCase() {
         input.add(subSet2)
         input.add(subSet3)
 
-        Assert.assertEquals(expected, searchDiscovery.buildAndString(input))
+        Assert.assertEquals(expected, searchDiscovery.buildAndString(input, 0))
     }
 
     @Test
@@ -159,7 +159,7 @@ class SearchDiscoveryTest: TestCase() {
         val input = mutableListOf<MutableSet<String>>()
         val expected = ""
 
-        Assert.assertEquals(expected, searchDiscovery.buildAndString(input))
+        Assert.assertEquals(expected, searchDiscovery.buildAndString(input, 0))
     }
 
     @Test
@@ -171,6 +171,27 @@ class SearchDiscoveryTest: TestCase() {
         input.add(subSet)
         input.add(subSet)
 
-        Assert.assertEquals(expected, searchDiscovery.buildAndString(input))
+        Assert.assertEquals(expected, searchDiscovery.buildAndString(input, 0))
+    }
+
+    @Test
+    fun testQueryStringLen(){
+        var input = mutableListOf<Ingredient>()
+
+        input.add(Ingredient("aaaaaaaaa"))
+        input.add(Ingredient("aaaaaaaaa"))
+        input.add(Ingredient("aaaaaaaaa"))
+        input.add(Ingredient("aaaaaaaaa"))
+        input.add(Ingredient("aaaaaaaaa"))
+        input.add(Ingredient("aaaaaaaaa"))
+        input.add(Ingredient("aaaaaaaaa"))
+        input.add(Ingredient("aaaaaaaaa"))
+        input.add(Ingredient("aaaaaaaaa"))
+        input.add(Ingredient("aaaaaaaaa"))
+
+        var ansString = searchDiscovery.buildIngredientQuery(input.toTypedArray())
+        var ans = ansString.length
+
+        Assert.assertTrue(2000 >= ans)
     }
 }
