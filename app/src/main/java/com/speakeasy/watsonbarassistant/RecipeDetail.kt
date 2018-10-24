@@ -70,7 +70,7 @@ class RecipeDetail : AppCompatActivity() {
             if(favorited){
                 favorited=false
                 unfavorited = true
-                Toast.makeText(baseContext, "Un-favorited ${recipe?.title}.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(baseContext, "Unfavorited ${recipe?.title}.", Toast.LENGTH_SHORT).show()
             }
             else{
                 favorited=true

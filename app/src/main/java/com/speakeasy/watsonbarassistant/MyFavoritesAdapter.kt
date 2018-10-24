@@ -52,5 +52,5 @@ class MyFavoritesAdapter(private val favoritesList: MutableList<DiscoveryRecipe?
         }
     }
 
-    override fun getItemCount(): Int = favorites.count()
+    override fun getItemCount(): Int = favoritesList.count()
 }
