@@ -12,7 +12,7 @@ import android.widget.TextView
 import com.facebook.drawee.view.SimpleDraweeView
 import com.speakeasy.watsonbarassistant.BarAssistant.Companion.favorites
 
-class MyFavoritesAdapter(private val favorites: MutableList<DiscoveryRecipe>, private val activity: Activity):
+class MyFavoritesAdapter(private val favoritesList: MutableList<DiscoveryRecipe>, private val activity: Activity):
         RecyclerView.Adapter<MyFavoritesAdapter.ViewHolder>() {
 
     class ViewHolder(val layout: ConstraintLayout) : RecyclerView.ViewHolder(layout)
@@ -28,7 +28,7 @@ class MyFavoritesAdapter(private val favorites: MutableList<DiscoveryRecipe>, pr
         val name = holder.layout.getChildAt(2) as TextView
         val description = holder.layout.getChildAt(1) as TextView
         val tagContainer = holder.layout.getChildAt(3) as LinearLayout
-        val favorite = favorites[position]
+        val favorite = favoritesList[position]
 
         addTags(tagContainer, favorite)
 
