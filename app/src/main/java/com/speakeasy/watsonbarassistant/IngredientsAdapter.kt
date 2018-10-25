@@ -9,8 +9,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.util.*
 
-class IngredientsAdapter(private var ingredientsSet: TreeSet<Ingredient>,
-                         private var documentsMap: MutableMap<String, String>):
+class IngredientsAdapter(private val ingredientsSet: TreeSet<Ingredient>,
+                         private val documentsMap: MutableMap<String, String>):
         RecyclerView.Adapter<IngredientsAdapter.ViewHolder>() {
 
     private val ingredientsList: MutableList<Ingredient>
@@ -33,7 +33,7 @@ class IngredientsAdapter(private var ingredientsSet: TreeSet<Ingredient>,
         holder.textView.text = ingredientsList[position].name.capitalize()
     }
 
-    override fun getItemCount(): Int = ingredientsSet.count()
+    override fun getItemCount(): Int = ingredientsList.count()
 
     fun removeAt(position: Int) {
         val ingredient = ingredientsList[position]

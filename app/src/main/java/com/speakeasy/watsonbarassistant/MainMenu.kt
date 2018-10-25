@@ -16,8 +16,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.google.firebase.storage.FirebaseStorage
 import com.google.gson.Gson
-import com.speakeasy.watsonbarassistant.Discovery.HandleDiscovery
-import com.speakeasy.watsonbarassistant.Discovery.SearchDiscovery
+import com.speakeasy.watsonbarassistant.discovery.HandleDiscovery
+import com.speakeasy.watsonbarassistant.discovery.SearchDiscovery
 import kotlinx.android.synthetic.main.activity_main_menu.*
 import java.util.*
 
@@ -42,6 +42,8 @@ class MainMenu : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_menu)
+        BarAssistant.storageReference = FirebaseStorage.getInstance().reference
+
         loadSharedPreferences()
         loadUserData()
         val barAssistant = application as BarAssistant
@@ -52,7 +54,6 @@ class MainMenu : AppCompatActivity() {
         if (!BarAssistant.isInternetConnected()) {
             Toast.makeText(baseContext, "Failed to download user data from the internet.", Toast.LENGTH_SHORT).show()
         }
-        BarAssistant.storageReference = FirebaseStorage.getInstance().reference
     }
 
     private fun loadSharedPreferences() {
@@ -93,6 +94,7 @@ class MainMenu : AppCompatActivity() {
         super.onPause()
         val preferences = getSharedPreferences(SHARED_PREFERENCES_SETTINGS, Context.MODE_PRIVATE)
         val editor = preferences.edit()
+        editor.putInt(TAB_INDEX, tabIndex)
         val gson = Gson()
         val ingredientJson = gson.toJson(ingredients.toTypedArray())
         editor.putString(INGREDIENT_PREFERENCES_ID, ingredientJson)
