@@ -81,8 +81,9 @@ class IngredientsTab : Fragment(), IngredientDelegate {
                 }
             }
             ingredientInputView.post {
-                val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
                 ingredientInputView.requestFocus()
+                ingredientInputView.setSelection(0)
+                val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
                 imm?.showSoftInput(ingredientInputView, InputMethodManager.SHOW_IMPLICIT)
             }
         }

@@ -88,9 +88,13 @@ class SearchActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
                 if(task.isSuccessful) {
                     val recipe = task.result?.toObject(FireStoreRecipe::class.java)
                     val discoveryRecipe = recipe?.toDiscoveryRecipe()
-                    val intent = Intent(baseContext, RecipeDetail::class.java)
-                    intent.putExtra("Recipe", discoveryRecipe)
-                    startActivity(intent)
+                    if(discoveryRecipe?.title != "") {
+                        val intent = Intent(baseContext, RecipeDetail::class.java)
+                        intent.putExtra("Recipe", discoveryRecipe)
+                        startActivity(intent)
+                    } else {
+                        getRandomRecipe()
+                    }
                 } else {
                     getRandomRecipe()
                 }
