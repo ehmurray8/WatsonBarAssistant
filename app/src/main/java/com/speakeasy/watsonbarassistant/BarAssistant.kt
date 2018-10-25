@@ -19,12 +19,11 @@ import com.google.gson.Gson
 class BarAssistant: Application() {
 
     companion object {
-
         var defaultImage: Drawable? = null
         var networkInfo: NetworkInfo? = null
         var storageReference: StorageReference? = null
         var recipes = mutableListOf<MutableList<DiscoveryRecipe>>()
-        var favoritesList = mutableListOf<DiscoveryRecipe>()
+        var favoritesList = sortedSetOf<DiscoveryRecipe>()
 
         val lastViewedRecipes: MutableMap<Long, DiscoveryRecipe> = mutableMapOf()
         val lastViewedTimes: MutableList<Long> = mutableListOf()

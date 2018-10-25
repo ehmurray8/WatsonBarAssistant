@@ -15,6 +15,8 @@ class MyFavoritesTab : Fragment() {
 
     private var viewAdapter: MyRecipeAdapter? = null
     private var manager: LinearLayoutManager? = null
+    private var favorites = mutableListOf<DiscoveryRecipe>()
+    get() = BarAssistant.favoritesList.toMutableList()
 
     companion object {
         var lastScrolledPosition: Int = 0
@@ -34,7 +36,7 @@ class MyFavoritesTab : Fragment() {
 
         manager = LinearLayoutManager(activity?.baseContext)
         val mainMenu = activity as MainMenu
-        viewAdapter = MyRecipeAdapter(BarAssistant.favoritesList, mainMenu)
+        viewAdapter = MyRecipeAdapter(favorites, mainMenu)
 
         favorites_list.apply {
             setHasFixedSize(true)
@@ -56,7 +58,7 @@ class MyFavoritesTab : Fragment() {
             override fun onItemClicked(position: Int, view: View) {
                 val intent = Intent(activity, RecipeDetail::class.java)
                 val favoritesList = BarAssistant.favoritesList
-                intent.putExtra("Recipe", favoritesList[position])
+                intent.putExtra("Recipe", favoritesList.toMutableList()[position])
                 startActivity(intent)
             }
         })

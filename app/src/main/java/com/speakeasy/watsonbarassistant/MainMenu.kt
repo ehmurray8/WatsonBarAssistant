@@ -82,7 +82,9 @@ class MainMenu : AppCompatActivity() {
             ingredients.clear()
             ingredients.addAll(storedIngredients)
         }
-        loadRecentlyViewedRecipesSharedPreferences(storedLastViewedTimes)
+        if(storedLastViewedTimes != null && storedLastViewedTimes.count() > 0) {
+            loadRecentlyViewedRecipesSharedPreferences(storedLastViewedTimes)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
