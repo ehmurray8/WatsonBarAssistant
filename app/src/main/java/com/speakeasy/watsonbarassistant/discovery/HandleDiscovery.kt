@@ -11,7 +11,7 @@ open class HandleDiscovery(private val mainMenu: MainMenu?): CompletedDiscovery 
         val fragment = mainMenu?.fragment
         if(fragment as? HomeTab != null) {
             fragment.refresh()
-        } else if(fragment as? MyRecipesTab != null) {
+        } else if(fragment as? MyFavoritesTab != null) {
             fragment.refresh()
         }
     }

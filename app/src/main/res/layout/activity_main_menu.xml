@@ -41,8 +41,8 @@
             android:layout_width="match_parent"/>
 
         <android.support.design.widget.TabItem
-            android:id="@+id/recipes_tab"
-            android:text="@string/recipes_tab"
+            android:id="@+id/favorites_tab"
+            android:text="Favorites"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"/>
 

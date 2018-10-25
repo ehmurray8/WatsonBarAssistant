@@ -1,3 +1,4 @@
+
 package com.speakeasy.watsonbarassistant
 
 import android.content.Context
@@ -6,7 +7,9 @@ import android.media.MediaPlayer
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
+import android.view.animation.AnimationUtils
 import android.widget.TextView
+import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.speakeasy.watsonbarassistant.speech.HandleTtS
@@ -18,6 +21,12 @@ class RecipeDetail : AppCompatActivity() {
     private var authorization = FirebaseAuth.getInstance()
     private var fireStore = FirebaseFirestore.getInstance()
     private var mediaPlayer: MediaPlayer? = null
+    private var favorited = false
+
+    private var favoriteIds = listOf<String>()
+    get() {
+        return BarAssistant.favoritesList.map { it.imageId }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,6 +34,7 @@ class RecipeDetail : AppCompatActivity() {
         val recipe = intent.getSerializableExtra("Recipe") as? DiscoveryRecipe
 
         mediaPlayer = MediaPlayer()
+        button_favorite.alpha = 0.35.toFloat()
 
         if(recipe != null) {
             addToRecentlyViewed(recipe)
@@ -42,9 +52,34 @@ class RecipeDetail : AppCompatActivity() {
             loadImage(baseContext, drink_detail_image, recipe)
             addTags(recipe)
 
+            val favoriteAnim = AnimationUtils.loadAnimation(baseContext, R.anim.anim_favorite)
+
+            if(favoriteIds.contains(recipe.imageId)) {
+                favorited = true
+                button_favorite.startAnimation(favoriteAnim)
+                button_favorite.isChecked = true
+            }
+
             readDescriptionButton.setOnClickListener {
                 val textToSpeech = TextToSpeech(HandleTtS(), mediaPlayer ?: return@setOnClickListener)
                 textToSpeech.execute(recipe.title + ". " + recipe.description)
+            }
+
+            button_favorite.setOnClickListener {
+                if(favorited) {
+                    favorited=false
+                    BarAssistant.favoritesList.removeIf { favorite ->
+                        favorite.imageId == recipe.imageId
+                    }
+                    Toast.makeText(baseContext, "Unfavorited ${recipe.title}.", Toast.LENGTH_SHORT).show()
+                } else {
+                    favorited=true
+                    button_favorite.startAnimation(favoriteAnim)
+                    if(!favoriteIds.contains(recipe.imageId)) {
+                        BarAssistant.favoritesList.add(recipe)
+                    }
+                    Toast.makeText(baseContext, "Favorited ${recipe.title}.", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
@@ -86,9 +121,10 @@ class RecipeDetail : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        val barAssistant = application as BarAssistant
-        barAssistant.storeRecentlyViewed(authorization, fireStore)
         mediaPlayer?.release()
         mediaPlayer = null
+        val barAssistant = application as? BarAssistant
+        barAssistant?.updateFavoriteFireStore(authorization, fireStore)
+        barAssistant?.storeRecentlyViewedAndFavorites(authorization, fireStore)
     }
 }

@@ -45,6 +45,8 @@ const val INGREDIENT_COLLECTION = "ingredients"
 const val RECENTLY_VIEWED_COLLECTION = "recentlyViewed"
 const val SHOPPING_CART_COLLECTION = "shoppingCart"
 const val FAVORITES_COLLECTION = "favorites"
+const val FAVORITES_LIST = "favoritesList"
+const val FAVORITES_PREFERENCES = "favorites"
 
 const val GROCERY_INGREDIENTS = "ingredients"
 const val GROCERY_NEEDED = "needed"
