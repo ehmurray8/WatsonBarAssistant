@@ -10,10 +10,10 @@ import com.facebook.common.util.ByteConstants
 import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.imagepipeline.core.ImagePipelineConfig
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.StorageReference
 import com.google.gson.Gson
-import java.util.ArrayList
 
 
 class BarAssistant: Application() {
@@ -24,7 +24,6 @@ class BarAssistant: Application() {
         var networkInfo: NetworkInfo? = null
         var storageReference: StorageReference? = null
         var recipes = mutableListOf<MutableList<DiscoveryRecipe>>()
-        var favorites = mutableListOf<String>()
         var favoritesList = mutableListOf<DiscoveryRecipe>()
 
         val lastViewedRecipes: MutableMap<Long, DiscoveryRecipe> = mutableMapOf()
@@ -42,12 +41,6 @@ class BarAssistant: Application() {
                 recipes.add(mutableListOf())
             }
         }
-        if(favorites.isEmpty()) {
-            homeCategories.forEach { _ ->
-                favorites = mutableListOf()
-            }
-        }
-
     }
 
     override fun onCreate() {
@@ -67,7 +60,7 @@ class BarAssistant: Application() {
         Fresco.initialize(baseContext, imagePipelineConfig)
     }
 
-    fun storeRecentlyViewed(authorization: FirebaseAuth, fireStore: FirebaseFirestore) {
+    fun storeRecentlyViewedAndFavorites(authorization: FirebaseAuth, fireStore: FirebaseFirestore) {
         storeRecentlyViewedFireStore(authorization, fireStore)
         val preferences = getSharedPreferences(SHARED_PREFERENCES_SETTINGS, Context.MODE_PRIVATE)
         val editor = preferences.edit()
@@ -78,6 +71,8 @@ class BarAssistant: Application() {
         }
         val lastViewedTimesJson = gson.toJson(BarAssistant.lastViewedTimes.sortedByDescending { it -> it })
         editor.putString(LAST_VIEWED_RECIPE_TIMES, lastViewedTimesJson)
+        val favoritesJson = gson.toJson(BarAssistant.favoritesList)
+        editor.putString(FAVORITES_PREFERENCES, favoritesJson)
         editor.apply()
     }
 
@@ -101,22 +96,41 @@ class BarAssistant: Application() {
 
     fun loadFavoritesFromFireStore(authorization: FirebaseAuth, fireStore: FirebaseFirestore) {
         val uid = authorization.currentUser?.uid
-        if(uid != null) {
+        if(isInternetConnected() && uid != null) {
             fireStore.collection(MAIN_COLLECTION).document(uid).collection(FAVORITES_COLLECTION)
                     .document("main").get().addOnSuccessListener {
-
-                        favorites = it.get(FAVORITES_LIST) as MutableList<String>
-
+                        loadRecipeFromDocument(it, fireStore)
                     }
+        }
+    }
+
+    private fun loadRecipeFromDocument(document: DocumentSnapshot, fireStore: FirebaseFirestore) {
+        val temporaryList = mutableListOf<DiscoveryRecipe>()
+        val favoriteIds = document.get(FAVORITES_LIST) as? ArrayList<*>
+        var count = 0
+        favoriteIds?.forEach { recipeId ->
+            fireStore.collection(RECIPE_COLLECTION).document(recipeId.toString()).get().addOnCompleteListener {
+                if (it.isSuccessful) {
+                    val recipeDocument = it.result ?: return@addOnCompleteListener
+                    val favorite = recipeDocument.toObject(FireStoreRecipe::class.java)
+                    temporaryList.add(favorite?.toDiscoveryRecipe() ?: return@addOnCompleteListener)
+                    count++
+                    if(++count >= favoriteIds.count()) {
+                        favoritesList.clear()
+                        favoritesList.addAll(temporaryList)
+                    }
+                }
+            }
         }
     }
 
     fun updateFavoriteFireStore(authorization: FirebaseAuth, fireStore: FirebaseFirestore) {
         if (BarAssistant.isInternetConnected()) {
             val uid = authorization.currentUser?.uid
-            val favoritesMap = mapOf(FAVORITES_LIST to favorites)
+            val favoritesMap = mapOf(FAVORITES_LIST to favoritesList.map { it.imageId.toFloat().toInt() })
             if (uid != null) {
-                fireStore.collection(MAIN_COLLECTION).document(uid).collection(FAVORITES_COLLECTION).document("main").set(favoritesMap)
+                fireStore.collection(MAIN_COLLECTION).document(uid).collection(FAVORITES_COLLECTION)
+                        .document("main").set(favoritesMap)
             }
         }
     }

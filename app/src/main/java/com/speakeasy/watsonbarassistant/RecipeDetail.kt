@@ -11,10 +11,8 @@ import android.widget.TextView
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.speakeasy.watsonbarassistant.BarAssistant.Companion.favorites
-import com.speakeasy.watsonbarassistant.R.id.tagContainerDetail
 import kotlinx.android.synthetic.main.activity_recipe_detail.*
-import java.util.ArrayList
+
 
 class RecipeDetail : AppCompatActivity() {
 
@@ -24,12 +22,17 @@ class RecipeDetail : AppCompatActivity() {
     private var unfavorited: Boolean = false
     private lateinit var favoriteAnim: Animation
 
+    private var favoriteIds: MutableList<String>? = null
+    get() {
+        return BarAssistant.favoritesList.asSequence().map { it.imageId }.toMutableList()
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recipe_detail)
         val recipe = intent.getSerializableExtra("Recipe") as? DiscoveryRecipe
 
-        /* Set transparency */
         button_favorite.alpha = 0.35.toFloat()
 
         if(recipe != null) {
@@ -52,35 +55,29 @@ class RecipeDetail : AppCompatActivity() {
 
             favoriteAnim = AnimationUtils.loadAnimation(baseContext, R.anim.anim_favorite)
 
-            /* Check if already favorited */
-            BarAssistant.favorites.forEachIndexed { index, _ ->
-
-                if (BarAssistant.favorites[index].equals(recipe.imageId)){
-                    /* Already on favorites list */
-                    favorited = true
-                    button_favorite.startAnimation(favoriteAnim)
-                    button_favorite.isChecked = true
-                }
+            if(favoriteIds?.contains(recipe.imageId) ?: return) {
+                favorited = true
+                button_favorite.startAnimation(favoriteAnim)
+                button_favorite.isChecked = true
             }
         }
-
 
         button_favorite.setOnClickListener {
-
-            if(favorited){
+            if(favorited) {
                 favorited=false
-                unfavorited = true
+                BarAssistant.favoritesList.removeIf { favorite ->
+                    favorite.imageId == recipe?.imageId
+                }
                 Toast.makeText(baseContext, "Unfavorited ${recipe?.title}.", Toast.LENGTH_SHORT).show()
-            }
-            else{
+            } else {
                 favorited=true
-                unfavorited = false
                 button_favorite.startAnimation(favoriteAnim)
+                if(favoriteIds?.contains(recipe?.imageId) == false) {
+                    BarAssistant.favoritesList.add(recipe?:return@setOnClickListener)
+                }
                 Toast.makeText(baseContext, "Favorited ${recipe?.title}.", Toast.LENGTH_SHORT).show()
             }
-
         }
-
     }
 
     private fun addToRecentlyViewed(recipe: DiscoveryRecipe) {
@@ -118,38 +115,11 @@ class RecipeDetail : AppCompatActivity() {
         }
     }
 
-    private fun saveFavoriteToFireStore(recipe: DiscoveryRecipe) {
-        val uid = authorization.currentUser?.uid
-
-        val recipeId = recipe.imageId
-
-        if (uid != null && !favorites.contains(recipeId)) {
-            BarAssistant.favorites.add(recipeId)
-        }
-    }
-
-    private fun removeFavoriteFromFireStore(recipe: DiscoveryRecipe) {
-        val uid = authorization.currentUser?.uid
-        val recipeId = recipe.imageId
-
-        if (uid != null && favorites.contains(recipeId)) {
-            BarAssistant.favorites.remove(recipeId)
-        }
-    }
-
     override fun onPause() {
         super.onPause()
-        val barAssistant = application as BarAssistant
-        barAssistant.storeRecentlyViewed(authorization, fireStore)
-        val recipe = intent.getSerializableExtra("Recipe") as DiscoveryRecipe
-        if(favorited && !unfavorited) {
-            saveFavoriteToFireStore(recipe)
-            barAssistant.updateFavoriteFireStore(authorization, fireStore)
-        }
-        else if(!favorited && unfavorited){
-            removeFavoriteFromFireStore(recipe)
-            barAssistant.updateFavoriteFireStore(authorization, fireStore)
-        }
+        val barAssistant = application as? BarAssistant
+        barAssistant?.updateFavoriteFireStore(authorization, fireStore)
+        barAssistant?.storeRecentlyViewedAndFavorites(authorization, fireStore)
     }
 }
 

@@ -62,23 +62,26 @@ class MainMenu : AppCompatActivity() {
         BarAssistant.homeCategories.forEachIndexed { i, category ->
             val recipeJson = preferences.getString(category, "")
             val storedRecipes = gson.fromJson(recipeJson, Array<DiscoveryRecipe>::class.java)
-            val ingredientsJson = preferences.getString(INGREDIENT_PREFERENCES_ID, "")
-            val storedIngredients = gson.fromJson(ingredientsJson, Array<Ingredient>::class.java)
-            val lastViewedTimesJson = preferences.getString(LAST_VIEWED_RECIPE_TIMES, "")
-            val storedLastViewedTimes = gson.fromJson(lastViewedTimesJson, Array<Long>::class.java)
+
             if (storedRecipes != null && storedRecipes.count() > 0) {
                 BarAssistant.recipes[i].addAll(storedRecipes.toList())
             }
-            if (storedIngredients != null && storedIngredients.count() > 0) {
-                ingredients.clear()
-                ingredients.addAll(storedIngredients)
-            }
-            /*if (storedFavorites != null && storedFavorites.count() > 0) {
-                BarAssistant.favorites[i].addAll(storedFavorites.toList())
-            }*/
-            loadRecentlyViewedRecipesSharedPreferences(storedLastViewedTimes
-                    ?: return@forEachIndexed)
         }
+        val ingredientsJson = preferences.getString(INGREDIENT_PREFERENCES_ID, "")
+        val storedIngredients = gson.fromJson(ingredientsJson, Array<Ingredient>::class.java)
+        val lastViewedTimesJson = preferences.getString(LAST_VIEWED_RECIPE_TIMES, "")
+        val storedLastViewedTimes = gson.fromJson(lastViewedTimesJson, Array<Long>::class.java)
+        val favoritesJson = preferences.getString(FAVORITES_PREFERENCES, "")
+        val favorites = gson.fromJson(favoritesJson, Array<DiscoveryRecipe>::class.java)
+        if(favorites != null && favorites.count() > 0) {
+            BarAssistant.favoritesList.clear()
+            BarAssistant.favoritesList.addAll(favorites)
+        }
+        if (storedIngredients != null && storedIngredients.count() > 0) {
+            ingredients.clear()
+            ingredients.addAll(storedIngredients)
+        }
+        loadRecentlyViewedRecipesSharedPreferences(storedLastViewedTimes)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -107,7 +110,9 @@ class MainMenu : AppCompatActivity() {
         currentUser = authorization.currentUser
         loadIngredients()
         loadRecentlyViewed()
+        (application as? BarAssistant)?.loadFavoritesFromFireStore(authorization, fireStore)
         (fragment as? IngredientsTab)?.refresh()
+        (fragment as? MyFavoritesTab)?.refresh()
     }
 
     private fun loadIngredients() {
