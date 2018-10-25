@@ -66,13 +66,6 @@
                 android:textColor="@color/primaryText"
                 android:textSize="16sp" />
 
-            <Button
-                android:id="@+id/readDescriptionButton"
-                android:layout_margin="15dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/speech_button" />
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
