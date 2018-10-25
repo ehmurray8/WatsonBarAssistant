@@ -5,26 +5,21 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.Toolbar
+import android.support.v7.widget.*
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.SearchView
+import android.widget.Toast
 import com.algolia.search.saas.Client
 import com.algolia.search.saas.Query
-import com.algolia.search.saas.android.BuildConfig.ALGOLIA_API_KEY
-import com.algolia.search.saas.android.BuildConfig.ALGOLIA_APPLICATION_ID
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_search.*
 import kotlinx.serialization.json.JSON
 
 class SearchActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
 
-    private val client = Client(ALGOLIA_APPLICATION_ID, ALGOLIA_API_KEY)
+    private val client = Client(ALGOLIA_APP_ID, ALGOLIA_API_KEY)
     private val recipeIndex = client.getIndex("Recipe")
     private var searchMenuItem: MenuItem? = null
     private var searchView: SearchView? = null
@@ -109,17 +104,18 @@ class SearchActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
         recipeIndex.searchAsync(Query(query)) { content, error ->
             if(error != null) {
                 Log.d("Algolia", "Error Code: ${error.statusCode}, Message: ${error.message}")
-            }
+                Toast.makeText(baseContext, "Failed to retreive any results.", Toast.LENGTH_SHORT).show()
+            } else if(content != null) {
+                val response = content.getJSONArray("hits")
+                searchRecipes.clear()
+                for (i in 0 until response.length()) {
+                    val recipe = JSON.nonstrict.parse<DiscoveryRecipe>(response.getJSONObject(i).toString())
+                    searchRecipes.add(recipe)
+                }
 
-            val response = content.getJSONArray("hits")
-            searchRecipes.clear()
-            for (i in 0 until response.length()) {
-                val recipe = JSON.nonstrict.parse<DiscoveryRecipe>(response.getJSONObject(i).toString())
-                searchRecipes.add(recipe)
-            }
-
-            runOnUiThread {
-                viewAdapter?.notifyDataSetChanged()
+                runOnUiThread {
+                    viewAdapter?.notifyDataSetChanged()
+                }
             }
         }
         return true
