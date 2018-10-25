@@ -59,11 +59,12 @@ class RecipeDetail : AppCompatActivity() {
                 button_favorite.startAnimation(favoriteAnim)
                 button_favorite.isChecked = true
             }
-
+            /*
             readDescriptionButton.setOnClickListener {
                 val textToSpeech = TextToSpeech(HandleTtS(), mediaPlayer ?: return@setOnClickListener)
                 textToSpeech.execute(recipe.title + ". " + recipe.description)
             }
+            */
 
             button_favorite.setOnClickListener {
                 if(favorited) {
