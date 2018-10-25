@@ -5,19 +5,18 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import kotlinx.android.synthetic.main.activity_recipe_collection.*
 import kotlinx.android.synthetic.main.fragment_my_favorites_tab.*
 
 
-class MyRecipesTab : Fragment() {
+class MyFavoritesTab : Fragment() {
 
     private var viewAdapter: MyRecipeAdapter? = null
-    private var recyclerView: RecyclerView? = null
     private var manager: LinearLayoutManager? = null
+    private var favorites = mutableListOf<DiscoveryRecipe>()
+    get() = BarAssistant.favoritesList.toMutableList()
 
     companion object {
         var lastScrolledPosition: Int = 0
@@ -37,9 +36,9 @@ class MyRecipesTab : Fragment() {
 
         manager = LinearLayoutManager(activity?.baseContext)
         val mainMenu = activity as MainMenu
-        viewAdapter = MyRecipeAdapter(BarAssistant.recipes[0], mainMenu)
+        viewAdapter = MyRecipeAdapter(favorites, mainMenu)
 
-        recyclerView = favorites_list.apply {
+        favorites_list.apply {
             setHasFixedSize(true)
             layoutManager = manager
             adapter = viewAdapter
@@ -48,20 +47,19 @@ class MyRecipesTab : Fragment() {
         manager?.scrollToPosition(lastScrolledPosition)
 
         val itemDecorator = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
-        recyclerView?.addItemDecoration(itemDecorator)
+        favorites_list?.addItemDecoration(itemDecorator)
 
         setupOnClickListener()
+        refresh()
     }
 
     private fun setupOnClickListener() {
-        recyclerView?.addOnItemClickListener(object : OnItemClickListener {
+        favorites_list?.addOnItemClickListener(object : OnItemClickListener {
             override fun onItemClicked(position: Int, view: View) {
                 val intent = Intent(activity, RecipeDetail::class.java)
-                val recipes = BarAssistant.recipes
-                intent.putExtra("Recipe", recipes[0][position])
+                val favoritesList = BarAssistant.favoritesList
+                intent.putExtra("Recipe", favoritesList.toMutableList()[position])
                 startActivity(intent)
-//                val intent = Intent(activity,VisionTab::class.java)
-                //startActivity(intent)
             }
         })
     }

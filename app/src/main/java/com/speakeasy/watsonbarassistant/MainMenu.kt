@@ -46,6 +46,8 @@ class MainMenu : AppCompatActivity() {
 
         loadSharedPreferences()
         loadUserData()
+        val barAssistant = application as BarAssistant
+        barAssistant.loadFavoritesFromFireStore(authorization, fireStore)
         tabs.getTabAt(tabIndex)?.select()
         tabs.addOnTabSelectedListener(MainMenuTabListener(this))
         setSupportActionBar(toolbar as Toolbar)
@@ -61,19 +63,27 @@ class MainMenu : AppCompatActivity() {
         BarAssistant.homeCategories.forEachIndexed { i, category ->
             val recipeJson = preferences.getString(category, "")
             val storedRecipes = gson.fromJson(recipeJson, Array<DiscoveryRecipe>::class.java)
-            val ingredientsJson = preferences.getString(INGREDIENT_PREFERENCES_ID, "")
-            val storedIngredients = gson.fromJson(ingredientsJson, Array<Ingredient>::class.java)
-            val lastViewedTimesJson = preferences.getString(LAST_VIEWED_RECIPE_TIMES, "")
-            val storedLastViewedTimes = gson.fromJson(lastViewedTimesJson, Array<Long>::class.java)
+
             if (storedRecipes != null && storedRecipes.count() > 0) {
                 BarAssistant.recipes[i].addAll(storedRecipes.toList())
             }
-            if (storedIngredients != null && storedIngredients.count() > 0) {
-                ingredients.clear()
-                ingredients.addAll(storedIngredients)
-            }
-            loadRecentlyViewedRecipesSharedPreferences(storedLastViewedTimes
-                    ?: return@forEachIndexed)
+        }
+        val ingredientsJson = preferences.getString(INGREDIENT_PREFERENCES_ID, "")
+        val storedIngredients = gson.fromJson(ingredientsJson, Array<Ingredient>::class.java)
+        val lastViewedTimesJson = preferences.getString(LAST_VIEWED_RECIPE_TIMES, "")
+        val storedLastViewedTimes = gson.fromJson(lastViewedTimesJson, Array<Long>::class.java)
+        val favoritesJson = preferences.getString(FAVORITES_PREFERENCES, "")
+        val favorites = gson.fromJson(favoritesJson, Array<DiscoveryRecipe>::class.java)
+        if(favorites != null && favorites.count() > 0) {
+            BarAssistant.favoritesList.clear()
+            BarAssistant.favoritesList.addAll(favorites)
+        }
+        if (storedIngredients != null && storedIngredients.count() > 0) {
+            ingredients.clear()
+            ingredients.addAll(storedIngredients)
+        }
+        if(storedLastViewedTimes != null && storedLastViewedTimes.count() > 0) {
+            loadRecentlyViewedRecipesSharedPreferences(storedLastViewedTimes)
         }
     }
 
@@ -84,8 +94,6 @@ class MainMenu : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        val barAssistant = (application as BarAssistant)
-        barAssistant.storeRecentlyViewed(authorization, fireStore)
         val preferences = getSharedPreferences(SHARED_PREFERENCES_SETTINGS, Context.MODE_PRIVATE)
         val editor = preferences.edit()
         editor.putInt(TAB_INDEX, tabIndex)
@@ -106,7 +114,9 @@ class MainMenu : AppCompatActivity() {
         currentUser = authorization.currentUser
         loadIngredients()
         loadRecentlyViewed()
+        (application as? BarAssistant)?.loadFavoritesFromFireStore(authorization, fireStore)
         (fragment as? IngredientsTab)?.refresh()
+        (fragment as? MyFavoritesTab)?.refresh()
     }
 
     private fun loadIngredients() {
@@ -151,7 +161,7 @@ class MainMenu : AppCompatActivity() {
         when (tabIndex) {
             0 -> fragment = IngredientsTab()
             1 -> fragment = HomeTab()
-            2 -> fragment = MyRecipesTab()
+            2 -> fragment = MyFavoritesTab()
         }
         replaceFragment()
     }

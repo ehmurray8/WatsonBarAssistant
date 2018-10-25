@@ -7,7 +7,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
    <TextView
-       android:id="@+id/recipe_collection_title"
+       android:id="@+id/favorites_collection_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="25sp"
@@ -18,7 +18,7 @@
         android:layout_marginTop="10dp"/>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/recipes_collection_list"
+        android:id="@+id/favorites_collection_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="20dp"/>

@@ -31,7 +31,7 @@ data class DiscoveryRecipe(@Optional val title: String = "",
                            @Optional val totalTime: String = "",
                            @Optional val imageId: String = "",
                            @Optional val googleBestImgUrl: String = "",
-                           @Optional val googleBestImgScore: Double = 0.0): Serializable {
+                           @Optional val googleBestImgScore: Double = 0.0): Serializable, Comparable<DiscoveryRecipe> {
 
     @Optional var percentOfIngredientsOwned: Int = 0
     @Optional var recipeImageUriString: String = ""
@@ -42,6 +42,21 @@ data class DiscoveryRecipe(@Optional val title: String = "",
                 instructionList = instructionList, prepTime = prepTime, cookTime = cookTime,
                 totalTime = totalTime, imageId = imageId.toFloat().toLong(), googleBestImgUrl = googleBestImgUrl,
                 googleBestImgScore = googleBestImgScore)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if(other as? DiscoveryRecipe != null) {
+            return other.imageId == imageId
+        }
+        return false
+    }
+
+    override fun hashCode(): Int {
+        return imageId.hashCode()
+    }
+
+    override fun compareTo(other: DiscoveryRecipe): Int {
+        return title.compareTo(other.title)
     }
 
     fun calculatePercentAvailable(userIngredients: Array<Ingredient>){

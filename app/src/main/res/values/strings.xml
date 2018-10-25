@@ -3,7 +3,8 @@
     <string name="home_tab">Home</string>
     <string name="recipes_tab">Recipes</string>
 
-    <string name="my_recipes_tab_welcome">My Recipes</string>
+    <string name="home_tab_welcome">Current Ingredients</string>
+    <string name="my_favorites_tab_welcome">My Favorites</string>
     <string name="ingredient_hint">Ingredients to add</string>
     <string name="placeholder_header">Header</string>
     <string name="recipe_name_placeholder">Recipe Name</string>
