@@ -3,6 +3,7 @@ package com.speakeasy.watsonbarassistant
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
@@ -23,6 +24,8 @@ class MyFavoritesTab : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?):View? {
+        super.onCreateView(inflater, container, savedInstanceState)
+        (activity as? AppCompatActivity)?.supportActionBar?.title = "Favorites"
         return inflater.inflate(R.layout.fragment_my_favorites_tab, container, false)
     }
 

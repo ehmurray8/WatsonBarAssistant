@@ -28,5 +28,6 @@
     <string name="random_title">Random</string>
     <string name="speech_button">Read for Me</string>
     <string name="vision_button_placeholder">Button</string>
+    <string name="favorites_tab">Favorites</string>
 
 </resources>

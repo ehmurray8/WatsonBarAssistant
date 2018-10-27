@@ -104,9 +104,12 @@ class SearchActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
         recipeIndex.searchAsync(Query(query)) { content, error ->
             if(error != null) {
                 Log.d("Algolia", "Error Code: ${error.statusCode}, Message: ${error.message}")
-                Toast.makeText(baseContext, "Failed to retreive any results.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(baseContext, "Failed to retrieve any results.", Toast.LENGTH_SHORT).show()
             } else if(content != null) {
                 val response = content.getJSONArray("hits")
+                if(response.length() == 0) {
+                    Toast.makeText(baseContext, "No results for $query.", Toast.LENGTH_SHORT).show()
+                }
                 searchRecipes.clear()
                 for (i in 0 until response.length()) {
                     val recipe = JSON.nonstrict.parse<DiscoveryRecipe>(response.getJSONObject(i).toString())

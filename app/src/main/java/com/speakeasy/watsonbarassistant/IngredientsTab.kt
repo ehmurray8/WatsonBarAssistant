@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -37,15 +38,16 @@ class IngredientsTab : Fragment(), IngredientDelegate {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-       super.onCreateView(inflater, container, savedInstanceState)
-       return inflater.inflate(R.layout.fragment_ingredient_tab, container, false)
+        super.onCreateView(inflater, container, savedInstanceState)
+        (activity as? AppCompatActivity)?.supportActionBar?.title = "Ingredients"
+        return inflater.inflate(R.layout.fragment_ingredient_tab, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val viewManager = LinearLayoutManager(activity)
         val mainMenu = activity as MainMenu
-        viewAdapter = IngredientsAdapter(mainMenu.ingredients, mainMenu.documentsMap)
+        viewAdapter = IngredientsAdapter(mainMenu.ingredients)
 
         ingredients_recycler_view.apply {
             setHasFixedSize(true)
@@ -117,7 +119,10 @@ class IngredientsTab : Fragment(), IngredientDelegate {
         if(ingredients.any { it.name.toLowerCase() == ingredient.name.toLowerCase() }) {
             Toast.makeText(activity, "${ingredient.name} is already stored as an ingredient.", Toast.LENGTH_SHORT).show()
         } else {
-            addIngredientToFireStore(ingredient)
+            val mainMenu = (activity as? MainMenu) ?: return
+            mainMenu.ingredients.add(ingredient)
+            mainMenu.refreshDiscovery(true)
+            refresh()
         }
     }
 
@@ -133,20 +138,6 @@ class IngredientsTab : Fragment(), IngredientDelegate {
          val itemTouchHelper = ItemTouchHelper(swipeHandler)
          itemTouchHelper.attachToRecyclerView(ingredients_recycler_view)
      }
-
-    private fun addIngredientToFireStore(ingredient: Ingredient) {
-        val mainMenu = (activity as? MainMenu)
-        val uid = mainMenu?.currentUser?.uid ?: return
-
-        fireStore.collection(MAIN_COLLECTION).document(uid)
-                .collection(INGREDIENT_COLLECTION).add(ingredient).addOnSuccessListener { _ ->
-                    Toast.makeText(context, "Successfully added ${ingredient.name}.", Toast.LENGTH_SHORT).show()
-                    mainMenu.ingredients.add(ingredient)
-                    refresh()
-                }.addOnFailureListener {
-                    Toast.makeText(activity?.applicationContext, "Failed to add ${ingredient.name}.", Toast.LENGTH_SHORT).show()
-                }
-    }
 
     fun refresh() {
         activity?.runOnUiThread {

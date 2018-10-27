@@ -13,7 +13,6 @@ import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.google.firebase.storage.FirebaseStorage
 import com.google.gson.Gson
 import com.speakeasy.watsonbarassistant.discovery.HandleDiscovery
@@ -24,7 +23,6 @@ import java.util.*
 class MainMenu : AppCompatActivity() {
 
     var ingredients = sortedSetOf<Ingredient>(kotlin.Comparator { o1, o2 -> if (o1.compareName() > o2.compareName()) 1 else -1 })
-    var documentsMap = mutableMapOf<String, String>()
     var currentUser: FirebaseUser? = null
     var tabIndex = 1
     var fragment: Fragment? = null
@@ -94,6 +92,13 @@ class MainMenu : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
+        val uid = currentUser?.uid
+        if(uid != null) {
+            val ingredientsMap = mapOf(INGREDIENT_COLLECTION to ingredients.toTypedArray())
+            fireStore.collection(MAIN_COLLECTION).document(uid).collection(INGREDIENT_COLLECTION)
+                    .document("ma" +
+                            "in").set(ingredientsMap)
+        }
         val preferences = getSharedPreferences(SHARED_PREFERENCES_SETTINGS, Context.MODE_PRIVATE)
         val editor = preferences.edit()
         editor.putInt(TAB_INDEX, tabIndex)
@@ -126,15 +131,17 @@ class MainMenu : AppCompatActivity() {
             val oldIngredients = ingredients.toTypedArray()
             if (uid != null) {
                 fireStore.collection(MAIN_COLLECTION).document(uid)
-                        .collection(INGREDIENT_COLLECTION).get().addOnCompleteListener {
+                        .collection(INGREDIENT_COLLECTION).document("main").get().addOnSuccessListener {
                             ingredients.clear()
-                            if (it.isSuccessful) {
-                                it.result?.forEach { snapshot ->
-                                    parseSnapshot(snapshot)
+                            val lastViewedTimes = it.get(INGREDIENT_COLLECTION) as? ArrayList<*>
+                            lastViewedTimes?.forEach { element ->
+                                val name = element as? String
+                                if(name != null) {
+                                    ingredients.add(Ingredient(name))
                                 }
-                                if (!oldIngredients.toMutableList().containsAll(ingredients)) {
-                                    refreshDiscovery(true)
-                                }
+                            }
+                            if (!oldIngredients.toMutableList().containsAll(ingredients)) {
+                                refreshDiscovery(true)
                             }
                         }
             }
@@ -144,7 +151,7 @@ class MainMenu : AppCompatActivity() {
     fun refreshDiscovery(forceRefresh: Boolean = false) {
         if (ingredients.count() > 0) {
             if (forceRefresh || lastDiscoveryRefreshTime == -1L ||
-                    Date().time - lastDiscoveryRefreshTime >= 60_000) {
+                    Date().time - lastDiscoveryRefreshTime >= 30_000) {
                 lastDiscoveryRefreshTime = Date().time
                 val discovery = SearchDiscovery(HandleDiscovery(this))
                 discovery.execute(ingredients.toTypedArray())
@@ -173,20 +180,20 @@ class MainMenu : AppCompatActivity() {
         tabsItems?.get(tabIndex)?.isSelected = true
     }
 
-    private fun parseSnapshot(snapshot: QueryDocumentSnapshot) {
-        val name = snapshot.get("name") as? String
-        val id = snapshot.id
-        if (name != null) {
-            documentsMap[name] = id
-            val ingredient = Ingredient(name)
-            ingredients.add(ingredient)
-        }
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
             R.id.user_profile -> {
                 val intent = Intent(this, UserProfile::class.java)
+                startActivity(intent)
+                return true
+            }
+            R.id.searchMenuButton -> {
+                val intent = Intent(this, SearchActivity::class.java)
+                startActivity(intent)
+                return true
+            }
+            R.id.shoppingCartMenuButton -> {
+                val intent = Intent(this, ShoppingCart::class.java)
                 startActivity(intent)
                 return true
             }
