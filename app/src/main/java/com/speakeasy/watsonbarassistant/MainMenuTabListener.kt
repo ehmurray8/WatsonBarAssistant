@@ -1,6 +1,7 @@
 package com.speakeasy.watsonbarassistant
 
 import android.support.design.widget.TabLayout
+import com.speakeasy.watsonbarassistant.activity.MainMenu
 
 class MainMenuTabListener(private val mainMenu: MainMenu):
         TabLayout.OnTabSelectedListener {

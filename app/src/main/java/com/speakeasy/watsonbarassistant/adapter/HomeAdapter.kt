@@ -1,4 +1,4 @@
-package com.speakeasy.watsonbarassistant
+package com.speakeasy.watsonbarassistant.adapter
 
 import android.app.Activity
 import android.content.Intent
@@ -8,6 +8,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
+import com.speakeasy.watsonbarassistant.BarAssistant
+import com.speakeasy.watsonbarassistant.R
+import com.speakeasy.watsonbarassistant.activity.RecipeCollection
+import com.speakeasy.watsonbarassistant.fragment.HomeTab
 
 
 class HomeAdapter(private var activity: Activity):
@@ -15,44 +19,14 @@ class HomeAdapter(private var activity: Activity):
 
     class RecipeViewHolder(val layout: LinearLayout) : RecyclerView.ViewHolder(layout)
 
-    class ButtonViewHolder(val layout: LinearLayout): RecyclerView.ViewHolder(layout)
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return if(viewType == 0) {
-            val layout = LayoutInflater.from(parent.context).inflate(R.layout.home_buttons_view,
-                    parent, false) as LinearLayout
-            ButtonViewHolder(layout)
-        } else {
-            val linearLayout = LayoutInflater.from(parent.context).inflate(R.layout.home_recipe_category,
-                    parent, false) as LinearLayout
-            RecipeViewHolder(linearLayout)
-        }
-    }
-
-    override fun getItemViewType(position: Int): Int {
-        return if(position == 0) 0 else 1
+        val linearLayout = LayoutInflater.from(parent.context).inflate(R.layout.home_recipe_category,
+                parent, false) as LinearLayout
+        return RecipeViewHolder(linearLayout)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if(position == 0) {
-            bindButtonViewHolder(holder as ButtonViewHolder)
-        } else {
-            bindRecipeViewHolder(holder as RecipeViewHolder, position-1)
-        }
-    }
-
-    private fun bindButtonViewHolder(holder: ButtonViewHolder) {
-        val layout = holder.layout
-        val shoppingCartButton = layout.getChildAt(0)
-        shoppingCartButton.setOnClickListener {
-            val intent = Intent(activity, ShoppingCart::class.java)
-            activity.startActivity(intent)
-        }
-        val searchButton = layout.getChildAt(1)
-        searchButton.setOnClickListener {
-            val intent = Intent(activity, SearchActivity::class.java)
-            activity.startActivity(intent)
-        }
+        bindRecipeViewHolder(holder as RecipeViewHolder, position)
     }
 
     private fun bindRecipeViewHolder(recipeHolder: RecipeViewHolder, position: Int) {
@@ -60,7 +34,7 @@ class HomeAdapter(private var activity: Activity):
         val headerView = layout.getChildAt(0) as Button
         val category = BarAssistant.homeCategories[position]
         headerView.text = activity.resources.getString(R.string.collection_name, category)
-        val recipes = BarAssistant.recipes[position]
+        val recipes= synchronized(BarAssistant.recipes) { BarAssistant.recipes[position] }
         headerView.setOnClickListener {
             val intent = Intent(activity.applicationContext, RecipeCollection::class.java)
             intent.putExtra("Collection Name", category)
@@ -84,5 +58,9 @@ class HomeAdapter(private var activity: Activity):
         viewManager.scrollToPosition(HomeTab.homeScrollPositions[category] ?: 0)
     }
 
-    override fun getItemCount(): Int = BarAssistant.recipes.count() + 1
+    override fun getItemCount(): Int {
+        synchronized(BarAssistant.recipes) {
+            return BarAssistant.recipes.count()
+        }
+    }
 }

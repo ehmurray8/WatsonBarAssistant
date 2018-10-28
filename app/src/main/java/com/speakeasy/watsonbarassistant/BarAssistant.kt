@@ -22,12 +22,14 @@ class BarAssistant: Application() {
         var defaultImage: Drawable? = null
         var networkInfo: NetworkInfo? = null
         var storageReference: StorageReference? = null
-        var recipes = mutableListOf<MutableList<DiscoveryRecipe>>()
-        var favoritesList = sortedSetOf<DiscoveryRecipe>()
+
+        val recipes = mutableListOf<MutableList<DiscoveryRecipe>>()
+        val favoritesList = sortedSetOf<DiscoveryRecipe>()
+        val ingredients = sortedSetOf<Ingredient>(kotlin.Comparator { o1, o2 -> if (o1.compareName() > o2.compareName()) 1 else -1 })
 
         val lastViewedRecipes: MutableMap<Long, DiscoveryRecipe> = mutableMapOf()
         val lastViewedTimes: MutableList<Long> = mutableListOf()
-        val homeCategories = mutableListOf(SUGGESTIONS_CATEGORY, RECENTLY_VIEWED_CATEGORY)
+        val homeCategories = listOf(SUGGESTIONS_CATEGORY, RECENTLY_VIEWED_CATEGORY)
 
         fun isInternetConnected(): Boolean {
             return networkInfo?.isConnectedOrConnecting == true
@@ -35,9 +37,11 @@ class BarAssistant: Application() {
     }
 
     init {
-        if(recipes.isEmpty()) {
-            homeCategories.forEach { _ ->
-                recipes.add(mutableListOf())
+        synchronized(recipes) {
+            if (recipes.isEmpty()) {
+                homeCategories.forEach { _ ->
+                    recipes.add(mutableListOf())
+                }
             }
         }
     }
@@ -65,12 +69,18 @@ class BarAssistant: Application() {
         val editor = preferences.edit()
         val gson = Gson()
         BarAssistant.homeCategories.forEachIndexed { i, category ->
-            val json = gson.toJson(BarAssistant.recipes[i].toTypedArray())
+            val json = synchronized(BarAssistant.recipes) {
+                gson.toJson(BarAssistant.recipes[i].toTypedArray())
+            }
             editor.putString(category, json)
         }
-        val lastViewedTimesJson = gson.toJson(BarAssistant.lastViewedTimes.sortedByDescending { it -> it })
+        val lastViewedTimesJson = synchronized(BarAssistant.lastViewedTimes) {
+            gson.toJson(BarAssistant.lastViewedTimes.sortedByDescending { it -> it })
+        }
         editor.putString(LAST_VIEWED_RECIPE_TIMES, lastViewedTimesJson)
-        val favoritesJson = gson.toJson(BarAssistant.favoritesList)
+        val favoritesJson = synchronized(BarAssistant.favoritesList) {
+            gson.toJson(BarAssistant.favoritesList)
+        }
         editor.putString(FAVORITES_PREFERENCES, favoritesJson)
         editor.apply()
     }
@@ -79,16 +89,20 @@ class BarAssistant: Application() {
         if (BarAssistant.isInternetConnected()) {
             val uid = authorization.currentUser?.uid
             if (uid != null) {
-                val recipes = mutableListOf<Int>()
-                BarAssistant.lastViewedRecipes.keys.sortedByDescending { it -> it }
-                        .forEach {
-                            val recipe = BarAssistant.lastViewedRecipes[it]
-                            if(recipe != null) recipes.add(recipe.imageId.toFloat().toInt())
-                        }
-                val recentlyViewedMap = mapOf(LAST_VIEWED_RECIPE_TIMES to BarAssistant.lastViewedTimes,
-                        LAST_VIEWED_RECIPES to recipes)
-                fireStore.collection(MAIN_COLLECTION).document(uid).collection(RECENTLY_VIEWED_COLLECTION)
-                        .document("main").set(recentlyViewedMap)
+                synchronized(BarAssistant.lastViewedRecipes) {
+                    val recipes = mutableListOf<Int>()
+                    BarAssistant.lastViewedRecipes.keys.sortedByDescending { it -> it }
+                            .forEach {
+                                val recipe = BarAssistant.lastViewedRecipes[it]
+                                if (recipe != null) recipes.add(recipe.imageId.toFloat().toInt())
+                            }
+                    synchronized(BarAssistant.lastViewedTimes) {
+                        val recentlyViewedMap = mapOf(LAST_VIEWED_RECIPE_TIMES to BarAssistant.lastViewedTimes,
+                                LAST_VIEWED_RECIPES to recipes)
+                        fireStore.collection(MAIN_COLLECTION).document(uid).collection(RECENTLY_VIEWED_COLLECTION)
+                                .document("main").set(recentlyViewedMap)
+                    }
+                }
             }
         }
     }
@@ -115,8 +129,10 @@ class BarAssistant: Application() {
                     temporaryList.add(favorite?.toDiscoveryRecipe() ?: return@addOnCompleteListener)
                     count++
                     if(++count >= favoriteIds.count()) {
-                        favoritesList.clear()
-                        favoritesList.addAll(temporaryList)
+                        synchronized(BarAssistant.favoritesList) {
+                            favoritesList.clear()
+                            favoritesList.addAll(temporaryList)
+                        }
                     }
                 }
             }
@@ -126,7 +142,9 @@ class BarAssistant: Application() {
     fun updateFavoriteFireStore(authorization: FirebaseAuth, fireStore: FirebaseFirestore) {
         if (BarAssistant.isInternetConnected()) {
             val uid = authorization.currentUser?.uid
-            val favoritesMap = mapOf(FAVORITES_LIST to favoritesList.map { it.imageId.toFloat().toInt() })
+            val favoritesMap = synchronized(BarAssistant.favoritesList) {
+                mapOf(FAVORITES_LIST to favoritesList.map { it.imageId.toFloat().toInt() })
+            }
             if (uid != null) {
                 fireStore.collection(MAIN_COLLECTION).document(uid).collection(FAVORITES_COLLECTION)
                         .document("main").set(favoritesMap)

@@ -9,7 +9,7 @@
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:fitsSystemWindows="false"
-    tools:context=".IngredientsTab">
+    tools:context=".fragment.IngredientsTab">
 
     <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -17,21 +17,7 @@
         android:id="@+id/relativeLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".IngredientsTab">
-
-        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/ingredient"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:text="@string/ingredients_header"
-            android:textSize="25sp"
-            android:textColor="@color/primaryText"
-            android:layout_gravity="start"
-            android:gravity="center"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        tools:context=".fragment.IngredientsTab">
 
         <EditText
             android:id="@+id/ingredientInputView"
@@ -120,9 +106,10 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="12dp"
             android:scrollbars="vertical"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@+id/ingredientInputView"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ingredient" />
+            app:layout_constraintStart_toStartOf="parent" />
+
     </android.support.constraint.ConstraintLayout>
 </android.support.design.widget.CoordinatorLayout>

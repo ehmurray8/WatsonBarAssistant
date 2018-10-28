@@ -1,4 +1,4 @@
-package com.speakeasy.watsonbarassistant
+package com.speakeasy.watsonbarassistant.fragment
 
 
 import android.content.Context
@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -17,15 +18,17 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
-import com.google.firebase.firestore.FirebaseFirestore
-import com.speakeasy.watsonbarassistant.vision.VisionActivity
+import com.speakeasy.watsonbarassistant.BarAssistant
+import com.speakeasy.watsonbarassistant.R
+import com.speakeasy.watsonbarassistant.SwipeToDeleteCallback
+import com.speakeasy.watsonbarassistant.activity.MainMenu
+import com.speakeasy.watsonbarassistant.activity.VisionActivity
+import com.speakeasy.watsonbarassistant.adapter.IngredientsAdapter
+import com.speakeasy.watsonbarassistant.extensions.toast
 import kotlinx.android.synthetic.main.fragment_ingredient_tab.*
 
 
-class IngredientsTab : Fragment(), IngredientDelegate {
-
-    private val fireStore = FirebaseFirestore.getInstance()
+class IngredientsTab : Fragment() {
 
     private lateinit var menuAnimOpen: Animation
     private lateinit var menuAnimClose: Animation
@@ -37,15 +40,16 @@ class IngredientsTab : Fragment(), IngredientDelegate {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-       super.onCreateView(inflater, container, savedInstanceState)
-       return inflater.inflate(R.layout.fragment_ingredient_tab, container, false)
+        super.onCreateView(inflater, container, savedInstanceState)
+        (activity as? AppCompatActivity)?.supportActionBar?.title = "Ingredients"
+        return inflater.inflate(R.layout.fragment_ingredient_tab, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val viewManager = LinearLayoutManager(activity)
         val mainMenu = activity as MainMenu
-        viewAdapter = IngredientsAdapter(mainMenu.ingredients, mainMenu.documentsMap)
+        viewAdapter = IngredientsAdapter(synchronized(BarAssistant.ingredients) { BarAssistant.ingredients })
 
         ingredients_recycler_view.apply {
             setHasFixedSize(true)
@@ -72,7 +76,8 @@ class IngredientsTab : Fragment(), IngredientDelegate {
                 return@setOnEditorActionListener when (actionId) {
                     EditorInfo.IME_ACTION_DONE -> {
                         val name = ingredientInputView.text.toString()
-                        addIngredient(name)
+                        mainMenu.addIngredient(name)
+                        refresh()
                         ingredientInputView.selectAll()
                         ingredientInputView.setText("")
                         true
@@ -97,11 +102,12 @@ class IngredientsTab : Fragment(), IngredientDelegate {
             }
         }
         addViaCameraButton.setOnClickListener {
-            val intent = Intent(activity,VisionActivity::class.java)
-            VisionActivity.ingredientDelegate = this
+            val intent = Intent(activity, VisionActivity::class.java)
             startActivity(intent)
         }
-        addViaVoiceButton.setOnClickListener { Toast.makeText(context, "Voice support to be added!", Toast.LENGTH_SHORT).show() }
+        addViaVoiceButton.setOnClickListener {
+            activity?.applicationContext?.toast("Voice support to be added!")
+        }
 
         val itemDecorator = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
         ingredients_recycler_view.addItemDecoration(itemDecorator)
@@ -111,15 +117,6 @@ class IngredientsTab : Fragment(), IngredientDelegate {
         refresh()
     }
 
-    override fun addIngredient(name: String) {
-        val ingredient = Ingredient(name)
-        val ingredients = (activity as MainMenu).ingredients
-        if(ingredients.any { it.name.toLowerCase() == ingredient.name.toLowerCase() }) {
-            Toast.makeText(activity, "${ingredient.name} is already stored as an ingredient.", Toast.LENGTH_SHORT).show()
-        } else {
-            addIngredientToFireStore(ingredient)
-        }
-    }
 
      private fun setupSwipeHandler() {
          val context = activity?.baseContext ?: return
@@ -133,20 +130,6 @@ class IngredientsTab : Fragment(), IngredientDelegate {
          val itemTouchHelper = ItemTouchHelper(swipeHandler)
          itemTouchHelper.attachToRecyclerView(ingredients_recycler_view)
      }
-
-    private fun addIngredientToFireStore(ingredient: Ingredient) {
-        val mainMenu = (activity as? MainMenu)
-        val uid = mainMenu?.currentUser?.uid ?: return
-
-        fireStore.collection(MAIN_COLLECTION).document(uid)
-                .collection(INGREDIENT_COLLECTION).add(ingredient).addOnSuccessListener { _ ->
-                    Toast.makeText(context, "Successfully added ${ingredient.name}.", Toast.LENGTH_SHORT).show()
-                    mainMenu.ingredients.add(ingredient)
-                    refresh()
-                }.addOnFailureListener {
-                    Toast.makeText(activity?.applicationContext, "Failed to add ${ingredient.name}.", Toast.LENGTH_SHORT).show()
-                }
-    }
 
     fun refresh() {
         activity?.runOnUiThread {

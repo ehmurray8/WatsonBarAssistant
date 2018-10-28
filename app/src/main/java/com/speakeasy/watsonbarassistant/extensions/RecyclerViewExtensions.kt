@@ -1,4 +1,4 @@
-package com.speakeasy.watsonbarassistant
+package com.speakeasy.watsonbarassistant.extensions
 
 import android.support.v7.widget.RecyclerView
 import android.view.View

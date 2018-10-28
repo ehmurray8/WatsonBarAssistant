@@ -1,4 +1,4 @@
-package com.speakeasy.watsonbarassistant
+package com.speakeasy.watsonbarassistant.adapter
 
 import android.app.Activity
 import android.content.Context
@@ -10,13 +10,16 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.facebook.drawee.view.SimpleDraweeView
+import com.speakeasy.watsonbarassistant.DiscoveryRecipe
+import com.speakeasy.watsonbarassistant.R
+import com.speakeasy.watsonbarassistant.loadImage
 
-class MyRecipeAdapter(private val recipes: MutableList<DiscoveryRecipe>, private val activity: Activity):
-        RecyclerView.Adapter<MyRecipeAdapter.ViewHolder>() {
+class RecipeAdapter(private val recipes: MutableList<DiscoveryRecipe>, private val activity: Activity):
+        RecyclerView.Adapter<RecipeAdapter.ViewHolder>() {
 
     class ViewHolder(val layout: ConstraintLayout) : RecyclerView.ViewHolder(layout)
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyRecipeAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layout = LayoutInflater.from(parent.context)
                 .inflate(R.layout.my_recipe_view, parent,false) as ConstraintLayout
         return ViewHolder(layout)

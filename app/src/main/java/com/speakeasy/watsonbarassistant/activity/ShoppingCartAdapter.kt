@@ -1,4 +1,4 @@
-package com.speakeasy.watsonbarassistant
+package com.speakeasy.watsonbarassistant.activity
 
 import android.app.Activity
 import android.graphics.Paint
@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.speakeasy.watsonbarassistant.Ingredient
+import com.speakeasy.watsonbarassistant.R
 
 class ShoppingCartAdapter(private val shoppingCartItems:  MutableMap<Ingredient, Boolean>,
                           private val orderedItems: MutableList<Ingredient>,
@@ -16,7 +18,7 @@ class ShoppingCartAdapter(private val shoppingCartItems:  MutableMap<Ingredient,
 
     class ViewHolder(val layout: LinearLayout) : RecyclerView.ViewHolder(layout)
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShoppingCartAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layout = LayoutInflater.from(parent.context)
                 .inflate(R.layout.shopping_cart_item_view, parent,false) as LinearLayout
         return ViewHolder(layout)

@@ -1,4 +1,4 @@
-package com.speakeasy.watsonbarassistant
+package com.speakeasy.watsonbarassistant.activity
 
 import android.content.Context
 import android.content.Intent
@@ -8,10 +8,13 @@ import android.support.v7.app.AppCompatActivity
 import android.text.method.PasswordTransformationMethod
 import android.view.View
 import android.widget.EditText
-import android.widget.Toast
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthProvider
+import com.speakeasy.watsonbarassistant.BarAssistant
+import com.speakeasy.watsonbarassistant.R
+import com.speakeasy.watsonbarassistant.SHARED_PREFERENCES_SETTINGS
+import com.speakeasy.watsonbarassistant.extensions.toast
 import kotlinx.android.synthetic.main.activity_user_profile.*
 
 
@@ -40,7 +43,7 @@ class UserProfile : AppCompatActivity() {
                 if(email != "") {
                     authorization.sendPasswordResetEmail(email)
                 } else {
-                    Toast.makeText(applicationContext, "Please add an email address.", Toast.LENGTH_SHORT).show()
+                    applicationContext.toast("Please add an email address.")
                 }
             }
         }
@@ -56,7 +59,7 @@ class UserProfile : AppCompatActivity() {
             val newEmail = editText.text.toString()
             if(newEmail != "") {
                 currentUser?.updateEmail(newEmail)?.addOnSuccessListener {
-                    Toast.makeText(this, "Successfully updated email.", Toast.LENGTH_SHORT).show()
+                    applicationContext.toast("Successfully updated email.")
                 }?.addOnFailureListener {
                     reAuthenticateUser(newEmail)
                 }
@@ -82,13 +85,13 @@ class UserProfile : AppCompatActivity() {
                     .getCredential(currentUser?.phoneNumber ?: "", editText.text.toString())
             currentUser?.reauthenticate(authCredential)?.addOnSuccessListener {
                 currentUser?.updateEmail(newEmail)?.addOnSuccessListener { _ ->
-                    Toast.makeText(this, "Successfully updated email.", Toast.LENGTH_SHORT).show()
+                    applicationContext.toast("Successfully updated email.")
                 }?.addOnFailureListener { _ ->
-                    Toast.makeText(this, "Failed to add email.", Toast.LENGTH_SHORT).show()
+                    applicationContext.toast("Failed to add email.")
                     profile_email.text = ""
                 }
             }?.addOnFailureListener {
-                Toast.makeText(this, "Failed to sign in to your account.", Toast.LENGTH_SHORT).show()
+                applicationContext.toast("Failed to sign in to your account.")
                 profile_email.text = ""
             }
         }
@@ -101,9 +104,15 @@ class UserProfile : AppCompatActivity() {
     }
 
     private fun signOut() {
-        BarAssistant.recipes.forEach { it.clear() }
-        BarAssistant.lastViewedRecipes.clear()
-        BarAssistant.lastViewedTimes.clear()
+        synchronized(BarAssistant.recipes) {
+            BarAssistant.recipes.forEach { it.clear() }
+        }
+        synchronized(BarAssistant.lastViewedRecipes) {
+            BarAssistant.lastViewedRecipes.clear()
+        }
+        synchronized(BarAssistant.lastViewedTimes) {
+            BarAssistant.lastViewedTimes.clear()
+        }
         AuthUI.getInstance().signOut(this).addOnCompleteListener {
             val intent = Intent(this, Login::class.java)
             val preferences = getSharedPreferences(SHARED_PREFERENCES_SETTINGS, Context.MODE_PRIVATE)

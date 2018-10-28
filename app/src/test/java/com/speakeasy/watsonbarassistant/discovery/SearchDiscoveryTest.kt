@@ -176,7 +176,7 @@ class SearchDiscoveryTest: TestCase() {
 
     @Test
     fun testQueryStringLen(){
-        var input = mutableListOf<Ingredient>()
+        val input = mutableListOf<Ingredient>()
 
         input.add(Ingredient("aaaaaaaaa"))
         input.add(Ingredient("aaaaaaaaa"))
@@ -189,8 +189,8 @@ class SearchDiscoveryTest: TestCase() {
         input.add(Ingredient("aaaaaaaaa"))
         input.add(Ingredient("aaaaaaaaa"))
 
-        var ansString = searchDiscovery.buildIngredientQuery(input.toTypedArray())
-        var ans = ansString.length
+        val ansString = searchDiscovery.buildIngredientQuery(input.toTypedArray())
+        val ans = ansString.length
 
         Assert.assertTrue(2000 >= ans)
     }

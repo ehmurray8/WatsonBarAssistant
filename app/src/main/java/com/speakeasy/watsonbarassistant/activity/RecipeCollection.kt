@@ -1,4 +1,4 @@
-package com.speakeasy.watsonbarassistant
+package com.speakeasy.watsonbarassistant.activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,6 +7,11 @@ import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
+import com.speakeasy.watsonbarassistant.*
+import com.speakeasy.watsonbarassistant.adapter.RecipeAdapter
+import com.speakeasy.watsonbarassistant.extensions.OnItemClickListener
+import com.speakeasy.watsonbarassistant.extensions.addOnItemClickListener
+import com.speakeasy.watsonbarassistant.DiscoveryRecipe
 import kotlinx.android.synthetic.main.activity_recipe_collection.*
 
 class RecipeCollection : AppCompatActivity() {
@@ -29,7 +34,7 @@ class RecipeCollection : AppCompatActivity() {
 
     private fun setupListView() {
         val viewManager = LinearLayoutManager(this)
-        val viewAdapter = MyRecipeAdapter(recipesList, this)
+        val viewAdapter = RecipeAdapter(recipesList, this)
 
         recyclerView = favorites_collection_list.apply {
             setHasFixedSize(true)

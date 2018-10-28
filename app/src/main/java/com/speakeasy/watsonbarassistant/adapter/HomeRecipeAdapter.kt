@@ -1,4 +1,4 @@
-package com.speakeasy.watsonbarassistant
+package com.speakeasy.watsonbarassistant.adapter
 
 import android.app.Activity
 import android.content.Intent
@@ -10,6 +10,12 @@ import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
 import com.facebook.drawee.view.SimpleDraweeView
+import com.speakeasy.watsonbarassistant.DiscoveryRecipe
+import com.speakeasy.watsonbarassistant.MAX_HOME_RECIPES
+import com.speakeasy.watsonbarassistant.R
+import com.speakeasy.watsonbarassistant.activity.RecipeCollection
+import com.speakeasy.watsonbarassistant.activity.RecipeDetail
+import com.speakeasy.watsonbarassistant.loadImage
 
 
 class HomeRecipeAdapter(private val recipes: MutableList<DiscoveryRecipe>,

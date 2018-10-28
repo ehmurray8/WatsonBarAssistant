@@ -2,14 +2,11 @@ package com.speakeasy.watsonbarassistant.speech
 
 import android.media.MediaPlayer
 import android.os.AsyncTask
-import android.util.Log
 import com.ibm.watson.developer_cloud.android.library.audio.StreamPlayer
+import com.ibm.watson.developer_cloud.service.security.IamOptions
 import com.ibm.watson.developer_cloud.text_to_speech.v1.TextToSpeech
 import com.ibm.watson.developer_cloud.text_to_speech.v1.model.SynthesizeOptions
 import com.speakeasy.watsonbarassistant.*
-import com.ibm.watson.developer_cloud.service.security.IamOptions
-
-
 
 
 class TextToSpeech(private val inputListener: CompletedTtS, private val mediaPlayer: MediaPlayer):

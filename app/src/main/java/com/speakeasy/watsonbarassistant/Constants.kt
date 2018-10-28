@@ -50,3 +50,5 @@ const val FAVORITES_PREFERENCES = "favorites"
 
 const val GROCERY_INGREDIENTS = "ingredients"
 const val GROCERY_NEEDED = "needed"
+
+const val RC_SIGN_IN = 123

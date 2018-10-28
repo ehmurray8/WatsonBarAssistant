@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainMenu">
+    tools:context=".activity.MainMenu">
 
     <include
         android:id="@+id/toolbar"
@@ -42,7 +42,7 @@
 
         <android.support.design.widget.TabItem
             android:id="@+id/favorites_tab"
-            android:text="Favorites"
+            android:text="@string/favorites_tab"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"/>
 

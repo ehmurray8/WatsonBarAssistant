@@ -1,17 +1,18 @@
-package com.speakeasy.watsonbarassistant
+package com.speakeasy.watsonbarassistant.activity
 
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.widget.Toast
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.FirebaseAuth
+import com.speakeasy.watsonbarassistant.R
+import com.speakeasy.watsonbarassistant.RC_SIGN_IN
+import com.speakeasy.watsonbarassistant.extensions.toast
 import net.hockeyapp.android.CrashManager
 import net.hockeyapp.android.metrics.MetricsManager
 import java.util.*
 
-const val RC_SIGN_IN = 123
 
 class Login : AppCompatActivity() {
 
@@ -56,7 +57,7 @@ class Login : AppCompatActivity() {
                 showMainMenu()
             } else {
                 if(response != null) {
-                    Toast.makeText(this, "Login failed.", Toast.LENGTH_SHORT).show()
+                    applicationContext.toast("Login failed.")
                 }
             }
         }

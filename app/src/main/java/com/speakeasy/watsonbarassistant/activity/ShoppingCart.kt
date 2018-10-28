@@ -1,4 +1,4 @@
-package com.speakeasy.watsonbarassistant
+package com.speakeasy.watsonbarassistant.activity
 
 import android.content.Context
 import android.os.Bundle
@@ -7,10 +7,12 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.inputmethod.EditorInfo
-import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
+import com.speakeasy.watsonbarassistant.*
+import com.speakeasy.watsonbarassistant.extensions.toast
+import com.speakeasy.watsonbarassistant.Ingredient
 import kotlinx.android.synthetic.main.activity_shopping_cart.*
 import java.util.*
 
@@ -61,7 +63,7 @@ class ShoppingCart : AppCompatActivity() {
             orderedItems.add(ingredient)
             viewAdapter?.notifyDataSetChanged()
         } else {
-            Toast.makeText(baseContext, "${ingredient.name} is already in the grocery list.", Toast.LENGTH_SHORT).show()
+            applicationContext.toast("${ingredient.name} is already in the grocery list.")
         }
     }
 
