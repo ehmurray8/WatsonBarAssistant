@@ -1,4 +1,4 @@
-package com.speakeasy.watsonbarassistant
+package com.speakeasy.watsonbarassistant.activity
 
 import android.app.SearchManager
 import android.content.Context
@@ -10,10 +10,16 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import com.algolia.search.saas.Client
 import com.algolia.search.saas.Query
 import com.google.firebase.firestore.FirebaseFirestore
+import com.speakeasy.watsonbarassistant.*
+import com.speakeasy.watsonbarassistant.adapter.RecipeAdapter
+import com.speakeasy.watsonbarassistant.extensions.OnItemClickListener
+import com.speakeasy.watsonbarassistant.extensions.addOnItemClickListener
+import com.speakeasy.watsonbarassistant.extensions.toast
+import com.speakeasy.watsonbarassistant.DiscoveryRecipe
+import com.speakeasy.watsonbarassistant.FireStoreRecipe
 import kotlinx.android.synthetic.main.activity_search.*
 import kotlinx.serialization.json.JSON
 
@@ -24,7 +30,7 @@ class SearchActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
     private var searchMenuItem: MenuItem? = null
     private var searchView: SearchView? = null
     private var recyclerView: RecyclerView? = null
-    private var viewAdapter: MyRecipeAdapter? = null
+    private var viewAdapter: RecipeAdapter? = null
     private val searchRecipes: MutableList<DiscoveryRecipe> = mutableListOf()
     private val fireStore = FirebaseFirestore.getInstance()
 
@@ -34,7 +40,7 @@ class SearchActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
         setSupportActionBar(toolbar as Toolbar)
         supportActionBar?.title = "Search Recipes"
         val manager = LinearLayoutManager(baseContext)
-        viewAdapter = MyRecipeAdapter(searchRecipes, this)
+        viewAdapter = RecipeAdapter(searchRecipes, this)
 
         recyclerView = searchResults.apply {
             setHasFixedSize(true)
@@ -104,11 +110,11 @@ class SearchActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
         recipeIndex.searchAsync(Query(query)) { content, error ->
             if(error != null) {
                 Log.d("Algolia", "Error Code: ${error.statusCode}, Message: ${error.message}")
-                Toast.makeText(baseContext, "Failed to retrieve any results.", Toast.LENGTH_SHORT).show()
+                applicationContext.toast("Failed to retrieve any results.")
             } else if(content != null) {
                 val response = content.getJSONArray("hits")
                 if(response.length() == 0) {
-                    Toast.makeText(baseContext, "No results for $query.", Toast.LENGTH_SHORT).show()
+                    applicationContext.toast("No results for $query.")
                 }
                 searchRecipes.clear()
                 for (i in 0 until response.length()) {

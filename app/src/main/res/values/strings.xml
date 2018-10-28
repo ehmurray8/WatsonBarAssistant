@@ -1,10 +1,7 @@
 <resources>
     <string name="app_name">Bar Assistant</string>
     <string name="home_tab">Home</string>
-    <string name="recipes_tab">Recipes</string>
 
-    <string name="home_tab_welcome">Current Ingredients</string>
-    <string name="my_favorites_tab_welcome">My Favorites</string>
     <string name="ingredient_hint">Ingredients to add</string>
     <string name="placeholder_header">Header</string>
     <string name="recipe_name_placeholder">Recipe Name</string>
@@ -23,7 +20,6 @@
     <string name="take_photo">Take Photo</string>
     <string name="shopping_cart_header">Shopping Cart</string>
     <string name="shopping_cart_add_hint">Add to shopping cart…</string>
-    <string name="ingredient_page_description">Ingredients Page</string>
     <string name="search_title">Search</string>
     <string name="random_title">Random</string>
     <string name="speech_button">Read for Me</string>

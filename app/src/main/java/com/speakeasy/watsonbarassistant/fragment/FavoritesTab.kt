@@ -1,4 +1,4 @@
-package com.speakeasy.watsonbarassistant
+package com.speakeasy.watsonbarassistant.fragment
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,15 +9,22 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.speakeasy.watsonbarassistant.*
+import com.speakeasy.watsonbarassistant.activity.MainMenu
+import com.speakeasy.watsonbarassistant.activity.RecipeDetail
+import com.speakeasy.watsonbarassistant.adapter.RecipeAdapter
+import com.speakeasy.watsonbarassistant.extensions.OnItemClickListener
+import com.speakeasy.watsonbarassistant.extensions.addOnItemClickListener
+import com.speakeasy.watsonbarassistant.DiscoveryRecipe
 import kotlinx.android.synthetic.main.fragment_my_favorites_tab.*
 
 
-class MyFavoritesTab : Fragment() {
+class FavoritesTab : Fragment() {
 
-    private var viewAdapter: MyRecipeAdapter? = null
+    private var viewAdapter: RecipeAdapter? = null
     private var manager: LinearLayoutManager? = null
     private var favorites = mutableListOf<DiscoveryRecipe>()
-    get() = BarAssistant.favoritesList.toMutableList()
+    get() = synchronized(BarAssistant.favoritesList){BarAssistant.favoritesList.toMutableList()}
 
     companion object {
         var lastScrolledPosition: Int = 0
@@ -39,7 +46,7 @@ class MyFavoritesTab : Fragment() {
 
         manager = LinearLayoutManager(activity?.baseContext)
         val mainMenu = activity as MainMenu
-        viewAdapter = MyRecipeAdapter(favorites, mainMenu)
+        viewAdapter = RecipeAdapter(favorites, mainMenu)
 
         favorites_list.apply {
             setHasFixedSize(true)
@@ -60,8 +67,10 @@ class MyFavoritesTab : Fragment() {
         favorites_list?.addOnItemClickListener(object : OnItemClickListener {
             override fun onItemClicked(position: Int, view: View) {
                 val intent = Intent(activity, RecipeDetail::class.java)
-                val favoritesList = BarAssistant.favoritesList
-                intent.putExtra("Recipe", favoritesList.toMutableList()[position])
+                synchronized(BarAssistant) {
+                    val favoritesList = BarAssistant.favoritesList
+                    intent.putExtra("Recipe", favoritesList.toMutableList()[position])
+                }
                 startActivity(intent)
             }
         })

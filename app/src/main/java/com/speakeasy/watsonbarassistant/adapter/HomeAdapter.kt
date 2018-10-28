@@ -1,4 +1,4 @@
-package com.speakeasy.watsonbarassistant
+package com.speakeasy.watsonbarassistant.adapter
 
 import android.app.Activity
 import android.content.Intent
@@ -8,6 +8,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
+import com.speakeasy.watsonbarassistant.BarAssistant
+import com.speakeasy.watsonbarassistant.R
+import com.speakeasy.watsonbarassistant.activity.RecipeCollection
+import com.speakeasy.watsonbarassistant.fragment.HomeTab
 
 
 class HomeAdapter(private var activity: Activity):
@@ -30,7 +34,7 @@ class HomeAdapter(private var activity: Activity):
         val headerView = layout.getChildAt(0) as Button
         val category = BarAssistant.homeCategories[position]
         headerView.text = activity.resources.getString(R.string.collection_name, category)
-        val recipes = BarAssistant.recipes[position]
+        val recipes= synchronized(BarAssistant.recipes) { BarAssistant.recipes[position] }
         headerView.setOnClickListener {
             val intent = Intent(activity.applicationContext, RecipeCollection::class.java)
             intent.putExtra("Collection Name", category)
@@ -54,5 +58,9 @@ class HomeAdapter(private var activity: Activity):
         viewManager.scrollToPosition(HomeTab.homeScrollPositions[category] ?: 0)
     }
 
-    override fun getItemCount(): Int = BarAssistant.recipes.count()
+    override fun getItemCount(): Int {
+        synchronized(BarAssistant.recipes) {
+            return BarAssistant.recipes.count()
+        }
+    }
 }

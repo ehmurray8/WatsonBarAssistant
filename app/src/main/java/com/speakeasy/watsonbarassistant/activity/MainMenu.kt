@@ -1,4 +1,4 @@
-package com.speakeasy.watsonbarassistant
+package com.speakeasy.watsonbarassistant.activity
 
 import android.content.Context
 import android.content.Intent
@@ -9,20 +9,25 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.gson.Gson
+import com.speakeasy.watsonbarassistant.*
 import com.speakeasy.watsonbarassistant.discovery.HandleDiscovery
 import com.speakeasy.watsonbarassistant.discovery.SearchDiscovery
+import com.speakeasy.watsonbarassistant.extensions.loadRecentlyViewed
+import com.speakeasy.watsonbarassistant.extensions.loadRecentlyViewedRecipesSharedPreferences
+import com.speakeasy.watsonbarassistant.extensions.toast
+import com.speakeasy.watsonbarassistant.fragment.FavoritesTab
+import com.speakeasy.watsonbarassistant.fragment.HomeTab
+import com.speakeasy.watsonbarassistant.fragment.IngredientsTab
 import kotlinx.android.synthetic.main.activity_main_menu.*
 import java.util.*
 
 class MainMenu : AppCompatActivity() {
 
-    var ingredients = sortedSetOf<Ingredient>(kotlin.Comparator { o1, o2 -> if (o1.compareName() > o2.compareName()) 1 else -1 })
     var currentUser: FirebaseUser? = null
     var tabIndex = 1
     var fragment: Fragment? = null
@@ -43,14 +48,19 @@ class MainMenu : AppCompatActivity() {
         BarAssistant.storageReference = FirebaseStorage.getInstance().reference
 
         loadSharedPreferences()
-        loadUserData()
-        val barAssistant = application as BarAssistant
-        barAssistant.loadFavoritesFromFireStore(authorization, fireStore)
+
+        val ingredientName = intent.getStringExtra("Ingredient")
+        if(ingredientName != null) {
+            addIngredient(ingredientName)
+        } else {
+            loadUserData()
+        }
+
         tabs.getTabAt(tabIndex)?.select()
         tabs.addOnTabSelectedListener(MainMenuTabListener(this))
         setSupportActionBar(toolbar as Toolbar)
         if (!BarAssistant.isInternetConnected()) {
-            Toast.makeText(baseContext, "Failed to download user data from the internet.", Toast.LENGTH_SHORT).show()
+            applicationContext.toast("Failed to download user data from the internet.")
         }
     }
 
@@ -59,26 +69,31 @@ class MainMenu : AppCompatActivity() {
         tabIndex = preferences.getInt(TAB_INDEX, 1)
         val gson = Gson()
         BarAssistant.homeCategories.forEachIndexed { i, category ->
-            val recipeJson = preferences.getString(category, "")
-            val storedRecipes = gson.fromJson(recipeJson, Array<DiscoveryRecipe>::class.java)
-
-            if (storedRecipes != null && storedRecipes.count() > 0) {
-                BarAssistant.recipes[i].addAll(storedRecipes.toList())
+            synchronized(BarAssistant.recipes) {
+                val recipeJson = preferences.getString(category, "")
+                val storedRecipes = gson.fromJson(recipeJson, Array<DiscoveryRecipe>::class.java)
+                if (storedRecipes != null && storedRecipes.count() > 0) {
+                    BarAssistant.recipes[i].addAll(storedRecipes.toList())
+                }
             }
         }
         val ingredientsJson = preferences.getString(INGREDIENT_PREFERENCES_ID, "")
-        val storedIngredients = gson.fromJson(ingredientsJson, Array<Ingredient>::class.java)
         val lastViewedTimesJson = preferences.getString(LAST_VIEWED_RECIPE_TIMES, "")
         val storedLastViewedTimes = gson.fromJson(lastViewedTimesJson, Array<Long>::class.java)
-        val favoritesJson = preferences.getString(FAVORITES_PREFERENCES, "")
-        val favorites = gson.fromJson(favoritesJson, Array<DiscoveryRecipe>::class.java)
-        if(favorites != null && favorites.count() > 0) {
-            BarAssistant.favoritesList.clear()
-            BarAssistant.favoritesList.addAll(favorites)
+        synchronized(BarAssistant.favoritesList) {
+            val favoritesJson = preferences.getString(FAVORITES_PREFERENCES, "")
+            val favorites = gson.fromJson(favoritesJson, Array<DiscoveryRecipe>::class.java)
+            if (favorites != null && favorites.count() > 0) {
+                BarAssistant.favoritesList.clear()
+                BarAssistant.favoritesList.addAll(favorites)
+            }
         }
-        if (storedIngredients != null && storedIngredients.count() > 0) {
-            ingredients.clear()
-            ingredients.addAll(storedIngredients)
+        synchronized(BarAssistant.ingredients) {
+            val storedIngredients = gson.fromJson(ingredientsJson, Array<Ingredient>::class.java)
+            if (storedIngredients != null && storedIngredients.count() > 0) {
+                BarAssistant.ingredients.clear()
+                BarAssistant.ingredients.addAll(storedIngredients)
+            }
         }
         if(storedLastViewedTimes != null && storedLastViewedTimes.count() > 0) {
             loadRecentlyViewedRecipesSharedPreferences(storedLastViewedTimes)
@@ -94,25 +109,34 @@ class MainMenu : AppCompatActivity() {
         super.onPause()
         val uid = currentUser?.uid
         if(uid != null) {
-            val ingredientsMap = mapOf(INGREDIENT_COLLECTION to ingredients.toTypedArray())
+            val ingredientsMap = synchronized(BarAssistant.ingredients) {
+                mapOf(INGREDIENT_COLLECTION to BarAssistant.ingredients.asSequence().map { it.name }.toList())
+            }
             fireStore.collection(MAIN_COLLECTION).document(uid).collection(INGREDIENT_COLLECTION)
-                    .document("ma" +
-                            "in").set(ingredientsMap)
+                    .document("main").set(ingredientsMap)
         }
         val preferences = getSharedPreferences(SHARED_PREFERENCES_SETTINGS, Context.MODE_PRIVATE)
         val editor = preferences.edit()
         editor.putInt(TAB_INDEX, tabIndex)
         val gson = Gson()
-        val ingredientJson = gson.toJson(ingredients.toTypedArray())
+        val ingredientJson = synchronized(BarAssistant.ingredients) {
+            gson.toJson(BarAssistant.ingredients.toTypedArray())
+        }
         editor.putString(INGREDIENT_PREFERENCES_ID, ingredientJson)
         editor.apply()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        BarAssistant.lastViewedTimes.clear()
-        BarAssistant.lastViewedRecipes.clear()
-        BarAssistant.recipes.forEach { it.clear() }
+        synchronized(BarAssistant.lastViewedTimes) {
+            BarAssistant.lastViewedTimes.clear()
+        }
+        synchronized(BarAssistant.lastViewedRecipes) {
+            BarAssistant.lastViewedRecipes.clear()
+        }
+        synchronized(BarAssistant.recipes) {
+            BarAssistant.recipes.forEach { it.clear() }
+        }
     }
 
     private fun loadUserData() {
@@ -121,26 +145,28 @@ class MainMenu : AppCompatActivity() {
         loadRecentlyViewed()
         (application as? BarAssistant)?.loadFavoritesFromFireStore(authorization, fireStore)
         (fragment as? IngredientsTab)?.refresh()
-        (fragment as? MyFavoritesTab)?.refresh()
+        (fragment as? FavoritesTab)?.refresh()
     }
 
     private fun loadIngredients() {
         if (BarAssistant.isInternetConnected()) {
             val uid = currentUser?.uid
             refreshDiscovery()
-            val oldIngredients = ingredients.toTypedArray()
+            val oldIngredients = synchronized(BarAssistant.ingredients) { BarAssistant.ingredients.toTypedArray() }
             if (uid != null) {
                 fireStore.collection(MAIN_COLLECTION).document(uid)
                         .collection(INGREDIENT_COLLECTION).document("main").get().addOnSuccessListener {
-                            ingredients.clear()
-                            val lastViewedTimes = it.get(INGREDIENT_COLLECTION) as? ArrayList<*>
-                            lastViewedTimes?.forEach { element ->
-                                val name = element as? String
-                                if(name != null) {
-                                    ingredients.add(Ingredient(name))
+                            synchronized(BarAssistant.ingredients) {
+                                BarAssistant.ingredients.clear()
+                                val storedIngredients = it.get(INGREDIENT_COLLECTION) as? ArrayList<*>
+                                storedIngredients?.forEach { element ->
+                                    val name = element as? String
+                                    if (name != null) {
+                                        BarAssistant.ingredients.add(Ingredient(name))
+                                    }
                                 }
                             }
-                            if (!oldIngredients.toMutableList().containsAll(ingredients)) {
+                            if (!oldIngredients.toMutableList().containsAll(synchronized(BarAssistant.ingredients){BarAssistant.ingredients})) {
                                 refreshDiscovery(true)
                             }
                         }
@@ -149,12 +175,14 @@ class MainMenu : AppCompatActivity() {
     }
 
     fun refreshDiscovery(forceRefresh: Boolean = false) {
-        if (ingredients.count() > 0) {
-            if (forceRefresh || lastDiscoveryRefreshTime == -1L ||
-                    Date().time - lastDiscoveryRefreshTime >= 30_000) {
-                lastDiscoveryRefreshTime = Date().time
-                val discovery = SearchDiscovery(HandleDiscovery(this))
-                discovery.execute(ingredients.toTypedArray())
+        synchronized(BarAssistant.ingredients) {
+            if (BarAssistant.ingredients.count() > 0) {
+                if (forceRefresh || lastDiscoveryRefreshTime == -1L ||
+                        Date().time - lastDiscoveryRefreshTime >= 30_000) {
+                    lastDiscoveryRefreshTime = Date().time
+                    val discovery = SearchDiscovery(HandleDiscovery(this))
+                    discovery.execute(BarAssistant.ingredients.toTypedArray())
+                }
             }
         }
     }
@@ -168,7 +196,7 @@ class MainMenu : AppCompatActivity() {
         when (tabIndex) {
             0 -> fragment = IngredientsTab()
             1 -> fragment = HomeTab()
-            2 -> fragment = MyFavoritesTab()
+            2 -> fragment = FavoritesTab()
         }
         replaceFragment()
     }
@@ -199,5 +227,17 @@ class MainMenu : AppCompatActivity() {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    fun addIngredient(name: String) {
+        val ingredient = Ingredient(name)
+        synchronized(BarAssistant.ingredients) {
+            if (BarAssistant.ingredients.any { it.name.toLowerCase() == ingredient.name.toLowerCase() }) {
+                applicationContext?.toast("${ingredient.name} is already stored as an ingredient.")
+            } else {
+                BarAssistant.ingredients.add(ingredient)
+                refreshDiscovery(true)
+            }
+        }
     }
 }

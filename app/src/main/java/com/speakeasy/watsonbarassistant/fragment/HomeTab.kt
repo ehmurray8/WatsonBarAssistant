@@ -1,4 +1,4 @@
-package com.speakeasy.watsonbarassistant
+package com.speakeasy.watsonbarassistant.fragment
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -7,6 +7,10 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.speakeasy.watsonbarassistant.BarAssistant
+import com.speakeasy.watsonbarassistant.adapter.HomeAdapter
+import com.speakeasy.watsonbarassistant.R
+import com.speakeasy.watsonbarassistant.activity.MainMenu
 import kotlinx.android.synthetic.main.fragment_home_tab.*
 
 

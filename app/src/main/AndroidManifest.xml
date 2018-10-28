@@ -18,20 +18,20 @@
 
 
         <activity
-            android:name=".MainMenu"
+            android:name=".activity.MainMenu"
             android:windowSoftInputMode="adjustPan" />
-        <activity android:name=".RecipeDetail" />
-        <activity android:name=".Login">
+        <activity android:name=".activity.RecipeDetail" />
+        <activity android:name=".activity.Login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".UserProfile" />
-        <activity android:name=".RecipeCollection"/>
-        <activity android:name=".vision.VisionActivity" />
-        <activity android:name=".ShoppingCart" />
-        <activity android:name=".SearchActivity">
+        <activity android:name=".activity.UserProfile" />
+        <activity android:name=".activity.RecipeCollection"/>
+        <activity android:name=".activity.VisionActivity" />
+        <activity android:name=".activity.ShoppingCart" />
+        <activity android:name=".activity.SearchActivity">
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable"/>

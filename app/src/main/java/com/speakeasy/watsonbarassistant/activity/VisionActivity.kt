@@ -1,4 +1,4 @@
-package com.speakeasy.watsonbarassistant.vision
+package com.speakeasy.watsonbarassistant.activity
 
 import android.app.Activity
 import android.content.Intent
@@ -12,7 +12,10 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.widget.Button
-import com.speakeasy.watsonbarassistant.*
+import com.speakeasy.watsonbarassistant.CAMERA_PERMISSION_REQUEST_CODE
+import com.speakeasy.watsonbarassistant.R
+import com.speakeasy.watsonbarassistant.REQUEST_TAKE_PHOTO
+import com.speakeasy.watsonbarassistant.VISION_URL
 import khttp.responses.Response
 import kotlinx.android.synthetic.main.activity_vision.*
 import org.json.JSONArray
@@ -21,10 +24,6 @@ import java.io.ByteArrayOutputStream
 import java.util.*
 
 class VisionActivity : AppCompatActivity() {
-
-    companion object {
-        var ingredientDelegate: IngredientDelegate? = null
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -98,7 +97,7 @@ class VisionActivity : AppCompatActivity() {
             val button = choices.getChildAt(i) as Button
             button.setOnClickListener { _ ->
                 val resultIntent = Intent(this@VisionActivity, MainMenu::class.java)
-                ingredientDelegate?.addIngredient(responseList[i])
+                resultIntent.putExtra("Ingredient", responseList[i])
                 this@VisionActivity.startActivity(resultIntent)
                 finish()
             }
@@ -118,7 +117,6 @@ class VisionActivity : AppCompatActivity() {
         val byteArrayOutputStream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.JPEG,30, byteArrayOutputStream)
         val byteArray = byteArrayOutputStream.toByteArray()
-
         return Base64.getEncoder().encodeToString(byteArray)
     }
 }
