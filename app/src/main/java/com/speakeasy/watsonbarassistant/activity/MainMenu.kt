@@ -1,14 +1,20 @@
 package com.speakeasy.watsonbarassistant.activity
 
+import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.TabItem
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.SearchView
 import android.support.v7.widget.Toolbar
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import com.algolia.search.saas.Client
+import com.algolia.search.saas.Query
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
@@ -23,14 +29,16 @@ import com.speakeasy.watsonbarassistant.extensions.toast
 import com.speakeasy.watsonbarassistant.fragment.FavoritesTab
 import com.speakeasy.watsonbarassistant.fragment.HomeTab
 import com.speakeasy.watsonbarassistant.fragment.IngredientsTab
+import com.speakeasy.watsonbarassistant.fragment.SearchFragment
 import kotlinx.android.synthetic.main.activity_main_menu.*
+import kotlinx.serialization.json.JSON
 import java.util.*
 
-class MainMenu : AppCompatActivity() {
-
+class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
     var currentUser: FirebaseUser? = null
     var tabIndex = 1
     var fragment: Fragment? = null
+    var searchFragment: SearchFragment? = null
 
     private var tabsItems: Array<TabItem>? = null
 
@@ -41,6 +49,9 @@ class MainMenu : AppCompatActivity() {
     private var authorization = FirebaseAuth.getInstance()
     private var lastDiscoveryRefreshTime = -1L
 
+    private val client = Client(ALGOLIA_APP_ID, ALGOLIA_API_KEY)
+    private val recipeIndex = client.getIndex("Recipe")
+    private var searchMenuItem: MenuItem? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -102,11 +113,57 @@ class MainMenu : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_toolbar_menu, menu)
+
+        val searchManager = getSystemService(Context.SEARCH_SERVICE) as? SearchManager
+        searchMenuItem = menu?.findItem(R.id.searchMenuButton)
+        val searchView = searchMenuItem?.actionView as? SearchView
+        searchView?.findViewById<View?>(R.id.search_close_btn)?.setOnClickListener {
+            searchView.setQuery("", false)
+        }
+
+        searchMenuItem?.setOnActionExpandListener(object: MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
+                return true
+            }
+
+            override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
+                showCurrentFragment()
+                searchFragment = null
+                return true
+            }
+        })
+
+        searchView?.setOnSearchClickListener { _ ->
+            searchFragment = SearchFragment()
+            synchronized(BarAssistant.searchRecipes) {
+                BarAssistant.searchRecipes.clear()
+                val numRecipes = BarAssistant.lastViewedRecipes.count()
+                val end = if(numRecipes >= 25) 25 else numRecipes
+                BarAssistant.searchRecipes.addAll(BarAssistant.lastViewedRecipes.map { it -> it.value }.slice(0..end))
+            }
+            val transaction = supportFragmentManager.beginTransaction()
+            transaction.replace(R.id.fragment_container, searchFragment)
+            transaction.commit()
+        }
+
+        searchView?.setSearchableInfo(searchManager?.getSearchableInfo(componentName))
+        searchView?.setOnQueryTextListener(this)
         return true
+    }
+
+    override fun onBackPressed() {
+        searchMenuItem?.collapseActionView()
+        if(searchFragment != null) {
+            showCurrentFragment()
+            searchFragment = null
+        } else {
+            super.onBackPressed()
+        }
     }
 
     override fun onPause() {
         super.onPause()
+        searchMenuItem?.collapseActionView()
         val uid = currentUser?.uid
         if(uid != null) {
             val ingredientsMap = synchronized(BarAssistant.ingredients) {
@@ -159,7 +216,7 @@ class MainMenu : AppCompatActivity() {
                             synchronized(BarAssistant.ingredients) {
                                 BarAssistant.ingredients.clear()
                                 val storedIngredients = it.get(INGREDIENT_COLLECTION) as? ArrayList<*>
-                                storedIngredients?.forEach { element ->
+                                storedIngredients?.forEach { element: Any ->
                                     val name = element as? String
                                     if (name != null) {
                                         BarAssistant.ingredients.add(Ingredient(name))
@@ -215,11 +272,6 @@ class MainMenu : AppCompatActivity() {
                 startActivity(intent)
                 return true
             }
-            R.id.searchMenuButton -> {
-                val intent = Intent(this, SearchActivity::class.java)
-                startActivity(intent)
-                return true
-            }
             R.id.shoppingCartMenuButton -> {
                 val intent = Intent(this, ShoppingCart::class.java)
                 startActivity(intent)
@@ -237,6 +289,46 @@ class MainMenu : AppCompatActivity() {
             } else {
                 BarAssistant.ingredients.add(ingredient)
                 refreshDiscovery(true)
+            }
+        }
+    }
+
+    override fun onQueryTextSubmit(query: String?): Boolean {
+        if(query != null && query != "") {
+            searchAlgolia(query)
+            return true
+        }
+        return false
+    }
+
+    override fun onQueryTextChange(newText: String?): Boolean {
+        if(newText != null && newText != "") {
+            searchAlgolia(newText)
+            return true
+        }
+        return true
+    }
+
+    private fun searchAlgolia(query: String) {
+        recipeIndex.searchAsync(Query(query)) { content, error ->
+            if (error != null) {
+                Log.d("Algolia", "Error Code: ${error.statusCode}, Message: ${error.message}")
+                applicationContext.toast("Failed to retrieve any results.")
+            } else if (content != null) {
+                val response = content.getJSONArray("hits")
+                if (response.length() == 0) {
+                    applicationContext.toast("No results for $query.")
+                }
+                synchronized(BarAssistant.searchRecipes) {
+                    BarAssistant.searchRecipes.clear()
+                }
+                for (i in 0 until response.length()) {
+                    val recipe = JSON.nonstrict.parse<DiscoveryRecipe>(response.getJSONObject(i).toString())
+                    synchronized(BarAssistant.searchRecipes) {
+                        BarAssistant.searchRecipes.add(recipe)
+                    }
+                }
+                searchFragment?.refresh()
             }
         }
     }
