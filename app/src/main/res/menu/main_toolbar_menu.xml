@@ -7,23 +7,24 @@
     android:layout_height="wrap_content"
     android:layout_width="match_parent">
 
+    <item android:id="@+id/searchMenuButton"
+        android:orderInCategory="300"
+        android:title="@string/search_title"
+        android:icon="@drawable/ic_search_black_24dp"
+        app:showAsAction="collapseActionView|ifRoom"
+        app:closeIcon="@drawable/ic_close_black_24dp"
+        app:actionViewClass="android.support.v7.widget.SearchView" />
+
     <item
         android:id="@+id/shoppingCartMenuButton"
-        android:orderInCategory="100"
+        android:orderInCategory="200"
         android:icon="@drawable/ic_shopping_cart_black_24dp"
         android:title="@string/shopping_cart"
         app:showAsAction="ifRoom"/>
 
     <item
-        android:id="@+id/searchMenuButton"
-        android:orderInCategory="200"
-        android:icon="@drawable/ic_search_black_24dp"
-        android:title="@string/search_title"
-        app:showAsAction="ifRoom"/>
-
-    <item
         android:id="@+id/user_profile"
-        android:orderInCategory="300"
+        android:orderInCategory="100"
         android:icon="@drawable/ic_user_black_24dp"
         android:title="@string/user_profile"
         app:showAsAction="ifRoom" />
