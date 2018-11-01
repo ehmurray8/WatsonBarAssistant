@@ -85,6 +85,9 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
                 val storedRecipes = gson.fromJson(recipeJson, Array<DiscoveryRecipe>::class.java)
                 if (storedRecipes != null && storedRecipes.count() > 0) {
                     BarAssistant.recipes[i].addAll(storedRecipes.toList())
+                    synchronized(BarAssistant.feed) {
+                        if (i == 0) BarAssistant.feed.addAll(storedRecipes.toList().map { FeedElement(it) })
+                    }
                 }
             }
         }
@@ -153,11 +156,17 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
 
     override fun onBackPressed() {
         searchMenuItem?.collapseActionView()
-        if(searchFragment != null) {
-            showCurrentFragment()
-            searchFragment = null
-        } else {
-            super.onBackPressed()
+        when {
+            searchFragment != null -> {
+                showCurrentFragment()
+                searchFragment = null
+            }
+            tabIndex != 1 -> {
+                tabIndex = 1
+                tabs.getTabAt(tabIndex)?.select()
+                showCurrentFragment()
+            }
+            else -> super.onBackPressed()
         }
     }
 
