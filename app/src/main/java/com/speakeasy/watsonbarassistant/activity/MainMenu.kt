@@ -85,6 +85,7 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
                 val storedRecipes = gson.fromJson(recipeJson, Array<DiscoveryRecipe>::class.java)
                 if (storedRecipes != null && storedRecipes.count() > 0) {
                     BarAssistant.recipes[i].addAll(storedRecipes.toList())
+
                 }
             }
         }
@@ -153,11 +154,17 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
 
     override fun onBackPressed() {
         searchMenuItem?.collapseActionView()
-        if(searchFragment != null) {
-            showCurrentFragment()
-            searchFragment = null
-        } else {
-            super.onBackPressed()
+        when {
+            searchFragment != null -> {
+                showCurrentFragment()
+                searchFragment = null
+            }
+            tabIndex != 1 -> {
+                tabIndex = 1
+                tabs.getTabAt(tabIndex)?.select()
+                showCurrentFragment()
+            }
+            else -> super.onBackPressed()
         }
     }
 
@@ -200,9 +207,18 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
         currentUser = authorization.currentUser
         loadIngredients()
         loadRecentlyViewed()
+
+        synchronized(BarAssistant.feed) {
+            synchronized(BarAssistant.recipes) {
+                BarAssistant.feed.clear()
+                BarAssistant.feed.addAll(BarAssistant.recipes[0].map { FeedElement(it) })
+            }
+        }
+
         (application as? BarAssistant)?.loadFavoritesFromFireStore(authorization, fireStore)
         (fragment as? IngredientsTab)?.refresh()
         (fragment as? FavoritesTab)?.refresh()
+        (fragment as? HomeTab)?.refresh()
     }
 
     private fun loadIngredients() {

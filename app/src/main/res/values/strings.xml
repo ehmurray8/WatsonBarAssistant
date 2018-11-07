@@ -23,5 +23,10 @@
     <string name="search_title">Search</string>
     <string name="vision_button_placeholder">Button</string>
     <string name="favorites_tab">Favorites</string>
+    <string name="feed_header">Feed</string>
+    <string name="read_for_me">Read For Me</string>
+    <string name="share_button">Share</string>
+    <string name="ingredient_name_placeholder">Ingredient Name</string>
+    <string name="delete_ingredient_description">Delete ingredient</string>
 
 </resources>

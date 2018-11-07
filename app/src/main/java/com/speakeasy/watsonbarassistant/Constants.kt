@@ -52,3 +52,5 @@ const val GROCERY_INGREDIENTS = "ingredients"
 const val GROCERY_NEEDED = "needed"
 
 const val RC_SIGN_IN = 123
+
+const val DOWNLOAD_LINK = "https://github.com/ehmurray8/WatsonBarAssistant/releases/download/v0.0.1/bar-assistant.apk"

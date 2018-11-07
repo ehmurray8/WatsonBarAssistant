@@ -47,6 +47,10 @@ class UserProfile : AppCompatActivity() {
                 }
             }
         }
+
+        addFriendButton.setOnClickListener {
+            // val intent = Intent(baseContext, )
+        }
     }
 
     private fun addEmailDialog() {

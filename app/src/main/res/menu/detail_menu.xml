@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+tools:context=".activity.MainMenu"
+android:layout_height="wrap_content"
+android:layout_width="match_parent">
+
+<item android:id="@+id/shareMenuButton"
+    android:title="@string/share_button"
+    android:icon="@drawable/ic_share_white_24dp"
+    app:showAsAction="always"/>
+
+</menu>
