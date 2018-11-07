@@ -24,6 +24,7 @@ import com.speakeasy.watsonbarassistant.SwipeToDeleteCallback
 import com.speakeasy.watsonbarassistant.activity.MainMenu
 import com.speakeasy.watsonbarassistant.activity.VisionActivity
 import com.speakeasy.watsonbarassistant.adapter.IngredientsAdapter
+import com.speakeasy.watsonbarassistant.com.speakeasy.watsonbarassistant.activity.AddRecipeActivity
 import com.speakeasy.watsonbarassistant.extensions.toast
 import kotlinx.android.synthetic.main.fragment_ingredient_tab.*
 
@@ -106,7 +107,9 @@ class IngredientsTab : Fragment() {
             startActivity(intent)
         }
         addViaVoiceButton.setOnClickListener {
-            activity?.applicationContext?.toast("Voice support to be added!")
+            val intent = Intent(activity, AddRecipeActivity::class.java)
+            startActivity(intent)
+            //activity?.applicationContext?.toast("Voice support to be added!")
         }
 
         val itemDecorator = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)

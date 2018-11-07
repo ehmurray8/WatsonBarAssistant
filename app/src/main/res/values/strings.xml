@@ -23,5 +23,6 @@
     <string name="search_title">Search</string>
     <string name="vision_button_placeholder">Button</string>
     <string name="favorites_tab">Favorites</string>
+    <string name="recipe_addition_defualt">Click to change me!</string>
 
 </resources>
