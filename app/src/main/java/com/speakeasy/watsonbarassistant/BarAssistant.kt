@@ -27,6 +27,7 @@ class BarAssistant: Application() {
         val favoritesList = sortedSetOf<DiscoveryRecipe>()
         val ingredients = sortedSetOf<Ingredient>(kotlin.Comparator { o1, o2 -> if (o1.compareName() > o2.compareName()) 1 else -1 })
         val searchRecipes = mutableListOf<DiscoveryRecipe>()
+        val feed = mutableListOf<FeedElement>()
 
         val lastViewedRecipes: MutableMap<Long, DiscoveryRecipe> = mutableMapOf()
         val lastViewedTimes: MutableList<Long> = mutableListOf()

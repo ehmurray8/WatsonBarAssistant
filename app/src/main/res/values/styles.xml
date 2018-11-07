@@ -13,4 +13,8 @@
         <item name="tabIndicatorColor">@color/colorAccent</item>
     </style>
 
+    <style name="ExpandedAppBar" parent="@android:style/TextAppearance.Material.Display1">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
 </resources>

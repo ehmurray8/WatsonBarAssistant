@@ -18,8 +18,8 @@ import com.speakeasy.watsonbarassistant.activity.RecipeDetail
 import com.speakeasy.watsonbarassistant.loadImage
 
 
-class HomeRecipeAdapter(private val recipes: MutableList<DiscoveryRecipe>,
-                        private val activity: Activity, private val collectionName: String):
+class HorizontalRecipeAdapter(private val recipes: MutableList<DiscoveryRecipe>,
+                              private val activity: Activity, private val collectionName: String):
         RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     class ViewHolder(val card: CardView) : RecyclerView.ViewHolder(card)

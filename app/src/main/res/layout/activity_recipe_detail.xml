@@ -1,22 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".activity.RecipeDetail"
     xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="match_parent"
     android:layout_width="match_parent">
-    <ScrollView
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="350dp">
+
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/collapsingToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:expandedTitleMarginStart="8dp"
+            app:contentScrim="?attr/colorPrimary"
+            app:expandedTitleTextAppearance="@style/ExpandedAppBar"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
+
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/drink_detail_image"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="350dp"
+                android:scaleType="fitXY"
+                fresco:layout_collapseMode="parallax"
+                android:background="@drawable/scrim"
+                fresco:placeholderImage="@mipmap/ic_old_fashioned" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="350dp"
+                android:layout_gravity="bottom"
+                android:background="@drawable/scrim"/>
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbarRecipeDetail"
+                android:layout_width="match_parent"
+                app:layout_collapseMode="pin"
+                android:layout_height="?attr/actionBarSize"/>
+
+        </android.support.design.widget.CollapsingToolbarLayout>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/mainDetailScroll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".activity.RecipeDetail">
+        android:fillViewport="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_marginBottom="20dp"
+            android:focusableInTouchMode="true"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <TextView
+            <!--TextView
                 android:id="@+id/recipe_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -27,15 +72,7 @@
                 android:layout_marginBottom="10dp"
                 android:textColor="@color/primaryText"
                 android:textSize="25sp"
-                android:textStyle="bold"/>
-
-            <com.facebook.drawee.view.SimpleDraweeView
-                android:id="@+id/drink_detail_image"
-                android:layout_gravity="center_horizontal"
-                android:layout_width="400dp"
-                android:layout_height="247dp"
-                android:scaleType="fitXY"
-                fresco:placeholderImage="@mipmap/ic_old_fashioned" />
+                android:textStyle="bold"/-->
 
             <LinearLayout
                 android:id="@+id/tagContainerDetail"
@@ -55,7 +92,7 @@
                 android:layout_marginEnd="25dp"
                 android:textColor="@color/primaryText"
                 android:text="@string/description_header"
-                android:textSize="20sp" />
+                android:textSize="24sp" />
 
             <TextView
                 android:id="@+id/description_content"
@@ -64,42 +101,43 @@
                 android:layout_marginStart="30dp"
                 android:layout_marginEnd="20dp"
                 android:textColor="@color/primaryText"
-                android:textSize="16sp" />
+                android:textSize="18sp" />
 
-            <!--Button
+            <Button
+                android:visibility="gone"
                 android:id="@+id/readDescriptionButton"
                 android:layout_marginStart="15dp"
                 android:layout_marginEnd="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-            android:text="@string/speech_button" /-->
+                android:text="@string/read_for_me" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="25dp"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="25dp"
                 android:textColor="@color/primaryText"
                 android:text="@string/ingredients_header"
-                android:textSize="20sp" />
+                android:textSize="24sp" />
 
-            <TextView
-                android:id="@+id/recipe_ingredients"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/primaryText"
-                android:textSize="16sp"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/detailIngredients"
                 android:layout_marginEnd="20dp"
-                android:layout_marginStart="30dp"/>
+                android:layout_marginStart="30dp"
+                android:layout_marginBottom="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
 
         </LinearLayout>
-    </ScrollView>
+    </android.support.v4.widget.NestedScrollView>
 
     <ToggleButton
+        app:layout_anchor="@id/mainDetailScroll"
+        app:layout_anchorGravity="bottom|right|end"
         android:id="@+id/button_favorite"
         android:layout_width="46dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
         android:layout_marginEnd="14dp"
         android:layout_marginBottom="14dp"
         android:background="@drawable/favorite_button"
@@ -107,4 +145,5 @@
         android:text=""
         android:textOff=""
         android:textOn="" />
-</RelativeLayout>
+
+</android.support.design.widget.CoordinatorLayout>
