@@ -8,15 +8,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.speakeasy.watsonbarassistant.BarAssistant
-import com.speakeasy.watsonbarassistant.adapter.HomeAdapter
 import com.speakeasy.watsonbarassistant.R
 import com.speakeasy.watsonbarassistant.activity.MainMenu
+import com.speakeasy.watsonbarassistant.adapter.FeedAdapter
 import kotlinx.android.synthetic.main.fragment_home_tab.*
 
 
 class HomeTab : Fragment() {
 
-    private var viewAdapter: HomeAdapter? = null
+    private var viewAdapter: FeedAdapter? = null
     private var manager: LinearLayoutManager? = null
 
     companion object {
@@ -46,7 +46,7 @@ class HomeTab : Fragment() {
 
         manager = LinearLayoutManager(activity)
         val mainMenu = activity as MainMenu
-        viewAdapter = HomeAdapter(mainMenu)
+        viewAdapter = FeedAdapter(mainMenu)
 
         mainRefreshLayout.setOnRefreshListener {
             mainMenu.refreshDiscovery()

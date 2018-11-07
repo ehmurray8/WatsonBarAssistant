@@ -65,20 +65,6 @@
             android:src="@drawable/ic_camera_add"
             android:tint="@color/primaryText"
             android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/addViaVoiceButton"
-            app:layout_constraintEnd_toEndOf="parent">
-
-        </android.support.design.widget.FloatingActionButton>
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/addViaVoiceButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:src="@drawable/ic_voice_add"
-            android:tint="@color/primaryText"
-            android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/addViaTextButton"
             app:layout_constraintEnd_toEndOf="parent">
 
@@ -103,7 +89,6 @@
             android:layout_height="0dp"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="12dp"
             android:scrollbars="vertical"
             app:layout_constraintTop_toTopOf="parent"

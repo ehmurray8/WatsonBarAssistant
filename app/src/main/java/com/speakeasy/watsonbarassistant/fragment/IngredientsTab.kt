@@ -1,14 +1,14 @@
 package com.speakeasy.watsonbarassistant.fragment
 
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.LayoutInflater
@@ -23,8 +23,7 @@ import com.speakeasy.watsonbarassistant.R
 import com.speakeasy.watsonbarassistant.SwipeToDeleteCallback
 import com.speakeasy.watsonbarassistant.activity.MainMenu
 import com.speakeasy.watsonbarassistant.activity.VisionActivity
-import com.speakeasy.watsonbarassistant.adapter.IngredientsAdapter
-import com.speakeasy.watsonbarassistant.extensions.toast
+import com.speakeasy.watsonbarassistant.adapter.IngredientGridAdapter
 import kotlinx.android.synthetic.main.fragment_ingredient_tab.*
 
 
@@ -36,7 +35,7 @@ class IngredientsTab : Fragment() {
     private lateinit var menuAnimRotateBack: Animation
 
     private var isAddMenuOpen: Boolean = false
-    private var viewAdapter: IngredientsAdapter? = null
+    private var viewAdapter: IngredientGridAdapter? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -47,9 +46,9 @@ class IngredientsTab : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val viewManager = LinearLayoutManager(activity)
+        val viewManager = GridLayoutManager(activity, 2)
         val mainMenu = activity as MainMenu
-        viewAdapter = IngredientsAdapter(synchronized(BarAssistant.ingredients) { BarAssistant.ingredients })
+        viewAdapter = IngredientGridAdapter(synchronized(BarAssistant.ingredients) { BarAssistant.ingredients }, activity as Activity)
 
         ingredients_recycler_view.apply {
             setHasFixedSize(true)
@@ -105,14 +104,7 @@ class IngredientsTab : Fragment() {
             val intent = Intent(activity, VisionActivity::class.java)
             startActivity(intent)
         }
-        addViaVoiceButton.setOnClickListener {
-            activity?.applicationContext?.toast("Voice support to be added!")
-        }
 
-        val itemDecorator = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
-        ingredients_recycler_view.addItemDecoration(itemDecorator)
-
-        setupSwipeHandler()
         setupKeyboardListener()
         refresh()
     }
@@ -141,13 +133,10 @@ class IngredientsTab : Fragment() {
         addMenuButton.startAnimation(menuAnimRotateBack)
         addViaTextButton.startAnimation(menuAnimClose)
         addViaCameraButton.startAnimation(menuAnimClose)
-        addViaVoiceButton.startAnimation(menuAnimClose)
         addViaTextButton.isClickable = false
         addViaTextButton.hide()
         addViaCameraButton.isClickable = false
         addViaCameraButton.hide()
-        addViaVoiceButton.isClickable = false
-        addViaVoiceButton.hide()
         ingredientInputView.visibility = View.GONE
         isAddMenuOpen = false
     }
@@ -156,13 +145,10 @@ class IngredientsTab : Fragment() {
         addMenuButton.startAnimation(menuAnimRotateOut)
         addViaTextButton.startAnimation(menuAnimOpen)
         addViaCameraButton.startAnimation(menuAnimOpen)
-        addViaVoiceButton.startAnimation(menuAnimOpen)
         addViaTextButton.isClickable = true
         addViaTextButton.show()
         addViaCameraButton.isClickable = true
         addViaCameraButton.show()
-        addViaVoiceButton.isClickable = true
-        addViaVoiceButton.show()
         isAddMenuOpen = true
     }
 

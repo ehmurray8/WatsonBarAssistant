@@ -70,7 +70,7 @@ class HomeAdapter(private var activity: Activity):
                 LinearLayoutManager.HORIZONTAL, false)
 
         HomeTab.homeScrollManagers[position] = viewManager
-        val viewAdapter = HomeRecipeAdapter(recipes, activity, category)
+        val viewAdapter = HorizontalRecipeAdapter(recipes, activity, category)
 
         recipesList.apply {
             setHasFixedSize(true)
