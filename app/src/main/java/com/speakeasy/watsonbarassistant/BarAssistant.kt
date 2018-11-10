@@ -92,12 +92,12 @@ class BarAssistant: Application() {
         editor.apply()
     }
 
-    fun addNewImageToFireStore(newImage: ByteArray):String{
-        var newImageId = IMAGE_FAILED_TO_SAVE
+    fun addNewImageToFireStore(newImage: ByteArray):Long{
+        var newImageId: Long = -1
 
         if (BarAssistant.isInternetConnected()) {
             synchronized(BarAssistant.userCreatedRecipes) {
-                newImageId = UUID.randomUUID().toString()
+                newImageId = UUID.randomUUID().mostSignificantBits
                 val imagePath = RECIPE_IMAGES + newImageId + ".jpg"
                 Log.i("BarAssistantAddImage", "ImageId: " + newImageId)
                 var uploadTask = BarAssistant.storageReference?.child(imagePath)?.putBytes(newImage)
@@ -113,11 +113,26 @@ class BarAssistant: Application() {
         return newImageId
     }
 
-    fun storeNewRecipeInFireStore(fireStore: FirebaseFirestore, newRecipe: DiscoveryRecipe) {
+    fun storeNewRecipeInFireStore(authorization: FirebaseAuth, fireStore: FirebaseFirestore, newRecipe: DiscoveryRecipe) {
         if (BarAssistant.isInternetConnected()) {
-            synchronized(BarAssistant.userCreatedRecipes) {
-                val newRecipeId = UUID.randomUUID().toString()
-                fireStore.collection(RECIPE_COLLECTION).document(newRecipeId).set(newRecipe.toFireStoreRecipe())
+            val uid = authorization.currentUser?.uid
+            if (uid != null) {
+                synchronized(BarAssistant.userCreatedRecipes) {
+                    val newRecipeId = UUID.randomUUID().toString()
+
+                    //Add to master recipe list
+                    fireStore.collection(RECIPE_COLLECTION).document(newRecipeId).set(newRecipe.toFireStoreRecipe())
+
+                    //Add to user created list
+                    fireStore.collection(MAIN_COLLECTION).document(uid).collection(USER_CREATED_RECIPES).document(newRecipeId).set(newRecipe.toFireStoreRecipe())
+
+                    //Add to algolia
+
+                    Log.i("BarAssistantAddingFirebaseRecipe", "id: " + newRecipeId + " recipe: " + newRecipe.toString() + " uid: " + uid.toString())
+
+                }
+            } else {
+                //TODO invalid user error
             }
         }
     }

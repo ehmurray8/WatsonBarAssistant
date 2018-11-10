@@ -15,6 +15,8 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.speakeasy.watsonbarassistant.*
 import com.speakeasy.watsonbarassistant.activity.MainMenu
 import kotlinx.android.synthetic.main.activity_add_recipe.*
@@ -107,13 +109,12 @@ class AddRecipeActivity : AppCompatActivity() {
 
         val newImageId = assistant.addNewImageToFireStore(newImageByteArray)
 
-        if (newImageId == IMAGE_FAILED_TO_SAVE){
+        if (newImageId.equals(-1)){
             //TODO failed to save image message
         }else{
-            var newRecipe = DiscoveryRecipe(title = title_text.text.toString(), description = description_text.text.toString(), imageId = newImageId)
+            var newRecipe = DiscoveryRecipe(title = title_text.text.toString(), description = description_text.text.toString(), imageId = newImageId.toString())
             Log.i("AddRecipeActivity",newRecipe.toString())
-            val newFireRecipe = newRecipe.toFireStoreRecipe()
-            Log.i("AddRecipeActivity",newFireRecipe.toString())
+            assistant.storeNewRecipeInFireStore(FirebaseAuth.getInstance(),FirebaseFirestore.getInstance(), newRecipe)
         }
     }
 
