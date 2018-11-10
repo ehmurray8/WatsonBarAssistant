@@ -182,7 +182,7 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
                 BarAssistant.searchRecipes.clear()
                 val numRecipes = BarAssistant.lastViewedRecipes.count()
                 val end = if(numRecipes >= 25) 25 else numRecipes
-                BarAssistant.searchRecipes.addAll(BarAssistant.lastViewedRecipes.map { it -> it.value }.slice(0..end))
+                BarAssistant.searchRecipes.addAll(BarAssistant.lastViewedRecipes.map { it -> it.value }.slice(0 until end))
             }
             val transaction = supportFragmentManager.beginTransaction()
             transaction.replace(R.id.fragment_container, searchFragment)
