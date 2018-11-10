@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:ignore="HardcodedText"
+        tools:context=".activity.UserInfoActivity">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Welcome to BarAssistant"
+            android:textColor="@color/primaryText"
+            android:textSize="20sp"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="15dp"/>
+
+        <LinearLayout style="@style/UserInfoHorizontalLayout">
+
+            <TextView
+                style="@style/UserInfoTextView"
+                android:text="First Name:"/>
+
+            <EditText
+                style="@style/UserInfoEditText"
+                android:id="@+id/firstNameEditText"
+                android:inputType="textCapSentences"
+                android:imeOptions="actionNext"
+                android:hint="First Name"/>
+
+        </LinearLayout>
+
+        <LinearLayout style="@style/UserInfoHorizontalLayout">
+
+            <TextView
+                style="@style/UserInfoTextView"
+                android:text="Last Name:"/>
+
+            <EditText
+                style="@style/UserInfoEditText"
+                android:id="@+id/lastNameEditText"
+                android:imeOptions="actionNext"
+                android:hint="Last Name"
+                android:inputType="textCapSentences"/>
+
+        </LinearLayout>
+
+        <LinearLayout style="@style/UserInfoHorizontalLayout">
+
+            <TextView
+                style="@style/UserInfoTextView"
+                android:text="Username:"/>
+
+            <EditText
+                style="@style/UserInfoEditText"
+                android:id="@+id/usernameEditText"
+                android:hint="Username"
+                android:imeOptions="actionNext"
+                android:inputType="text"/>
+
+        </LinearLayout>
+
+        <LinearLayout style="@style/UserInfoHorizontalLayout">
+
+            <TextView
+                style="@style/UserInfoTextView"
+                android:text="Email:"/>
+
+            <EditText
+                android:id="@+id/emailEditText"
+                android:hint="Email"
+                android:imeOptions="actionNext"
+                android:inputType="textEmailAddress"
+                style="@style/UserInfoEditText"/>
+
+        </LinearLayout>
+
+        <TextView
+            style="@style/UserInfoTextView"
+            android:text="Birthday"
+            android:layout_margin="25dp"/>
+
+        <com.speakeasy.watsonbarassistant.ScrollableDatePicker
+            android:id="@+id/birthdayPicker"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/saveUserInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
+            android:text="Save"/>
+
+    </LinearLayout>
+</ScrollView>

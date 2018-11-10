@@ -26,9 +26,10 @@ import com.speakeasy.watsonbarassistant.discovery.SearchDiscovery
 import com.speakeasy.watsonbarassistant.extensions.loadRecentlyViewed
 import com.speakeasy.watsonbarassistant.extensions.loadRecentlyViewedRecipesSharedPreferences
 import com.speakeasy.watsonbarassistant.extensions.toast
-import com.speakeasy.watsonbarassistant.fragment.FavoritesTab
+import com.speakeasy.watsonbarassistant.extensions.userIngredientsDocument
 import com.speakeasy.watsonbarassistant.fragment.HomeTab
 import com.speakeasy.watsonbarassistant.fragment.IngredientsTab
+import com.speakeasy.watsonbarassistant.fragment.PersonalTab
 import com.speakeasy.watsonbarassistant.fragment.SearchFragment
 import kotlinx.android.synthetic.main.activity_main_menu.*
 import kotlinx.serialization.json.JSON
@@ -52,10 +53,13 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
     private val client = Client(ALGOLIA_APP_ID, ALGOLIA_API_KEY)
     private val recipeIndex = client.getIndex("Recipe")
     private var searchMenuItem: MenuItem? = null
+    private var loadingUserInfo = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_menu)
+
+        currentUser = authorization.currentUser
         BarAssistant.storageReference = FirebaseStorage.getInstance().reference
 
         loadSharedPreferences()
@@ -73,6 +77,35 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
         if (!BarAssistant.isInternetConnected()) {
             applicationContext.toast("Failed to download user data from the internet.")
         }
+
+        checkUserInfo()
+    }
+
+    private fun checkUserInfo() {
+        val uid = currentUser?.uid
+        if(uid != null) {
+            fireStore.collection(APP_COLLECTION).document(uid).collection(USER_COLLECTION).document("main").get().addOnCompleteListener {
+                if (it.isSuccessful) {
+                    val recipeDocument = it.result
+                    if(recipeDocument != null) {
+                        val userInfo = recipeDocument.toObject(UserInfo::class.java)
+                        if(userInfo != null) {
+                            BarAssistant.userInfo = userInfo
+                            (fragment as? PersonalTab)?.setUserInfo()
+                        }
+                    }
+                }
+                if(BarAssistant.userInfo == null) {
+                    val userInfoIntent = Intent(applicationContext, UserInfoActivity::class.java)
+                    userInfoIntent.putExtra("Email", currentUser?.email)
+                    userInfoIntent.putExtra("Name", currentUser?.displayName)
+                    userInfoIntent.putExtra("UID", currentUser?.uid)
+                    loadingUserInfo = true
+                    startActivity(userInfoIntent)
+                }
+            }
+        }
+
     }
 
     private fun loadSharedPreferences() {
@@ -89,9 +122,19 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
                 }
             }
         }
+        loadFeed()
+        val userInfoJson = preferences.getString(USER_INFO_PREFERENCES, "")
         val ingredientsJson = preferences.getString(INGREDIENT_PREFERENCES_ID, "")
         val lastViewedTimesJson = preferences.getString(LAST_VIEWED_RECIPE_TIMES, "")
         val storedLastViewedTimes = gson.fromJson(lastViewedTimesJson, Array<Long>::class.java)
+        BarAssistant.userInfo?.let {
+            synchronized(it) {
+                if(userInfoJson != "") {
+                    BarAssistant.userInfo = gson.fromJson(userInfoJson, UserInfo::class.java)
+                    (fragment as? PersonalTab)?.setUserInfo()
+                }
+            }
+        }
         synchronized(BarAssistant.favoritesList) {
             val favoritesJson = preferences.getString(FAVORITES_PREFERENCES, "")
             val favorites = gson.fromJson(favoritesJson, Array<DiscoveryRecipe>::class.java)
@@ -140,7 +183,7 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
                 BarAssistant.searchRecipes.clear()
                 val numRecipes = BarAssistant.lastViewedRecipes.count()
                 val end = if(numRecipes >= 25) 25 else numRecipes
-                BarAssistant.searchRecipes.addAll(BarAssistant.lastViewedRecipes.map { it -> it.value }.slice(0..end))
+                BarAssistant.searchRecipes.addAll(BarAssistant.lastViewedRecipes.map { it -> it.value }.slice(0 until end))
             }
             val transaction = supportFragmentManager.beginTransaction()
             transaction.replace(R.id.fragment_container, searchFragment)
@@ -168,26 +211,51 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        loadFeed()
+    }
+
+    private fun refreshFragments() {
+        (fragment as? HomeTab)?.refresh()
+        (fragment as? IngredientsTab)?.refresh()
+        (fragment as? PersonalTab)?.refresh()
+    }
+
     override fun onPause() {
         super.onPause()
-        searchMenuItem?.collapseActionView()
-        val uid = currentUser?.uid
-        if(uid != null) {
-            val ingredientsMap = synchronized(BarAssistant.ingredients) {
-                mapOf(INGREDIENT_COLLECTION to BarAssistant.ingredients.asSequence().map { it.name }.toList())
+        if(!loadingUserInfo) {
+            searchMenuItem?.collapseActionView()
+            val uid = currentUser?.uid
+            if (uid != null) {
+                val ingredientsMap = synchronized(BarAssistant.ingredients) {
+                    mapOf(INGREDIENT_COLLECTION to BarAssistant.ingredients.asSequence().map { it.name }.toList())
+                }
+                fireStore.collection(APP_COLLECTION).document(uid).collection(INGREDIENT_COLLECTION)
+                        .document("main").set(ingredientsMap)
             }
-            fireStore.collection(MAIN_COLLECTION).document(uid).collection(INGREDIENT_COLLECTION)
-                    .document("main").set(ingredientsMap)
+            val preferences = getSharedPreferences(SHARED_PREFERENCES_SETTINGS, Context.MODE_PRIVATE)
+            val editor = preferences.edit()
+            editor.putInt(TAB_INDEX, tabIndex)
+            val gson = Gson()
+            val ingredientJson = synchronized(BarAssistant.ingredients) {
+                gson.toJson(BarAssistant.ingredients.toTypedArray())
+            }
+            editor.putString(INGREDIENT_PREFERENCES_ID, ingredientJson)
+            val userInfoJson = BarAssistant.userInfo?.let {
+                synchronized(it) {
+                    gson.toJson(BarAssistant.userInfo)
+                }
+            }
+            currentUser?.uid?.let {
+                BarAssistant.userInfo?.let { userInfo ->
+                    fireStore.collection(APP_COLLECTION).document(it).collection(USER_COLLECTION).document("main").set(userInfo)
+                }
+            }
+            editor.putString(USER_INFO_PREFERENCES, userInfoJson)
+            editor.apply()
         }
-        val preferences = getSharedPreferences(SHARED_PREFERENCES_SETTINGS, Context.MODE_PRIVATE)
-        val editor = preferences.edit()
-        editor.putInt(TAB_INDEX, tabIndex)
-        val gson = Gson()
-        val ingredientJson = synchronized(BarAssistant.ingredients) {
-            gson.toJson(BarAssistant.ingredients.toTypedArray())
-        }
-        editor.putString(INGREDIENT_PREFERENCES_ID, ingredientJson)
-        editor.apply()
+        loadingUserInfo = false
     }
 
     override fun onDestroy() {
@@ -204,21 +272,14 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
     }
 
     private fun loadUserData() {
-        currentUser = authorization.currentUser
-        loadIngredients()
-        loadRecentlyViewed()
-
-        synchronized(BarAssistant.feed) {
-            synchronized(BarAssistant.recipes) {
-                BarAssistant.feed.clear()
-                BarAssistant.feed.addAll(BarAssistant.recipes[0].map { FeedElement(it) })
-            }
+        val barAssistant = application as? BarAssistant
+        barAssistant?.let {
+            it.loadFavoritesFromFireStore(authorization, fireStore)
+            it.loadUserInfo(authorization, fireStore)
         }
-
-        (application as? BarAssistant)?.loadFavoritesFromFireStore(authorization, fireStore)
-        (fragment as? IngredientsTab)?.refresh()
-        (fragment as? FavoritesTab)?.refresh()
-        (fragment as? HomeTab)?.refresh()
+        loadRecentlyViewed()
+        loadIngredients()
+        refreshFragments()
     }
 
     private fun loadIngredients() {
@@ -227,8 +288,7 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
             refreshDiscovery()
             val oldIngredients = synchronized(BarAssistant.ingredients) { BarAssistant.ingredients.toTypedArray() }
             if (uid != null) {
-                fireStore.collection(MAIN_COLLECTION).document(uid)
-                        .collection(INGREDIENT_COLLECTION).document("main").get().addOnSuccessListener {
+                fireStore.userIngredientsDocument(uid).get().addOnSuccessListener {
                             synchronized(BarAssistant.ingredients) {
                                 BarAssistant.ingredients.clear()
                                 val storedIngredients = it.get(INGREDIENT_COLLECTION) as? ArrayList<*>
@@ -249,13 +309,23 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
 
     fun refreshDiscovery(forceRefresh: Boolean = false) {
         synchronized(BarAssistant.ingredients) {
-            if (BarAssistant.ingredients.count() > 0) {
+            if (BarAssistant.ingredients.count() > 0 ) {
                 if (forceRefresh || lastDiscoveryRefreshTime == -1L ||
                         Date().time - lastDiscoveryRefreshTime >= 30_000) {
                     lastDiscoveryRefreshTime = Date().time
                     val discovery = SearchDiscovery(HandleDiscovery(this))
                     discovery.execute(BarAssistant.ingredients.toTypedArray())
                 }
+            }
+        }
+    }
+
+    fun loadFeed() {
+        synchronized(BarAssistant.feed) {
+            synchronized(BarAssistant.recipes) {
+                BarAssistant.feed.clear()
+                BarAssistant.feed.addAll(BarAssistant.recipes[0].shuffled().map { FeedElement(it) })
+                refreshFragments()
             }
         }
     }
@@ -269,7 +339,7 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
         when (tabIndex) {
             0 -> fragment = IngredientsTab()
             1 -> fragment = HomeTab()
-            2 -> fragment = FavoritesTab()
+            2 -> fragment = PersonalTab()
         }
         replaceFragment()
     }
@@ -284,13 +354,13 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
             R.id.user_profile -> {
-                val intent = Intent(this, UserProfile::class.java)
-                startActivity(intent)
+                val userProfileIntent = Intent(this, FriendActivity::class.java)
+                startActivity(userProfileIntent)
                 return true
             }
             R.id.shoppingCartMenuButton -> {
-                val intent = Intent(this, ShoppingCart::class.java)
-                startActivity(intent)
+                val shoppingCartIntent= Intent(this, ShoppingCart::class.java)
+                startActivity(shoppingCartIntent)
                 return true
             }
         }

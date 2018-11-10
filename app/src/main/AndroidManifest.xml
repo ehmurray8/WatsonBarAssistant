@@ -40,23 +40,21 @@
         <activity android:name=".activity.RecipeCollection" />
         <activity android:name=".activity.VisionActivity" />
         <activity android:name=".activity.ShoppingCart" />
-        <activity android:name=".FriendActivity" />
+        <activity android:name=".activity.FriendActivity" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:grantUriPermissions="true"
+            android:authorities="com.speakeasy.watsonbarassistant.provider"
             android:exported="false"
-            tools:replace="android:authorities"
-            android:authorities="com.speakeasy.watsonbarassistant.provider">
-
+            android:grantUriPermissions="true"
+            tools:replace="android:authorities">
             <meta-data
-                tools:replace="android:resource"
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_provider_paths"/>
-
+                android:resource="@xml/file_provider_paths"
+                tools:replace="android:resource" />
         </provider>
 
-
+        <activity android:name=".activity.UserInfoActivity" />
     </application>
 
 </manifest>

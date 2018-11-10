@@ -9,5 +9,7 @@
     <color name="dividerColor">#BDBDBD</color>
     <color name="white">#EEE</color>
 
+    <color name="backgroundColor">#EEE</color>
+
     <color name="black_trans80">#33000000</color>
 </resources>

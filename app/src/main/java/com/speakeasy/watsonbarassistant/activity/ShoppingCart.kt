@@ -11,8 +11,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 import com.speakeasy.watsonbarassistant.*
+import com.speakeasy.watsonbarassistant.extensions.shoppingCartDocument
 import com.speakeasy.watsonbarassistant.extensions.toast
-import com.speakeasy.watsonbarassistant.Ingredient
 import kotlinx.android.synthetic.main.activity_shopping_cart.*
 import java.util.*
 
@@ -113,27 +113,25 @@ class ShoppingCart : AppCompatActivity() {
             }
             val shoppingCartMap = mutableMapOf(GROCERY_INGREDIENTS to orderedItems.map { it -> it.name },
                     GROCERY_NEEDED to neededList)
-            fireStore.collection(MAIN_COLLECTION).document(uid).collection(SHOPPING_CART_COLLECTION)
-                    .document("main").set(shoppingCartMap.toMap())
+            fireStore.shoppingCartDocument(uid).set(shoppingCartMap.toMap())
         }
     }
 
     private fun loadFromFireStore() {
         val uid = authorization.currentUser?.uid
         if(uid != null) {
-            fireStore.collection(MAIN_COLLECTION).document(uid).collection(SHOPPING_CART_COLLECTION)
-                    .document("main").get().addOnSuccessListener {
-                        val ingredients = it.get(GROCERY_INGREDIENTS) as? ArrayList<*>
-                        val neededList = it.get(GROCERY_NEEDED) as? ArrayList<*>
-                        ingredients?.forEachIndexed { i, element ->
-                            val ingredient = Ingredient(element as String)
-                            if(!orderedItems.contains(ingredient)) {
-                                orderedItems.add(ingredient)
-                                shoppingCartItems[ingredient] = (neededList?.get(i) as? Boolean) ?: true
-                            }
-                        }
-                        viewAdapter?.notifyDataSetChanged()
+            fireStore.shoppingCartDocument(uid).get().addOnSuccessListener {
+                val ingredients = it.get(GROCERY_INGREDIENTS) as? ArrayList<*>
+                val neededList = it.get(GROCERY_NEEDED) as? ArrayList<*>
+                ingredients?.forEachIndexed { i, element ->
+                    val ingredient = Ingredient(element as String)
+                    if(!orderedItems.contains(ingredient)) {
+                        orderedItems.add(ingredient)
+                        shoppingCartItems[ingredient] = (neededList?.get(i) as? Boolean) ?: true
                     }
+                }
+                viewAdapter?.notifyDataSetChanged()
+            }
         }
     }
 

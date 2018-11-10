@@ -4,7 +4,6 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.speakeasy.watsonbarassistant.*
 import com.speakeasy.watsonbarassistant.activity.MainMenu
 import com.speakeasy.watsonbarassistant.fragment.HomeTab
-import com.speakeasy.watsonbarassistant.FireStoreRecipe
 
 internal fun loadRecentlyViewedRecipesSharedPreferences(storedLastViewedTimes: Array<Long>) {
     if (storedLastViewedTimes.count() > 0) {
@@ -34,13 +33,12 @@ internal fun MainMenu.loadRecentlyViewed() {
     if (BarAssistant.isInternetConnected()) {
         val uid = currentUser?.uid
         if (uid != null) {
-            fireStore.collection(MAIN_COLLECTION).document(uid).collection(RECENTLY_VIEWED_COLLECTION)
-                    .document("main").get().addOnCompleteListener {
-                        if (it.isSuccessful) {
-                            val document = it.result ?: return@addOnCompleteListener
-                            processRecentlyViewed(document)
-                        }
-                    }
+            fireStore.recentlyViewedDocument(uid).get().addOnCompleteListener {
+                if (it.isSuccessful) {
+                    val document = it.result ?: return@addOnCompleteListener
+                    processRecentlyViewed(document)
+                }
+            }
         }
     }
 }
@@ -59,13 +57,12 @@ private fun MainMenu.processRecentlyViewed(document: DocumentSnapshot) {
     var count = 0
     lastViewedRecipeIds?.forEachIndexed { index, recipeId ->
         if (recipeId != null) {
-            fireStore.collection(RECIPE_COLLECTION).document(recipeId.toString())
-                    .get().addOnCompleteListener { snapShotRecipe ->
-                        if (snapShotRecipe.isSuccessful) {
-                            val recipeDocument = snapShotRecipe.result ?: return@addOnCompleteListener
-                            addLastViewedRecipe(recipeDocument, index, ++count)
-                        }
-                    }
+            fireStore.recipeDocument(recipeId.toString()).get().addOnCompleteListener { snapShotRecipe ->
+                if (snapShotRecipe.isSuccessful) {
+                    val recipeDocument = snapShotRecipe.result ?: return@addOnCompleteListener
+                    addLastViewedRecipe(recipeDocument, index, ++count)
+                }
+            }
         }
     }
 }

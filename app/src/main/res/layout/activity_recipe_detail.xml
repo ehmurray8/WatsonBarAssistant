@@ -9,6 +9,7 @@
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appBarLayout"
+
         android:layout_width="match_parent"
         android:layout_height="350dp">
 
@@ -61,19 +62,6 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <!--TextView
-                android:id="@+id/recipe_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="10dp"
-                android:textColor="@color/primaryText"
-                android:textSize="25sp"
-                android:textStyle="bold"/-->
-
             <LinearLayout
                 android:id="@+id/tagContainerDetail"
                 android:orientation="horizontal"
@@ -81,7 +69,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:layout_marginTop="20dp"/>
+                android:layout_marginTop="35dp"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -102,16 +90,6 @@
                 android:layout_marginEnd="20dp"
                 android:textColor="@color/primaryText"
                 android:textSize="18sp" />
-
-            <Button
-                android:visibility="gone"
-                android:id="@+id/readDescriptionButton"
-                android:layout_marginStart="15dp"
-                android:layout_marginEnd="15dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/read_for_me" />
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -131,6 +109,19 @@
 
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
+
+     <android.support.design.widget.FloatingActionButton
+         android:id="@+id/readForMe"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_margin="15dp"
+         android:clickable="true"
+         android:src="@drawable/ic_mic_white_24dp"
+         app:backgroundTint="#279AF1"
+         app:fabSize="normal"
+         app:layout_anchor="@+id/appBarLayout"
+         app:layout_anchorGravity="bottom|right|end"
+         android:focusable="true" />
 
     <ToggleButton
         app:layout_anchor="@id/mainDetailScroll"

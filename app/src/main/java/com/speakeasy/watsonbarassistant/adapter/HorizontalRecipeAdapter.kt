@@ -24,18 +24,10 @@ class HorizontalRecipeAdapter(private val recipes: MutableList<DiscoveryRecipe>,
 
     class ViewHolder(val card: CardView) : RecyclerView.ViewHolder(card)
 
-    class ViewHolderSeeAll(val card: CardView) : RecyclerView.ViewHolder(card)
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return if(viewType == 0) {
-            val cardView = LayoutInflater.from(parent.context).inflate(R.layout.recipe_card,
-                    parent, false) as CardView
-            ViewHolder(cardView)
-        } else {
-            val cardView = LayoutInflater.from(parent.context).inflate(R.layout.see_all_card,
-                    parent, false) as CardView
-            ViewHolderSeeAll(cardView)
-        }
+        val cardView = LayoutInflater.from(parent.context).inflate(R.layout.recipe_card,
+                parent, false) as CardView
+        return ViewHolder(cardView)
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -43,17 +35,21 @@ class HorizontalRecipeAdapter(private val recipes: MutableList<DiscoveryRecipe>,
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        val viewHolder = holder as ViewHolder
         if(position == MAX_HOME_RECIPES) {
-            if(holder as? ViewHolderSeeAll != null) {
-                holder.card.setOnClickListener {
-                    RecipeCollection.recipesList = recipes
-                    val intent = Intent(activity.baseContext, RecipeCollection::class.java)
-                    intent.putExtra("Collection Name", collectionName)
-                    activity.startActivity(intent)
-                }
+            val mainLayout = holder.card.getChildAt(0) as RelativeLayout
+            val textView = mainLayout.findViewById<TextView>(R.id.recipeCardName)
+            textView.text = "See All"
+            val imageView = mainLayout.findViewById<SimpleDraweeView>(R.id.home_recipe_card)
+            imageView.hierarchy.setPlaceholderImage(R.mipmap.ic_old_fashioned)
+            holder.card.setOnClickListener {
+                RecipeCollection.recipesList = recipes
+                val intent = Intent(activity.baseContext, RecipeCollection::class.java)
+                intent.putExtra("Collection Name", collectionName)
+                activity.startActivity(intent)
             }
         } else {
-            bindRecipeViewHolder(holder as ViewHolder, position)
+            bindRecipeViewHolder(viewHolder, position)
         }
     }
 
@@ -65,14 +61,14 @@ class HorizontalRecipeAdapter(private val recipes: MutableList<DiscoveryRecipe>,
             activity.startActivity(intent)
         }
         val recipe = recipes[position]
-        val textView = mainLayout.getChildAt(1) as TextView
+        val textView = mainLayout.findViewById<TextView>(R.id.recipeCardName)
         setupImageView(mainLayout, recipe, textView)
         textView.text = recipe.title
     }
 
     private fun setupImageView(mainLayout: RelativeLayout, recipe: DiscoveryRecipe,
                                textView: TextView) {
-        val imageView = mainLayout.getChildAt(0) as SimpleDraweeView
+        val imageView = mainLayout.findViewById<SimpleDraweeView>(R.id.home_recipe_card)
         textView.setTypeface(textView.typeface, Typeface.BOLD)
         loadImage(activity.baseContext, imageView, recipe)
     }

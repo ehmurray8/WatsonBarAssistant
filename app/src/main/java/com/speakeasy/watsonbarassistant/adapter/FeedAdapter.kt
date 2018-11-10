@@ -30,32 +30,41 @@ class FeedAdapter(private var activity: Activity): RecyclerView.Adapter<Recycler
     }
 
     private fun bindFeedViewHolder(holder: FeedViewHolder?, position: Int) {
-        val layout = holder?.layout
-        val cardView  = layout?.getChildAt(0) as? CardView
-        val relativeLayout = cardView?.getChildAt(0) as? ConstraintLayout
+        if(BarAssistant.feed.count() == 0) {
+            val layout = holder?.layout
+            val cardView  = layout?.getChildAt(0) as? CardView
+            val relativeLayout = cardView?.getChildAt(0) as? ConstraintLayout
+            val imageView = relativeLayout?.getChildAt(1) as? SimpleDraweeView
+            imageView?.hierarchy?.setPlaceholderImage(R.mipmap.ic_old_fashioned)
+        } else {
+            val layout = holder?.layout
+            val cardView = layout?.getChildAt(0) as? CardView
+            val relativeLayout = cardView?.getChildAt(0) as? ConstraintLayout
 
-        val title = relativeLayout?.getChildAt(0) as? TextView
-        val imageView = relativeLayout?.getChildAt(1) as? SimpleDraweeView
-        val description = relativeLayout?.getChildAt(2) as? TextView
+            val title = relativeLayout?.getChildAt(0) as? TextView
+            val imageView = relativeLayout?.getChildAt(1) as? SimpleDraweeView
+            val description = relativeLayout?.getChildAt(2) as? TextView
 
-        val element = synchronized(BarAssistant.feed) {
-            BarAssistant.feed[position]
+            val element = BarAssistant.feed[position]
+
+            cardView?.setOnClickListener {
+                val intent = Intent(activity, RecipeDetail::class.java)
+                intent.putExtra("Recipe", element.recipe)
+                activity.startActivity(intent)
+            }
+
+            title?.text = element.recipe.title
+            if (imageView != null) {
+                imageView.hierarchy.setPlaceholderImage(R.mipmap.ic_old_fashioned)
+                loadImage(activity.applicationContext, imageView, element.recipe)
+            }
+
+            description?.text = "Test"
         }
-
-        cardView?.setOnClickListener {
-            val intent = Intent(activity, RecipeDetail::class.java)
-            intent.putExtra("Recipe", element.recipe)
-            activity.startActivity(intent)
-        }
-
-        title?.text = element.recipe.title
-        if(imageView != null) {
-            imageView.hierarchy.setPlaceholderImage(R.mipmap.ic_old_fashioned)
-            loadImage(activity.applicationContext, imageView, element.recipe)
-        }
-
-        description?.text = "Test"
     }
 
-    override fun getItemCount() = synchronized(BarAssistant.feed) { BarAssistant.feed.count() }
+    override fun getItemCount(): Int {
+        val count = BarAssistant.feed.count()
+        return if(count > 0) count else 1
+    }
 }

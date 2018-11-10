@@ -7,14 +7,14 @@ data class FireStoreRecipe(val title: String = "", val imageUrl: String = "", va
                            val description: String = "", val recipeUrl: String = "", val ingredientList: List<String> = emptyList(),
                            val instructionList: List<String> = emptyList(), val prepTime: String = "", val cookTime: String = "",
                            val totalTime: String = "", val imageId: Long = 0, val googleBestImgUrl: String = "",
-                           val googleBestImgScore: Double = 0.0) {
+                           val googleBestImgScore: Double = 0.0, var count: Int = 0) {
 
     fun toDiscoveryRecipe(): DiscoveryRecipe {
         return DiscoveryRecipe(title = title, imageUrl = imageUrl, reviewCount = reviewCount.toString(),
                 description = description, recipeUrl = recipeUrl, ingredientList = ingredientList,
                 instructionList = instructionList, prepTime = prepTime, cookTime = cookTime,
                 totalTime = totalTime, imageId = imageId.toString(), googleBestImgUrl = googleBestImgUrl,
-                googleBestImgScore = googleBestImgScore)
+                googleBestImgScore = googleBestImgScore, count = count)
     }
 }
 
@@ -31,7 +31,8 @@ data class DiscoveryRecipe(@Optional val title: String = "",
                            @Optional val totalTime: String = "",
                            @Optional val imageId: String = "",
                            @Optional val googleBestImgUrl: String = "",
-                           @Optional val googleBestImgScore: Double = 0.0): Serializable, Comparable<DiscoveryRecipe> {
+                           @Optional val googleBestImgScore: Double = 0.0,
+                           @Optional val count: Int = 0): Serializable, Comparable<DiscoveryRecipe> {
 
     @Optional var percentOfIngredientsOwned: Int = 0
     @Optional var recipeImageUriString: String = ""
@@ -41,7 +42,7 @@ data class DiscoveryRecipe(@Optional val title: String = "",
                 description = description, recipeUrl = recipeUrl, ingredientList = ingredientList,
                 instructionList = instructionList, prepTime = prepTime, cookTime = cookTime,
                 totalTime = totalTime, imageId = imageId.toFloat().toLong(), googleBestImgUrl = googleBestImgUrl,
-                googleBestImgScore = googleBestImgScore)
+                googleBestImgScore = googleBestImgScore, count = count)
     }
 
     override fun equals(other: Any?): Boolean {

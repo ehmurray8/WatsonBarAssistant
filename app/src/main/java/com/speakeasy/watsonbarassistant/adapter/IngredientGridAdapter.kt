@@ -14,6 +14,7 @@ import android.widget.TextView
 import com.facebook.drawee.view.SimpleDraweeView
 import com.speakeasy.watsonbarassistant.Ingredient
 import com.speakeasy.watsonbarassistant.R
+import com.speakeasy.watsonbarassistant.loadIngredientImage
 import java.util.*
 
 class IngredientGridAdapter(private val ingredientsSet: TreeSet<Ingredient>, private val activity: Activity):
@@ -40,7 +41,9 @@ class IngredientGridAdapter(private val ingredientsSet: TreeSet<Ingredient>, pri
         val cardView = holder.layout as? CardView
         val relativeLayout = cardView?.getChildAt(0) as? RelativeLayout
         val textView = relativeLayout?.findViewById<TextView>(R.id.ingredientGridName)
-        textView?.text = ingredientsList[position].name.capitalize()
+
+        val ingredient = ingredientsList[position]
+        textView?.text = ingredient.name.capitalize()
 
         val imageView = relativeLayout?.findViewById<SimpleDraweeView>(R.id.ingredientCard)
         imageView?.hierarchy?.setPlaceholderImage(R.mipmap.ic_cherry)
@@ -66,6 +69,10 @@ class IngredientGridAdapter(private val ingredientsSet: TreeSet<Ingredient>, pri
             showDelete = true
             notifyDataSetChanged()
             true
+        }
+
+        imageView?.let {
+            loadIngredientImage(activity.applicationContext, it, ingredient)
         }
     }
 
