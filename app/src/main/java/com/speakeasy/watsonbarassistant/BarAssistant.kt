@@ -5,6 +5,8 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
+import android.util.Log
+import android.widget.Toast
 import com.facebook.cache.disk.DiskCacheConfig
 import com.facebook.common.util.ByteConstants
 import com.facebook.drawee.backends.pipeline.Fresco
@@ -14,6 +16,8 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.StorageReference
 import com.google.gson.Gson
+import com.speakeasy.watsonbarassistant.extensions.toast
+import java.util.*
 
 
 class BarAssistant: Application() {
@@ -25,6 +29,7 @@ class BarAssistant: Application() {
 
         val recipes = mutableListOf<MutableList<DiscoveryRecipe>>()
         val favoritesList = sortedSetOf<DiscoveryRecipe>()
+        val userCreatedRecipes = sortedSetOf<DiscoveryRecipe>()
         val ingredients = sortedSetOf<Ingredient>(kotlin.Comparator { o1, o2 -> if (o1.compareName() > o2.compareName()) 1 else -1 })
         val searchRecipes = mutableListOf<DiscoveryRecipe>()
         val feed = mutableListOf<FeedElement>()
@@ -85,6 +90,36 @@ class BarAssistant: Application() {
         }
         editor.putString(FAVORITES_PREFERENCES, favoritesJson)
         editor.apply()
+    }
+
+    fun addNewImageToFireStore(newImage: ByteArray):String{
+        var newImageId = IMAGE_FAILED_TO_SAVE
+
+        if (BarAssistant.isInternetConnected()) {
+            synchronized(BarAssistant.userCreatedRecipes) {
+                newImageId = UUID.randomUUID().toString()
+                val imagePath = RECIPE_IMAGES + newImageId + ".jpg"
+                Log.i("BarAssistantAddImage", "ImageId: " + newImageId)
+                var uploadTask = BarAssistant.storageReference?.child(imagePath)?.putBytes(newImage)
+                uploadTask?.addOnFailureListener{
+                    Log.e("BarAssistantAddImage","Failed to add image.")
+                    //TODO failure thing
+                }?.addOnSuccessListener {
+                    Log.i("BarAssistantAddImage","Successfully added image.")
+                    //TODO on success thing
+                }
+            }
+        }
+        return newImageId
+    }
+
+    fun storeNewRecipeInFireStore(fireStore: FirebaseFirestore, newRecipe: DiscoveryRecipe) {
+        if (BarAssistant.isInternetConnected()) {
+            synchronized(BarAssistant.userCreatedRecipes) {
+                val newRecipeId = UUID.randomUUID().toString()
+                fireStore.collection(RECIPE_COLLECTION).document(newRecipeId).set(newRecipe.toFireStoreRecipe())
+            }
+        }
     }
 
     private fun storeRecentlyViewedFireStore(authorization: FirebaseAuth, fireStore: FirebaseFirestore) {

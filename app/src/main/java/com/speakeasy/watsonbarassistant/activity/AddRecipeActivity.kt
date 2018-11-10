@@ -1,7 +1,6 @@
 package com.speakeasy.watsonbarassistant.com.speakeasy.watsonbarassistant.activity
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -12,63 +11,110 @@ import android.support.annotation.RequiresApi
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
 import android.view.View
-import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
-import android.widget.Button
-import com.speakeasy.watsonbarassistant.CAMERA_PERMISSION_REQUEST_CODE
-import com.speakeasy.watsonbarassistant.R
-import com.speakeasy.watsonbarassistant.REQUEST_TAKE_PHOTO
-import com.speakeasy.watsonbarassistant.VISION_URL
+import com.speakeasy.watsonbarassistant.*
 import com.speakeasy.watsonbarassistant.activity.MainMenu
-import khttp.responses.Response
 import kotlinx.android.synthetic.main.activity_add_recipe.*
-import kotlinx.android.synthetic.main.activity_vision.*
-import kotlinx.android.synthetic.main.fragment_ingredient_tab.*
-import org.json.JSONArray
-import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 import java.util.*
 
 class AddRecipeActivity : AppCompatActivity() {
+    var newImageBitmap: Bitmap? = null
+    var titleNotNull = false
+    var descriptionNotNull = false
+    var pictureNotDefualt = false
+    var ingredientsUnique = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_recipe)
+
+        addRecipeButton.visibility = View.INVISIBLE
+
+        title_text.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(p0: Editable?) {
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                setTitleTextState(!p0.isNullOrEmpty())
+            }
+        })
+
+        description_text.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(p0: Editable?) {
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                setDescriptionTextState(!p0.isNullOrEmpty())
+            }
+        })
 
         newPic.setOnClickListener{
             if (!checkCameraPermission()) {
                 ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.CAMERA), CAMERA_PERMISSION_REQUEST_CODE)
             }
         }
-/*
-        title_text.setOnClickListener {
-            ingredientInputView.visibility = View.VISIBLE
-            ingredientInputView.setOnEditorActionListener { _, actionId, _ ->
 
-                return@setOnEditorActionListener when (actionId) {
-                    EditorInfo.IME_ACTION_DONE -> {
-                        /*
-                        val name = ingredientInputView.text.toString()
-                        mainMenu.addIngredient(name)
-                        refresh()
-                        */
-                        ingredientInputView.selectAll()
-                        ingredientInputView.setText("")
-                        true
-                    }
-                    else -> false
-                }
-            }
-            ingredientInputView.post {
-                ingredientInputView.requestFocus()
-                ingredientInputView.setText("")
-                ingredientInputView.setSelection(0)
-                val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-                imm?.showSoftInput(ingredientInputView, InputMethodManager.SHOW_IMPLICIT)
+        addRecipeButton.setOnClickListener {
+            if (this.newImageBitmap != null) {
+                addRecipe()
+                this.finish()
+            } else {
+                //Toast.makeText(Context,"Add a Picture!",Toast.LENGTH_SHORT)
+                Log.i("AddRecipeActivity", "Add a new recipe.")
             }
         }
-        */
+    }
+
+    private fun setTitleTextState(state: Boolean){
+        this.titleNotNull = state
+        Log.i("AddRecipeActivity", "Title state: " + this.titleNotNull.toString())
+        //TODO check title uniquness
+        setAddButtonVisibility()
+    }
+
+    private fun setDescriptionTextState(state: Boolean){
+        this.descriptionNotNull = state
+        Log.i("AddRecipeActivity", "Description state: " + this.descriptionNotNull.toString())
+        setAddButtonVisibility()
+    }
+
+    private fun setAddButtonVisibility(){
+        val buttonVisible = this.ingredientsUnique and this.titleNotNull and this.descriptionNotNull and this.pictureNotDefualt
+        if (buttonVisible){
+            addRecipeButton.visibility = View.VISIBLE
+        } else {
+            addRecipeButton.visibility = View.INVISIBLE
+        }
+    }
+
+    fun addRecipe(){
+        Log.i("AddRecipeActivity","Adding the recipe.")
+        val assistant = BarAssistant()
+
+        val stream = ByteArrayOutputStream()
+        this.newImageBitmap?.compress(Bitmap.CompressFormat.PNG, 100, stream)
+        val newImageByteArray = stream.toByteArray()
+
+        val newImageId = assistant.addNewImageToFireStore(newImageByteArray)
+
+        if (newImageId == IMAGE_FAILED_TO_SAVE){
+            //TODO failed to save image message
+        }else{
+            var newRecipe = DiscoveryRecipe(title = title_text.text.toString(), description = description_text.text.toString(), imageId = newImageId)
+            Log.i("AddRecipeActivity",newRecipe.toString())
+            val newFireRecipe = newRecipe.toFireStoreRecipe()
+            Log.i("AddRecipeActivity",newFireRecipe.toString())
+        }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -89,27 +135,10 @@ class AddRecipeActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == Activity.RESULT_OK) {
             val bitmap = data?.extras?.get("data") as Bitmap
+            this.newImageBitmap = bitmap
+            this.pictureNotDefualt = true
             newPic.setImageBitmap(bitmap)
-
-            /*
-            val encoded = encodeBitmapToBase64(bitmap)
-            val jImgContent = JSONObject()
-            jImgContent.put("content", encoded)
-            val jRequestsBody = JSONObject()
-            jRequestsBody.put("image", jImgContent)
-            val jType = JSONObject(mapOf("type" to "WEB_DETECTION", "maxResults" to 10))
-            val jFeaturesArray = JSONArray()
-            jFeaturesArray.put(jType)
-            val jRequestsArray = JSONArray()
-
-            jRequestsBody.put("features", jFeaturesArray)
-            jRequestsArray.put(jRequestsBody)
-            val jRequest = JSONObject(mapOf("requests" to jRequestsArray))
-
-            khttp.async.post(VISION_URL, data=jRequest, onResponse={
-                handleVisionResponse(this)
-            })
-            */
+            setAddButtonVisibility()
         }
     }
 

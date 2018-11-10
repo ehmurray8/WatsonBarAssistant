@@ -16,8 +16,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-
-            <TextView
+            <EditText
                 android:id="@+id/title_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -26,10 +25,10 @@
                 android:layout_marginTop="15dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginBottom="10dp"
-                android:text="@string/recipe_addition_defualt"
                 android:textColor="@color/primaryText"
                 android:textSize="25sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:hint="Title"/>
 
             <com.facebook.drawee.view.SimpleDraweeView
                 android:id="@+id/newPic"
@@ -58,21 +57,13 @@
                 android:textColor="@color/primaryText"
                 android:text="@string/description_header"
                 android:textSize="20sp" />
+
             <EditText
+                android:id="@+id/description_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:lines="4"
-                android:hint="Description"/>
-
-            <TextView
-                android:id="@+id/description_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="30dp"
-                android:layout_marginEnd="20dp"
-                android:text="@string/recipe_addition_defualt"
-                android:textColor="@color/primaryText"
-                android:textSize="16sp" />
+                android:hint="Description"
+                android:lines="4" />
 
             <!--Button
                 android:id="@+id/readDescriptionButton"
@@ -89,16 +80,17 @@
                 android:textColor="@color/primaryText"
                 android:text="@string/ingredients_header"
                 android:textSize="20sp" />
-
-            <TextView
-                android:id="@+id/ingredients_list"
-                android:layout_width="wrap_content"
+            <EditText
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="30dp"
-                android:layout_marginEnd="20dp"
-                android:text="@string/recipe_addition_defualt"
-                android:textColor="@color/primaryText"
-                android:textSize="16sp" />
+                android:lines="4"
+                android:hint="Ingredients"/>
+
+            <Button
+                android:id="@+id/addRecipeButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Add Recipe" />
 
         </LinearLayout>
     </ScrollView>

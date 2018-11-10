@@ -21,7 +21,7 @@ data class FireStoreRecipe(val title: String = "", val imageUrl: String = "", va
 @kotlinx.serialization.Serializable
 data class DiscoveryRecipe(@Optional val title: String = "",
                            @Optional val imageUrl: String = "",
-                           @Optional val reviewCount: String = "",
+                           @Optional val reviewCount: String = "0",
                            @Optional val description: String = "",
                            @Optional val recipeUrl: String = "",
                            @Optional val ingredientList: List<String> = emptyList(),
