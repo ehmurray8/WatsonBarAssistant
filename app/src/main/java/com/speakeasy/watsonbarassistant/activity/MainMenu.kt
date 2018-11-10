@@ -118,6 +118,7 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
                 val storedRecipes = gson.fromJson(recipeJson, Array<DiscoveryRecipe>::class.java)
                 if (storedRecipes != null && storedRecipes.count() > 0) {
                     BarAssistant.recipes[i].addAll(storedRecipes.toList())
+
                 }
             }
         }

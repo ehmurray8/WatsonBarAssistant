@@ -46,6 +46,7 @@ class RecipeDetail : AppCompatActivity() {
     private var drinkBitmap: Bitmap? = null
     private var recipeTitle: String? = null
     private var lastReadTime = -1L
+    private var collapsedMenu: Menu? = null
 
     private var favoriteIds = listOf<String>()
     get() {
@@ -115,7 +116,6 @@ class RecipeDetail : AppCompatActivity() {
         }
     }
 
-    private var collapsedMenu: Menu? = null
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.detail_menu, menu)
@@ -187,6 +187,7 @@ class RecipeDetail : AppCompatActivity() {
                         collapsingToolbar.setContentScrimColor(vibrantColor)
                         collapsingToolbar.setStatusBarScrimColor(baseContext.getColor(R.color.black_trans80))
                     }
+                    Unit
                 }
             } catch (_: MalformedURLException) {}
         }
@@ -199,9 +200,11 @@ class RecipeDetail : AppCompatActivity() {
                 appBarExpanded = true
                 invalidateOptionsMenu()
             }
+            thread {
+                addToRecentlyViewed(recipe)
+            }
         }
     }
-
 
      private fun addToRecentlyViewed(recipe: DiscoveryRecipe) {
          val currentTime = System.currentTimeMillis()
