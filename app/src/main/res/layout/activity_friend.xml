@@ -5,16 +5,44 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".FriendActivity">
+    tools:ignore="HardcodedText"
+    tools:context=".activity.FriendActivity">
 
-    <TextView
+    <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:layout_gravity="center_horizontal"/>
+        android:layout_margin="15dp"
+        android:textColor="@color/primaryText"
+        android:hint="Username"
+        android:inputType="text"
+        android:imeOptions="actionSearch" />
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/friendTabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="8dp"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        style="@style/MainTabLayout">
+
+        <android.support.design.widget.TabItem
+            android:id="@+id/friendTab"
+            android:text="Friends"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"/>
+
+        <android.support.design.widget.TabItem
+            android:id="@+id/userTab"
+            android:text="Users"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"/>
+
+    </android.support.design.widget.TabLayout>
 
     <android.support.v7.widget.RecyclerView
+        android:id="@+id/userRecycler"
+        android:layout_marginTop="15dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="match_parent"/>
 
 </LinearLayout>

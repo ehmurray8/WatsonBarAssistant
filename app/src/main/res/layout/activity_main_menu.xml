@@ -42,7 +42,7 @@
 
         <android.support.design.widget.TabItem
             android:id="@+id/favorites_tab"
-            android:text="@string/favorites_tab"
+            android:text="@string/account_tab"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"/>
 

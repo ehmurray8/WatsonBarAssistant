@@ -24,16 +24,25 @@
         android:layout_below="@id/profile_name"
         android:layout_marginTop="20dp"/>
 
-    <Button
-        android:id="@+id/add_email"
-        android:text="@string/add_email"
-        android:visibility="invisible"
-        android:textColor="@color/primaryText"
-        android:layout_centerHorizontal="true"
-        android:layout_width="wrap_content"
-        android:layout_above="@+id/change_password"
-        android:layout_marginBottom="20dp"
-        android:layout_height="wrap_content" />
+   <TextView
+       android:id="@+id/profile_username"
+       android:layout_centerHorizontal="true"
+       android:textColor="@color/primaryText"
+       android:layout_below="@id/profile_email"
+       android:layout_marginTop="20dp"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content" />
+
+   <Button
+       android:id="@+id/add_email"
+       android:text="@string/add_email"
+       android:visibility="invisible"
+       android:textColor="@color/primaryText"
+       android:layout_centerHorizontal="true"
+       android:layout_width="wrap_content"
+       android:layout_above="@+id/change_password"
+       android:layout_marginBottom="20dp"
+       android:layout_height="wrap_content" />
 
     <Button
         android:id="@+id/change_password"
@@ -54,16 +63,5 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:text="@string/sign_out"/>
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/addFriendButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:src="@drawable/ic_add_icon"
-        android:tint="@color/primaryText" />
 
 </RelativeLayout>
