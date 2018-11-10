@@ -36,7 +36,6 @@ class FriendActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
         userRecycler.apply {
             setHasFixedSize(true)
             layoutManager = viewManager
-            adapter = viewAdapter
         }
 
         val itemDecorator = DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
@@ -60,15 +59,18 @@ class FriendActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
 
     private fun showCurrentTab() {
         users.clear()
-        when (tabIndex) {
+        viewAdapter = when (tabIndex) {
             0 -> {
                 users.addAll(BarAssistant.friends)
+                FriendAdapter(applicationContext, users)
             } else -> {
                 val uid = auth.currentUser?.uid
                 users.addAll(BarAssistant.allUsers.asSequence().filter { it.userId != uid }
                         .filter { it !in users && it !in BarAssistant.blockedUsers}.toList())
+                FriendAdapter(applicationContext, users)
             }
         }
+        userRecycler.adapter = viewAdapter
         refresh()
     }
 

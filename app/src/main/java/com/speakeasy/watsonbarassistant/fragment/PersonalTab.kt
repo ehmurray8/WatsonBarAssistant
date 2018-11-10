@@ -42,7 +42,7 @@ class PersonalTab : Fragment(), TabLayout.OnTabSelectedListener {
         updateRecyclerView()
     }
 
-    private fun setUserInfo() {
+    fun setUserInfo() {
         val firstName = BarAssistant.userInfo?.firstName ?: ""
         val lastName = BarAssistant.userInfo?.lastName ?: ""
         val fullName = "$firstName $lastName"

@@ -91,6 +91,7 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
                         val userInfo = recipeDocument.toObject(UserInfo::class.java)
                         if(userInfo != null) {
                             BarAssistant.userInfo = userInfo
+                            (fragment as? PersonalTab)?.setUserInfo()
                         }
                     }
                 }
@@ -129,6 +130,7 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
             synchronized(it) {
                 if(userInfoJson != "") {
                     BarAssistant.userInfo = gson.fromJson(userInfoJson, UserInfo::class.java)
+                    (fragment as? PersonalTab)?.setUserInfo()
                 }
             }
         }
