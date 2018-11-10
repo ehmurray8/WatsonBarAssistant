@@ -24,25 +24,23 @@ fun loadImage(context: Context, imageView: SimpleDraweeView, recipe: DiscoveryRe
     }
 }
 
-
 fun loadIngredientImage(context: Context, imageView: SimpleDraweeView, ingredient: Ingredient?) {
     imageView.hierarchy.setFailureImage(R.mipmap.ic_cherry)
     imageView.hierarchy.setRetryImage(R.mipmap.ic_cherry)
+
     if(ingredient != null) {
-        val imageReference = BarAssistant.storageReference?.child(ingredient.getImageName())
-        if(ingredient.imageUri == "") {
+        val imageUriString = ingredient.imageUri
+        if(imageUriString == "") {
+            val imageReference = BarAssistant.storageReference?.child(ingredient.getImageName())
             imageReference?.downloadUrl?.addOnSuccessListener {
                 ingredient.imageUri = it.toString()
-                imageView.setImageURI(it.toString(), context)
+                imageView.setImageURI(ingredient.imageUri, context)
             }
         } else {
             imageView.setImageURI(ingredient.imageUri, context)
         }
-    } else {
-        loadFailImage(context, imageView)
     }
 }
-
 
 private fun setImage(imageView: SimpleDraweeView, recipe: DiscoveryRecipe, context: Context,
                      recipeUri: Uri? = null) {

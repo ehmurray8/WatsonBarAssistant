@@ -6,8 +6,6 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
 import android.widget.ImageButton
 import android.widget.RelativeLayout
 import android.widget.TextView
@@ -27,7 +25,6 @@ class IngredientGridAdapter(private val ingredientsSet: TreeSet<Ingredient>, pri
     }
 
     private var showDelete = false
-    private var animation: Animation = AnimationUtils.loadAnimation(activity, R.anim.wobble)
 
     class ViewHolder(val layout: CardView) : RecyclerView.ViewHolder(layout)
 
@@ -48,9 +45,12 @@ class IngredientGridAdapter(private val ingredientsSet: TreeSet<Ingredient>, pri
         val imageView = relativeLayout?.findViewById<SimpleDraweeView>(R.id.ingredientCard)
         imageView?.hierarchy?.setPlaceholderImage(R.mipmap.ic_cherry)
 
+        imageView?.let{
+            loadIngredientImage(activity, it, ingredient)
+        }
+
         val deleteButton = relativeLayout?.findViewById<ImageButton>(R.id.ingredientGridDelete)
         if(showDelete) {
-            imageView?.startAnimation(animation)
             deleteButton?.visibility = View.VISIBLE
             deleteButton?.setOnClickListener {
                 removeAt(position)
@@ -61,7 +61,6 @@ class IngredientGridAdapter(private val ingredientsSet: TreeSet<Ingredient>, pri
                 notifyDataSetChanged()
             }
         } else {
-            cardView?.clearAnimation()
             deleteButton?.visibility = View.GONE
         }
 
@@ -76,7 +75,7 @@ class IngredientGridAdapter(private val ingredientsSet: TreeSet<Ingredient>, pri
         }
     }
 
-    override fun getItemCount(): Int = ingredientsList.count()
+    override fun getItemCount(): Int = ingredientsSet.count()
 
     fun removeAt(position: Int) {
         val ingredient = ingredientsList[position]
