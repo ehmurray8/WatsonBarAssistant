@@ -6,7 +6,6 @@ import android.graphics.drawable.Drawable
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.util.Log
-import android.widget.Toast
 import com.facebook.cache.disk.DiskCacheConfig
 import com.facebook.common.util.ByteConstants
 import com.facebook.drawee.backends.pipeline.Fresco
@@ -16,8 +15,8 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.StorageReference
 import com.google.gson.Gson
-import com.speakeasy.watsonbarassistant.extensions.toast
 import java.util.*
+import com.speakeasy.watsonbarassistant.extensions.*
 
 
 class BarAssistant: Application() {
@@ -26,6 +25,7 @@ class BarAssistant: Application() {
         var defaultImage: Drawable? = null
         var networkInfo: NetworkInfo? = null
         var storageReference: StorageReference? = null
+        var userInfo: UserInfo? = null
 
         val recipes = mutableListOf<MutableList<DiscoveryRecipe>>()
         val favoritesList = sortedSetOf<DiscoveryRecipe>()
@@ -33,6 +33,17 @@ class BarAssistant: Application() {
         val ingredients = sortedSetOf<Ingredient>(kotlin.Comparator { o1, o2 -> if (o1.compareName() > o2.compareName()) 1 else -1 })
         val searchRecipes = mutableListOf<DiscoveryRecipe>()
         val feed = mutableListOf<FeedElement>()
+        val friends = mutableListOf<UserInfo>()
+
+        // Active requests that the user has made to other users
+        val pendingRequests = mutableListOf<UserInfo>()
+
+        // Requests that the user has received that they have not yet accepted
+        val requestsInProgress = mutableListOf<UserInfo>()
+
+        val allUsers = mutableListOf<UserInfo>()
+
+        val blockedUsers = mutableListOf<UserInfo>()
 
         val lastViewedRecipes: MutableMap<Long, DiscoveryRecipe> = mutableMapOf()
         val lastViewedTimes: MutableList<Long> = mutableListOf()
@@ -92,13 +103,13 @@ class BarAssistant: Application() {
         editor.apply()
     }
 
-    fun addNewImageToFireStore(newImage: ByteArray):Long{
-        var newImageId: Long = -1
+    fun addNewImageToFireStore(newImage: ByteArray):String{
+        var newImageId = "-1"
 
         if (BarAssistant.isInternetConnected()) {
             synchronized(BarAssistant.userCreatedRecipes) {
-                newImageId = UUID.randomUUID().mostSignificantBits
-                val imagePath = RECIPE_IMAGES + newImageId + ".jpg"
+                newImageId = UUID.randomUUID().mostSignificantBits.toString().dropLast(4)
+                val imagePath = RECIPE_IMAGES + "/GSBimg" + newImageId + ".jpg"
                 Log.i("BarAssistantAddImage", "ImageId: " + newImageId)
                 var uploadTask = BarAssistant.storageReference?.child(imagePath)?.putBytes(newImage)
                 uploadTask?.addOnFailureListener{
@@ -118,17 +129,21 @@ class BarAssistant: Application() {
             val uid = authorization.currentUser?.uid
             if (uid != null) {
                 synchronized(BarAssistant.userCreatedRecipes) {
-                    val newRecipeId = UUID.randomUUID().toString()
 
                     //Add to master recipe list
-                    fireStore.collection(RECIPE_COLLECTION).document(newRecipeId).set(newRecipe.toFireStoreRecipe())
-
+                    val fireRecipe = newRecipe.toFireStoreRecipe()
+                    fireStore.collection(RECIPE_COLLECTION).document(newRecipe.imageId).set(fireRecipe)
+                    Log.i("FireRecipeType","fire: " + fireRecipe.imageId + " dis: " + newRecipe.imageId)
                     //Add to user created list
-                    fireStore.collection(MAIN_COLLECTION).document(uid).collection(USER_CREATED_RECIPES).document(newRecipeId).set(newRecipe.toFireStoreRecipe())
+                    synchronized(BarAssistant.userCreatedRecipes){
+                        userCreatedRecipes.add(newRecipe)
+                    }
+
+                    updateUserCreatedReipesFireStore(authorization,fireStore)
 
                     //Add to algolia
 
-                    Log.i("BarAssistantAddingFirebaseRecipe", "id: " + newRecipeId + " recipe: " + newRecipe.toString() + " uid: " + uid.toString())
+                    Log.i("BarAssistantAddingFirebaseRecipe", "id: " + newRecipe.imageId + " recipe: " + newRecipe.toString() + " uid: " + uid.toString())
 
                 }
             } else {
@@ -143,16 +158,15 @@ class BarAssistant: Application() {
             if (uid != null) {
                 synchronized(BarAssistant.lastViewedRecipes) {
                     val recipes = mutableListOf<Int>()
-                    BarAssistant.lastViewedRecipes.keys.sortedByDescending { it -> it }
-                            .forEach {
-                                val recipe = BarAssistant.lastViewedRecipes[it]
-                                if (recipe != null) recipes.add(recipe.imageId.toFloat().toInt())
-                            }
+                    BarAssistant.lastViewedRecipes.keys.sortedByDescending { it -> it } .forEach {
+                        val recipe = BarAssistant.lastViewedRecipes[it]
+                        if (recipe != null) recipes.add(recipe.imageId.toFloat().toInt())
+                    }
                     synchronized(BarAssistant.lastViewedTimes) {
-                        val recentlyViewedMap = mapOf(LAST_VIEWED_RECIPE_TIMES to BarAssistant.lastViewedTimes,
+                        val recentlyViewedMap = mapOf(
+                                LAST_VIEWED_RECIPE_TIMES to BarAssistant.lastViewedTimes,
                                 LAST_VIEWED_RECIPES to recipes)
-                        fireStore.collection(MAIN_COLLECTION).document(uid).collection(RECENTLY_VIEWED_COLLECTION)
-                                .document("main").set(recentlyViewedMap)
+                        fireStore.recentlyViewedDocument(uid).set(recentlyViewedMap)
                     }
                 }
             }
@@ -162,10 +176,40 @@ class BarAssistant: Application() {
     fun loadFavoritesFromFireStore(authorization: FirebaseAuth, fireStore: FirebaseFirestore) {
         val uid = authorization.currentUser?.uid
         if(isInternetConnected() && uid != null) {
-            fireStore.collection(MAIN_COLLECTION).document(uid).collection(FAVORITES_COLLECTION)
-                    .document("main").get().addOnSuccessListener {
-                        loadRecipeFromDocument(it, fireStore)
+            fireStore.favoritesDocument(uid).get().addOnSuccessListener {
+                loadRecipeFromDocument(it, fireStore)
+            }
+        }
+    }
+
+    fun loadUserCreatedRecipesFromFireStore(authorization: FirebaseAuth, fireStore: FirebaseFirestore) {
+        val uid = authorization.currentUser?.uid
+        if(isInternetConnected() && uid != null) {
+            fireStore.userCreatedRecipesDocument(uid).get().addOnSuccessListener {
+                loadRecipeFromDocumentToUserCreatedList(it, fireStore)
+            }
+        }
+    }
+
+    private fun loadRecipeFromDocumentToUserCreatedList(document: DocumentSnapshot, fireStore: FirebaseFirestore){
+        val temporaryList = mutableListOf<DiscoveryRecipe>()
+        val recipeIds = document.get(USER_CREATED_RECIPES_LIST) as? ArrayList<*>
+        var count = 0
+        recipeIds?.forEach { recipeId ->
+            fireStore.recipeDocument(recipeId.toString()).get().addOnCompleteListener {
+                if (it.isSuccessful) {
+                    val recipeDocument = it.result ?: return@addOnCompleteListener
+                    val recipe = recipeDocument.toObject(FireStoreRecipe::class.java)
+                    temporaryList.add(recipe?.toDiscoveryRecipe() ?: return@addOnCompleteListener)
+                    count++
+                    if(++count >= recipeIds.count()) {
+                        synchronized(BarAssistant.userCreatedRecipes) {
+                            userCreatedRecipes.clear()
+                            userCreatedRecipes.addAll(temporaryList)
+                        }
                     }
+                }
+            }
         }
     }
 
@@ -174,7 +218,7 @@ class BarAssistant: Application() {
         val favoriteIds = document.get(FAVORITES_LIST) as? ArrayList<*>
         var count = 0
         favoriteIds?.forEach { recipeId ->
-            fireStore.collection(RECIPE_COLLECTION).document(recipeId.toString()).get().addOnCompleteListener {
+            fireStore.recipeDocument(recipeId.toString()).get().addOnCompleteListener {
                 if (it.isSuccessful) {
                     val recipeDocument = it.result ?: return@addOnCompleteListener
                     val favorite = recipeDocument.toObject(FireStoreRecipe::class.java)
@@ -191,6 +235,27 @@ class BarAssistant: Application() {
         }
     }
 
+    fun updateUserCreatedReipesFireStore(authorization: FirebaseAuth, fireStore: FirebaseFirestore) {
+        if (BarAssistant.isInternetConnected()) {
+            val uid = authorization.currentUser?.uid
+            val recipesMap = synchronized(BarAssistant.userCreatedRecipes) {
+                mapOf(USER_CREATED_RECIPES_LIST to userCreatedRecipes.map { it.imageId.toLong() })
+            }
+            if (uid != null) {
+                fireStore.userCreatedRecipesDocument(uid).set(recipesMap)
+                userCreatedRecipes.forEach { userRecipe ->
+                    fireStore.recipeDocument(userRecipe.imageId).get().addOnSuccessListener {
+                        val recipe = it.toObject(FireStoreRecipe::class.java)
+                        if(recipe != null) {
+                            recipe.count++
+                            fireStore.recipeDocument(userRecipe.imageId).set(recipe)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     fun updateFavoriteFireStore(authorization: FirebaseAuth, fireStore: FirebaseFirestore) {
         if (BarAssistant.isInternetConnected()) {
             val uid = authorization.currentUser?.uid
@@ -198,8 +263,81 @@ class BarAssistant: Application() {
                 mapOf(FAVORITES_LIST to favoritesList.map { it.imageId.toFloat().toInt() })
             }
             if (uid != null) {
-                fireStore.collection(MAIN_COLLECTION).document(uid).collection(FAVORITES_COLLECTION)
-                        .document("main").set(favoritesMap)
+                fireStore.favoritesDocument(uid).set(favoritesMap)
+                favoritesList.forEach { favorite ->
+                    fireStore.recipeDocument(favorite.imageId).get().addOnSuccessListener {
+                        val recipe = it.toObject(FireStoreRecipe::class.java)
+                        if(recipe != null) {
+                            recipe.count++
+                            fireStore.recipeDocument(favorite.imageId).set(recipe)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fun loadUserInfo(authorization: FirebaseAuth, fireStore: FirebaseFirestore) {
+        if(BarAssistant.isInternetConnected()) {
+            val uid = authorization.currentUser?.uid
+            if (uid != null) {
+                getUserInfoFromCollection(fireStore, uid, PENDING_FRIENDS_COLLECTION, pendingRequests, PENDING_LIST)
+                getUserInfoFromCollection(fireStore, uid, FRIEND_REQUEST_COLLECTION, requestsInProgress, REQUEST_LIST)
+                getUserInfoFromCollection(fireStore, uid, FRIENDS_COLLECTION, friends, FRIEND_LIST)
+                getUserInfoFromCollection(fireStore, uid, BLOCKED_COLLECTION, blockedUsers, BLOCKED_LIST)
+                getAllUsers(fireStore)
+            }
+        }
+    }
+
+    private fun getUserInfoFromCollection(fireStore: FirebaseFirestore, uid: String,
+                                          collection: String, outputList: MutableList<UserInfo>,
+                                          identifier: String) {
+        fireStore.appDocument(uid, collection).get().addOnSuccessListener {
+            val requestIds = it.get(identifier) as? ArrayList<*>
+            Log.d("Load Users", "Collection: $collection, ${requestIds?.toStringMutableList()}")
+            synchronized(outputList) {
+                outputList.clear()
+            }
+            requestIds?.forEach { rid ->
+                (rid as? String)?.let { otherUserId ->
+                    addUserInfoToList(fireStore, otherUserId, outputList, collection)
+                }
+            }
+        }
+    }
+
+    private fun addUserInfoToList(fireStore: FirebaseFirestore, otherUserId: String,
+                                  outputList: MutableList<UserInfo>, collection: String) {
+        fireStore.userDocument(otherUserId).get().addOnSuccessListener {
+            it.toObject(UserInfo::class.java)?.let { userInfo ->
+                Log.d("Load Users", "Collection: $collection, Id: $otherUserId, UserInfo: $userInfo")
+                synchronized(outputList) {
+                    userInfo.userId = otherUserId
+                    outputList.add(userInfo)
+                }
+            }
+        }
+    }
+
+    private fun getAllUsers(fireStore: FirebaseFirestore) {
+        fireStore.allUsersDocument().get().addOnSuccessListener {
+            val storedUserIds = it.get(ALL_USERS_LIST) as? ArrayList<*>
+            val allUserIds = storedUserIds?.toStringMutableList()
+            allUserIds?.forEach { userId ->
+                synchronized(BarAssistant.allUsers){
+                    BarAssistant.allUsers.clear()
+                }
+                fireStore.userDocument(userId).get().addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        task.result?.toObject(UserInfo::class.java)?.let { user ->
+                            synchronized(BarAssistant.allUsers) {
+                                user.userId = userId
+                                BarAssistant.allUsers.add(user)
+                            }
+                        }
+                    }
+                }
             }
         }
     }

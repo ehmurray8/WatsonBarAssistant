@@ -9,13 +9,14 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.speakeasy.watsonbarassistant.*
+import com.speakeasy.watsonbarassistant.BarAssistant
+import com.speakeasy.watsonbarassistant.DiscoveryRecipe
+import com.speakeasy.watsonbarassistant.R
 import com.speakeasy.watsonbarassistant.activity.MainMenu
 import com.speakeasy.watsonbarassistant.activity.RecipeDetail
 import com.speakeasy.watsonbarassistant.adapter.RecipeAdapter
 import com.speakeasy.watsonbarassistant.extensions.OnItemClickListener
 import com.speakeasy.watsonbarassistant.extensions.addOnItemClickListener
-import com.speakeasy.watsonbarassistant.DiscoveryRecipe
 import kotlinx.android.synthetic.main.fragment_my_favorites_tab.*
 
 

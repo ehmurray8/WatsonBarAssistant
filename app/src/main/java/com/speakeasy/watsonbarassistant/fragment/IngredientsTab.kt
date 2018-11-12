@@ -103,16 +103,9 @@ class IngredientsTab : Fragment() {
                 addMenuButton.show()
             }
         }
-        /*
         addViaCameraButton.setOnClickListener {
             val intent = Intent(activity, VisionActivity::class.java)
             startActivity(intent)
-        }
-        */
-        addViaCameraButton.setOnClickListener {
-            val intent = Intent(activity, AddRecipeActivity::class.java)
-            startActivity(intent)
-            //activity?.applicationContext?.toast("Voice support to be added!")
         }
 
         val itemDecorator = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)

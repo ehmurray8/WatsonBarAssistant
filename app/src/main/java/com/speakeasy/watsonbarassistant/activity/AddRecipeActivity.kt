@@ -109,10 +109,10 @@ class AddRecipeActivity : AppCompatActivity() {
 
         val newImageId = assistant.addNewImageToFireStore(newImageByteArray)
 
-        if (newImageId.equals(-1)){
+        if (newImageId == "-1"){
             //TODO failed to save image message
         }else{
-            var newRecipe = DiscoveryRecipe(title = title_text.text.toString(), description = description_text.text.toString(), imageId = newImageId.toString())
+            var newRecipe = DiscoveryRecipe(title = title_text.text.toString(), description = description_text.text.toString(), imageId = newImageId)
             Log.i("AddRecipeActivity",newRecipe.toString())
             assistant.storeNewRecipeInFireStore(FirebaseAuth.getInstance(),FirebaseFirestore.getInstance(), newRecipe)
         }

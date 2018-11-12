@@ -45,6 +45,8 @@ class RecipeDetail : AppCompatActivity() {
     private var appBarExpanded = true
     private var drinkBitmap: Bitmap? = null
     private var recipeTitle: String? = null
+    private var lastReadTime = -1L
+    private var collapsedMenu: Menu? = null
 
     private var favoriteIds = listOf<String>()
     get() {
@@ -66,7 +68,7 @@ class RecipeDetail : AppCompatActivity() {
 
             description_content.text = recipe.description
 
-            val viewAdapter = IngredientAdapter(TreeSet(recipe.ingredientList.map { Ingredient(it) }))
+            val viewAdapter = IngredientAdapter(TreeSet(recipe.ingredientList.map { Ingredient(it) }), applicationContext)
             val viewManager = AutoLinearLayoutManager(this)
 
             detailIngredients.isNestedScrollingEnabled = false
@@ -114,7 +116,6 @@ class RecipeDetail : AppCompatActivity() {
         }
     }
 
-    private var collapsedMenu: Menu? = null
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.detail_menu, menu)
@@ -163,6 +164,8 @@ class RecipeDetail : AppCompatActivity() {
             collapsedMenu?.getItem(0)?.setIcon(R.drawable.ic_share_white_24dp)
         } else {
             collapsedMenu?.getItem(0)?.setIcon(R.drawable.ic_share_black_24dp)
+            collapsedMenu?.add("Read Description")?.setIcon(R.drawable.ic_mic_black_24dp)
+                    ?.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM)
         }
         return super.onPrepareOptionsMenu(collapsedMenu)
     }
@@ -184,6 +187,7 @@ class RecipeDetail : AppCompatActivity() {
                         collapsingToolbar.setContentScrimColor(vibrantColor)
                         collapsingToolbar.setStatusBarScrimColor(baseContext.getColor(R.color.black_trans80))
                     }
+                    Unit
                 }
             } catch (_: MalformedURLException) {}
         }
@@ -196,9 +200,11 @@ class RecipeDetail : AppCompatActivity() {
                 appBarExpanded = true
                 invalidateOptionsMenu()
             }
+            thread {
+                addToRecentlyViewed(recipe)
+            }
         }
     }
-
 
      private fun addToRecentlyViewed(recipe: DiscoveryRecipe) {
          val currentTime = System.currentTimeMillis()
@@ -256,11 +262,14 @@ class RecipeDetail : AppCompatActivity() {
     }
 
     private fun addReadListener(recipe: DiscoveryRecipe) {
-        readDescriptionButton.setOnClickListener {
-            clearMediaPlayer()
-            mediaPlayer = MediaPlayer()
-            val textToSpeech = TextToSpeech(HandleTtS(), mediaPlayer ?: return@setOnClickListener)
-            textToSpeech.execute(recipe.title + ". " + recipe.description)
+        readForMe.setOnClickListener {
+            if(lastReadTime == -1L || System.currentTimeMillis() - lastReadTime > 60_000) {
+                clearMediaPlayer()
+                mediaPlayer = MediaPlayer()
+                val textToSpeech = TextToSpeech(HandleTtS(), mediaPlayer ?: return@setOnClickListener)
+                textToSpeech.execute(recipe.title + ". " + recipe.description)
+            }
+            lastReadTime = System.currentTimeMillis()
         }
     }
 }

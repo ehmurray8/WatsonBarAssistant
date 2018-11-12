@@ -13,8 +13,8 @@ fun loadImage(context: Context, imageView: SimpleDraweeView, recipe: DiscoveryRe
         if(imageUriString == "") {
             val imageReference = BarAssistant.storageReference?.child(recipe.getImageName())
             imageReference?.downloadUrl?.addOnSuccessListener {
-                setImage(imageView, recipe, context, it)
                 recipe.recipeImageUriString = it.toString()
+                setImage(imageView, recipe, context, it)
             }
         } else {
             setImage(imageView, recipe, context)
@@ -24,6 +24,23 @@ fun loadImage(context: Context, imageView: SimpleDraweeView, recipe: DiscoveryRe
     }
 }
 
+fun loadIngredientImage(context: Context, imageView: SimpleDraweeView, ingredient: Ingredient?) {
+    imageView.hierarchy.setFailureImage(R.mipmap.ic_cherry)
+    imageView.hierarchy.setRetryImage(R.mipmap.ic_cherry)
+
+    if(ingredient != null) {
+        val imageUriString = ingredient.imageUri
+        if(imageUriString == "") {
+            val imageReference = BarAssistant.storageReference?.child(ingredient.getImageName())
+            imageReference?.downloadUrl?.addOnSuccessListener {
+                ingredient.imageUri = it.toString()
+                imageView.setImageURI(ingredient.imageUri, context)
+            }
+        } else {
+            imageView.setImageURI(ingredient.imageUri, context)
+        }
+    }
+}
 
 private fun setImage(imageView: SimpleDraweeView, recipe: DiscoveryRecipe, context: Context,
                      recipeUri: Uri? = null) {

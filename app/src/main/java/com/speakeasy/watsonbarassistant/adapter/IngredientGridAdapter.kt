@@ -6,14 +6,13 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
 import android.widget.ImageButton
 import android.widget.RelativeLayout
 import android.widget.TextView
 import com.facebook.drawee.view.SimpleDraweeView
 import com.speakeasy.watsonbarassistant.Ingredient
 import com.speakeasy.watsonbarassistant.R
+import com.speakeasy.watsonbarassistant.loadIngredientImage
 import java.util.*
 
 class IngredientGridAdapter(private val ingredientsSet: TreeSet<Ingredient>, private val activity: Activity):
@@ -26,7 +25,6 @@ class IngredientGridAdapter(private val ingredientsSet: TreeSet<Ingredient>, pri
     }
 
     private var showDelete = false
-    private var animation: Animation = AnimationUtils.loadAnimation(activity, R.anim.wobble)
 
     class ViewHolder(val layout: CardView) : RecyclerView.ViewHolder(layout)
 
@@ -40,14 +38,19 @@ class IngredientGridAdapter(private val ingredientsSet: TreeSet<Ingredient>, pri
         val cardView = holder.layout as? CardView
         val relativeLayout = cardView?.getChildAt(0) as? RelativeLayout
         val textView = relativeLayout?.findViewById<TextView>(R.id.ingredientGridName)
-        textView?.text = ingredientsList[position].name.capitalize()
+
+        val ingredient = ingredientsList[position]
+        textView?.text = ingredient.name.capitalize()
 
         val imageView = relativeLayout?.findViewById<SimpleDraweeView>(R.id.ingredientCard)
         imageView?.hierarchy?.setPlaceholderImage(R.mipmap.ic_cherry)
 
+        imageView?.let{
+            loadIngredientImage(activity, it, ingredient)
+        }
+
         val deleteButton = relativeLayout?.findViewById<ImageButton>(R.id.ingredientGridDelete)
         if(showDelete) {
-            imageView?.startAnimation(animation)
             deleteButton?.visibility = View.VISIBLE
             deleteButton?.setOnClickListener {
                 removeAt(position)
@@ -58,7 +61,6 @@ class IngredientGridAdapter(private val ingredientsSet: TreeSet<Ingredient>, pri
                 notifyDataSetChanged()
             }
         } else {
-            cardView?.clearAnimation()
             deleteButton?.visibility = View.GONE
         }
 
@@ -67,9 +69,13 @@ class IngredientGridAdapter(private val ingredientsSet: TreeSet<Ingredient>, pri
             notifyDataSetChanged()
             true
         }
+
+        imageView?.let {
+            loadIngredientImage(activity.applicationContext, it, ingredient)
+        }
     }
 
-    override fun getItemCount(): Int = ingredientsList.count()
+    override fun getItemCount(): Int = ingredientsSet.count()
 
     fun removeAt(position: Int) {
         val ingredient = ingredientsList[position]
