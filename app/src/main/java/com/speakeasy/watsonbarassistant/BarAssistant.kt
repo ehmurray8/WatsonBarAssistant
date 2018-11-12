@@ -165,7 +165,7 @@ class BarAssistant: Application() {
                     fireStore.recipeDocument(favorite.imageId).get().addOnSuccessListener {
                         val recipe = it.toObject(FireStoreRecipe::class.java)
                         if(recipe != null) {
-                            recipe.count++
+                            recipe.favoriteCount++
                             fireStore.recipeDocument(favorite.imageId).set(recipe)
                         }
                     }
@@ -183,6 +183,7 @@ class BarAssistant: Application() {
                 getUserInfoFromCollection(fireStore, uid, FRIENDS_COLLECTION, friends, FRIEND_LIST)
                 getUserInfoFromCollection(fireStore, uid, BLOCKED_COLLECTION, blockedUsers, BLOCKED_LIST)
                 getAllUsers(fireStore)
+                loadFeedRecipes(fireStore)
             }
         }
     }

@@ -54,15 +54,14 @@ const val SHOPPING_CART_COLLECTION = "shoppingCart"
 const val FAVORITES_COLLECTION = "favorites"
 const val FAVORITES_LIST = "favoritesList"
 const val FAVORITES_PREFERENCES = "favorites"
+const val ALL_RECIPES_COLLECTION = "all_recipes"
 
+const val ALL_RECIPES_LIST = "all_recipes_list"
 const val PENDING_LIST = "PendingList"
 const val REQUEST_LIST = "RequestList"
-const val USER_LIST = "UserList"
 const val FRIEND_LIST = "FriendList"
 const val BLOCKED_LIST = "BlockedList"
 const val ALL_USERS_LIST = "AllUsersList"
-
-const val RECIPE_FAVORITE_COUNT = "count"
 
 const val USER_INFO_PREFERENCES = "UserInfo"
 
@@ -72,3 +71,4 @@ const val GROCERY_NEEDED = "needed"
 const val RC_SIGN_IN = 123
 
 const val DOWNLOAD_LINK = "https://github.com/ehmurray8/WatsonBarAssistant/releases/download/v0.0.1/bar-assistant.apk"
+
