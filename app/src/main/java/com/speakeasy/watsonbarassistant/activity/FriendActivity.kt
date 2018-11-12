@@ -18,6 +18,7 @@ class FriendActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
     private var tabIndex = 0
     private var viewAdapter: FriendAdapter? = null
     private var fireStore = FirebaseFirestore.getInstance()
+    private var authorization = FirebaseAuth.getInstance()
     private var auth = FirebaseAuth.getInstance()
 
     // Currently displayed users
@@ -40,11 +41,11 @@ class FriendActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
 
         val itemDecorator = DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
         userRecycler?.addItemDecoration(itemDecorator)
+        showCurrentTab()
     }
 
     override fun onResume() {
         super.onResume()
-        (application as? BarAssistant)?.loadUserInfo(auth, fireStore)
         refresh()
     }
 
@@ -71,7 +72,13 @@ class FriendActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
             }
         }
         userRecycler.adapter = viewAdapter
+        userRecycler.refreshDrawableState()
         refresh()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        (application as? BarAssistant)?.loadUserInfo(authorization, fireStore)
     }
 
     private fun refresh() {

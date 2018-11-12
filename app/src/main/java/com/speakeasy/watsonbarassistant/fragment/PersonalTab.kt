@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
@@ -18,12 +19,17 @@ import kotlinx.android.synthetic.main.fragment_personal_tab.*
 
 class PersonalTab : Fragment(), TabLayout.OnTabSelectedListener {
 
-    private var tabIndex = 0
+    companion object {
+        private var tabIndex = 0
+        private var scrollPosition = 0
+    }
     private var viewAdapter: HorizontalRecipeAdapter? = null
+    private var viewManager: LinearLayoutManager? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val viewManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
+        viewManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
+        (activity as? AppCompatActivity)?.supportActionBar?.title = "Account"
 
         setUserInfo()
 
@@ -34,12 +40,19 @@ class PersonalTab : Fragment(), TabLayout.OnTabSelectedListener {
             setHasFixedSize(true)
             layoutManager = viewManager
         }
+        profileRecipeRecycler.isMotionEventSplittingEnabled = false
 
         fullAccountButton.setOnClickListener {
             val intent = Intent(activity, UserProfile::class.java)
             startActivity(intent)
         }
         updateRecyclerView()
+        viewManager?.scrollToPosition(scrollPosition)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        scrollPosition = viewManager?.findFirstVisibleItemPosition() ?: 0
     }
 
     fun setUserInfo() {
@@ -60,7 +73,11 @@ class PersonalTab : Fragment(), TabLayout.OnTabSelectedListener {
     override fun onTabUnselected(tab: TabLayout.Tab?) { }
 
     override fun onTabSelected(tab: TabLayout.Tab?) {
-        tabIndex = tab?.position ?: 0
+        val newIndex = tab?.position ?: 0
+        if(newIndex != tabIndex) {
+            scrollPosition = 0
+        }
+        tabIndex = newIndex
         updateRecyclerView()
     }
 

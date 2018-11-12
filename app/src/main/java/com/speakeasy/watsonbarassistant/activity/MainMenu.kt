@@ -122,7 +122,6 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
                 }
             }
         }
-        loadFeed()
         val userInfoJson = preferences.getString(USER_INFO_PREFERENCES, "")
         val ingredientsJson = preferences.getString(INGREDIENT_PREFERENCES_ID, "")
         val lastViewedTimesJson = preferences.getString(LAST_VIEWED_RECIPE_TIMES, "")
@@ -211,15 +210,12 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        loadFeed()
-    }
-
     private fun refreshFragments() {
-        (fragment as? HomeTab)?.refresh()
-        (fragment as? IngredientsTab)?.refresh()
-        (fragment as? PersonalTab)?.refresh()
+        runOnUiThread {
+            (fragment as? HomeTab)?.refresh()
+            (fragment as? IngredientsTab)?.refresh()
+            (fragment as? PersonalTab)?.refresh()
+        }
     }
 
     override fun onPause() {
@@ -279,6 +275,7 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
         }
         loadRecentlyViewed()
         loadIngredients()
+        loadFeed()
         refreshFragments()
     }
 
@@ -321,12 +318,8 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
     }
 
     fun loadFeed() {
-        synchronized(BarAssistant.feed) {
-            synchronized(BarAssistant.recipes) {
-                BarAssistant.feed.clear()
-                BarAssistant.feed.addAll(BarAssistant.recipes[0].shuffled().map { FeedElement(it) })
-                refreshFragments()
-            }
+        if(BarAssistant.feed.count() == 0) {
+            loadFeedRecipes(fireStore, this::refreshFragments)
         }
     }
 
