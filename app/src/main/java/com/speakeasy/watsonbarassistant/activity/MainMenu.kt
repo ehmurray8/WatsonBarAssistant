@@ -15,6 +15,8 @@ import android.view.MenuItem
 import android.view.View
 import com.algolia.search.saas.Client
 import com.algolia.search.saas.Query
+import com.algolia.search.saas.android.BuildConfig.ALGOLIA_API_KEY
+import com.algolia.search.saas.android.BuildConfig.ALGOLIA_APPLICATION_ID
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
@@ -50,7 +52,7 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
     private var authorization = FirebaseAuth.getInstance()
     private var lastDiscoveryRefreshTime = -1L
 
-    private val client = Client(ALGOLIA_APP_ID, ALGOLIA_API_KEY)
+    private val client = Client(ALGOLIA_APPLICATION_ID, ALGOLIA_API_KEY)
     private val recipeIndex = client.getIndex("Recipe")
     private var searchMenuItem: MenuItem? = null
     private var loadingUserInfo = false

@@ -51,3 +51,7 @@ fun FirebaseFirestore.recipeDocument(recipeId: String): DocumentReference {
 fun FirebaseFirestore.appDocument(userId: String, collection: String): DocumentReference {
     return collection(APP_COLLECTION).document(userId).collection(collection).document(MAIN_DOCUMENT)
 }
+
+/*fun FirebaseFirestore.masterIngredientsDocument(): DocumentReference {
+    return collection(INGREDIENT_COLLECTION)
+}*/

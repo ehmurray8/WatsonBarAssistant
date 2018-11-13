@@ -2,9 +2,7 @@ package com.speakeasy.watsonbarassistant.fragment
 
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
-import android.graphics.Rect
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
@@ -16,15 +14,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
 import com.speakeasy.watsonbarassistant.BarAssistant
 import com.speakeasy.watsonbarassistant.R
 import com.speakeasy.watsonbarassistant.SwipeToDeleteCallback
+import com.speakeasy.watsonbarassistant.activity.IngredientAdd
 import com.speakeasy.watsonbarassistant.activity.MainMenu
 import com.speakeasy.watsonbarassistant.activity.VisionActivity
 import com.speakeasy.watsonbarassistant.adapter.IngredientGridAdapter
-import kotlinx.android.synthetic.main.fragment_ingredient_tab.*
+import kotlinx.android.synthetic.main.fragment_ingredient_tab_radial.*
+
 
 
 class IngredientsTab : Fragment() {
@@ -41,7 +39,7 @@ class IngredientsTab : Fragment() {
                               savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         (activity as? AppCompatActivity)?.supportActionBar?.title = "Ingredients"
-        return inflater.inflate(R.layout.fragment_ingredient_tab, container, false)
+        return inflater.inflate(R.layout.fragment_ingredient_tab_radial, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -67,45 +65,53 @@ class IngredientsTab : Fragment() {
                 else -> openMenus()
             }
         }
-        addViaTextButton.setOnClickListener {
-            closeMenus()
-            ingredientInputView.visibility = View.VISIBLE
-            ingredientInputView.setOnEditorActionListener { _, actionId, _ ->
 
-                return@setOnEditorActionListener when (actionId) {
-                    EditorInfo.IME_ACTION_DONE -> {
-                        val name = ingredientInputView.text.toString()
-                        mainMenu.addIngredient(name)
-                        refresh()
-                        ingredientInputView.selectAll()
-                        ingredientInputView.setText("")
-                        true
-                    }
-                    else -> false
-                }
-            }
-            ingredientInputView.post {
-                ingredientInputView.requestFocus()
-                ingredientInputView.setText("")
-                ingredientInputView.setSelection(0)
-                val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-                imm?.showSoftInput(ingredientInputView, InputMethodManager.SHOW_IMPLICIT)
-            }
+        alcoholsButton.setOnClickListener {
+            val intent = Intent(activity, IngredientAdd::class.java)
+            startActivity(intent)
         }
-        
-        ingredientInputView.setOnFocusChangeListener { _, hasFocus ->
-            if(hasFocus) {
-                addMenuButton.hide()
-            } else {
-                addMenuButton.show()
-            }
+        beveragesAndFlavoringButton.setOnClickListener {
+            val intent = Intent(activity, IngredientAdd::class.java)
+            startActivity(intent)
         }
+        bittersButton.setOnClickListener {
+            val intent = Intent(activity, IngredientAdd::class.java)
+            startActivity(intent)
+        }
+        fruitsAndVegetablesButton.setOnClickListener {
+            val intent = Intent(activity, IngredientAdd::class.java)
+            startActivity(intent)
+        }
+        herbsAndSpicesButton.setOnClickListener {
+            val intent = Intent(activity, IngredientAdd::class.java)
+            startActivity(intent)
+        }
+        juicesButton.setOnClickListener {
+            val intent = Intent(activity, IngredientAdd::class.java)
+            startActivity(intent)
+        }
+        liqueursButton.setOnClickListener {
+            val intent = Intent(activity, IngredientAdd::class.java)
+            startActivity(intent)
+        }
+        miscellaneousButton.setOnClickListener {
+            val intent = Intent(activity, IngredientAdd::class.java)
+            startActivity(intent)
+        }
+        sweetsButton.setOnClickListener {
+            val intent = Intent(activity, IngredientAdd::class.java)
+            startActivity(intent)
+        }
+        syrupsButton.setOnClickListener {
+            val intent = Intent(activity, IngredientAdd::class.java)
+            startActivity(intent)
+        }
+
         addViaCameraButton.setOnClickListener {
             val intent = Intent(activity, VisionActivity::class.java)
             startActivity(intent)
         }
 
-        setupKeyboardListener()
         refresh()
     }
 
@@ -131,28 +137,83 @@ class IngredientsTab : Fragment() {
 
     private fun closeMenus(){
         addMenuButton.startAnimation(menuAnimRotateBack)
-        addViaTextButton.startAnimation(menuAnimClose)
         addViaCameraButton.startAnimation(menuAnimClose)
-        addViaTextButton.isClickable = false
-        addViaTextButton.hide()
         addViaCameraButton.isClickable = false
         addViaCameraButton.hide()
-        ingredientInputView.visibility = View.GONE
+        alcoholsLayout.visibility = View.GONE
+        alcoholsButton.isClickable = false
+        alcoholsButton.hide()
+        beveragesAndFlavoringLayout.visibility = View.GONE
+        beveragesAndFlavoringButton.isClickable = false
+        beveragesAndFlavoringButton.hide()
+        bittersLayout.visibility = View.GONE
+        bittersButton.isClickable = false
+        bittersButton.hide()
+        fruitsAndVegetablesLayout.visibility = View.GONE
+        fruitsAndVegetablesButton.isClickable = false
+        fruitsAndVegetablesButton.hide()
+        herbsAndSpicesButtonLayout.visibility = View.GONE
+        herbsAndSpicesButton.isClickable = false
+        herbsAndSpicesButton.hide()
+        juicesLayout.visibility = View.GONE
+        juicesButton.isClickable = false
+        juicesButton.hide()
+        liqueursLayout.visibility = View.GONE
+        liqueursButton.isClickable = false
+        liqueursButton.hide()
+        miscellaneousLayout.visibility = View.GONE
+        miscellaneousButton.isClickable = false
+        miscellaneousButton.hide()
+        sweetsLayout.visibility = View.GONE
+        sweetsButton.isClickable = false
+        sweetsButton.hide()
+        syrupsLayout.visibility = View.GONE
+        syrupsButton.isClickable = false
+        syrupsButton.hide()
+        ingredients_recycler_view.alpha = 1.0F
         isAddMenuOpen = false
     }
 
     private fun openMenus(){
         addMenuButton.startAnimation(menuAnimRotateOut)
-        addViaTextButton.startAnimation(menuAnimOpen)
         addViaCameraButton.startAnimation(menuAnimOpen)
-        addViaTextButton.isClickable = true
-        addViaTextButton.show()
         addViaCameraButton.isClickable = true
         addViaCameraButton.show()
+        alcoholsLayout.visibility = View.VISIBLE
+        alcoholsButton.isClickable = true
+        alcoholsButton.show()
+        beveragesAndFlavoringLayout.visibility = View.VISIBLE
+        beveragesAndFlavoringButton.isClickable = true
+        beveragesAndFlavoringButton.show()
+        bittersLayout.visibility = View.VISIBLE
+        bittersButton.isClickable = true
+        bittersButton.show()
+        fruitsAndVegetablesLayout.visibility = View.VISIBLE
+        fruitsAndVegetablesButton.isClickable = true
+        fruitsAndVegetablesButton.show()
+        herbsAndSpicesButtonLayout.visibility = View.VISIBLE
+        herbsAndSpicesButton.isClickable = true
+        herbsAndSpicesButton.show()
+        juicesLayout.visibility = View.VISIBLE
+        juicesButton.isClickable = true
+        juicesButton.show()
+        liqueursLayout.visibility = View.VISIBLE
+        liqueursButton.isClickable = true
+        liqueursButton.show()
+        miscellaneousLayout.visibility = View.VISIBLE
+        miscellaneousButton.isClickable = true
+        miscellaneousButton.show()
+        sweetsLayout.visibility = View.VISIBLE
+        sweetsButton.isClickable = true
+        sweetsButton.show()
+        syrupsLayout.visibility = View.VISIBLE
+        syrupsButton.isClickable = true
+        syrupsButton.show()
+        ingredients_recycler_view.alpha = 0.4F
         isAddMenuOpen = true
     }
 
-    private fun setupKeyboardListener() {
+    /*private fun setupKeyboardListener() {
         coordinateLayout.viewTreeObserver.addOnGlobalLayoutListener {
             val rect = Rect()
             if(coordinateLayout != null && ingredientInputView.hasFocus()) {
@@ -167,5 +228,5 @@ class IngredientsTab : Fragment() {
                 }
             }
         }
-    }
+    }*/
 }

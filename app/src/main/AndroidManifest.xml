@@ -55,6 +55,7 @@
         </provider>
 
         <activity android:name=".activity.UserInfoActivity" />
+        <activity android:name=".activity.IngredientAdd" />
     </application>
 
 </manifest>

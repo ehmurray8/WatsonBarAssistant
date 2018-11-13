@@ -16,6 +16,16 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.StorageReference
 import com.google.gson.Gson
 import com.speakeasy.watsonbarassistant.extensions.*
+import com.google.firebase.firestore.QuerySnapshot
+import android.support.annotation.NonNull
+import android.widget.Toast
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.Task
+import com.google.firebase.firestore.DocumentReference
+
+
+
+
 
 
 class BarAssistant: Application() {
@@ -46,6 +56,10 @@ class BarAssistant: Application() {
         val lastViewedRecipes: MutableMap<Long, DiscoveryRecipe> = mutableMapOf()
         val lastViewedTimes: MutableList<Long> = mutableListOf()
         val homeCategories = listOf(SUGGESTIONS_CATEGORY, RECENTLY_VIEWED_CATEGORY)
+
+        var firstLevelIngredients : MutableList<String>? = ArrayList()
+        var secondLevelIngredients : MutableList<MutableList<String>>? = ArrayList()
+        var thirdLevelIngredients : MutableList<String>? = ArrayList()
 
         fun isInternetConnected(): Boolean {
             return networkInfo?.isConnectedOrConnecting == true
@@ -184,6 +198,7 @@ class BarAssistant: Application() {
                 getUserInfoFromCollection(fireStore, uid, BLOCKED_COLLECTION, blockedUsers, BLOCKED_LIST)
                 getAllUsers(fireStore)
             }
+            loadMasterIngredientsFromFireStore(authorization, fireStore)
         }
     }
 
@@ -237,5 +252,47 @@ class BarAssistant: Application() {
                 }
             }
         }
+    }
+
+    fun loadMasterIngredientsFromFireStore(authorization: FirebaseAuth, fireStore: FirebaseFirestore) {
+        val uid = authorization.currentUser?.uid
+        if(isInternetConnected() && uid != null) {
+            fireStore.collection(INGREDIENT_COLLECTION).get().addOnSuccessListener {
+                firstLevelIngredients?.clear()
+                secondLevelIngredients?.clear()
+                thirdLevelIngredients?.clear()
+                loadMasterIngredients(fireStore)
+            }
+        }
+    }
+
+    private fun loadMasterIngredients(fireStore: FirebaseFirestore) {
+
+
+        fireStore.collection(INGREDIENT_COLLECTION).get().addOnCompleteListener(object : OnCompleteListener<QuerySnapshot> {
+            override fun onComplete(task: Task<QuerySnapshot>) {
+                if (task.isSuccessful) {
+                     task.result?.forEach { document ->
+                        firstLevelIngredients?.add(document.id)
+                         secondLevelIngredients?.add(document.data.keys.toMutableList())
+                             document.data.entries.forEach { index ->
+                                 if(!index.value.toString().isEmpty()) {
+                                     thirdLevelIngredients?.add(index.value.toString())
+                                 }
+                                 else{
+                                     thirdLevelIngredients?.add("")
+                             }
+                         }
+                    }
+                }
+            }
+        })
+        firstLevelIngredients?.sort()
+        secondLevelIngredients?.forEach { index ->
+            index.sort()
+        }
+        thirdLevelIngredients?.sort()
+
+        //Toast.makeText(baseContext, "REEEEEEE", Toast.LENGTH_SHORT).show()
     }
 }

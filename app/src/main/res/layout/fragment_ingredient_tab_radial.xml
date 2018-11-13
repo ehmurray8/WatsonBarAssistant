@@ -1,0 +1,469 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinateLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="bottom"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:fitsSystemWindows="false"
+    tools:context=".fragment.IngredientsTab">
+
+    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".fragment.IngredientsTab">
+
+        <LinearLayout
+            android:id="@+id/alcoholsLayout"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:orientation="vertical"
+            android:translationZ="1dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/fruitsAndVegetablesLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/ingredients_recycler_view"
+            app:layout_constraintVertical_bias="0.971">
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/alcoholsButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/ic_alcohols"
+                android:tint="@color/primaryText"
+                android:visibility="visible"
+                app:fabSize="mini"
+                tools:layout_editor_absoluteX="172dp"
+                tools:layout_editor_absoluteY="188dp"
+                tools:src="@drawable/ic_alcohols">
+
+            </android.support.design.widget.FloatingActionButton>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|center_horizontal"
+                android:background="@android:color/transparent"
+                android:paddingTop="4dp"
+                android:text="@string/alcohols"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="10sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/beveragesAndFlavoringLayout"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="104dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="1dp"
+            android:orientation="vertical"
+            android:translationZ="1dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/herbsAndSpicesButtonLayout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0">
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/beveragesAndFlavoringButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/ic_beverage"
+                android:tint="@color/primaryText"
+                android:visibility="visible"
+                app:fabSize="mini"
+                tools:layout_editor_absoluteX="112dp"
+                tools:layout_editor_absoluteY="215dp">
+
+            </android.support.design.widget.FloatingActionButton>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|center_horizontal"
+                android:background="@android:color/transparent"
+                android:paddingTop="2dp"
+                android:text="@string/beverages_amp_flavoring"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="10sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/bittersLayout"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="104dp"
+            android:layout_marginBottom="2dp"
+            android:orientation="vertical"
+            android:translationZ="1dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/juicesLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.96">
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/bittersButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/ic_bitters"
+                android:tint="@color/primaryText"
+                android:visibility="visible"
+                app:fabSize="mini"
+                tools:layout_editor_absoluteX="232dp"
+                tools:layout_editor_absoluteY="215dp">
+
+            </android.support.design.widget.FloatingActionButton>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|center_horizontal"
+                android:background="@android:color/transparent"
+                android:paddingTop="4dp"
+                android:text="@string/bitters"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="10sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/fruitsAndVegetablesLayout"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:orientation="vertical"
+            android:translationZ="1dp"
+            android:visibility="gone"
+            android:weightSum="10000"
+            app:layout_constraintBottom_toTopOf="@+id/liqueursLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fruitsAndVegetablesButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/ic_fruits_veggies"
+                android:tint="@color/primaryText"
+                android:visibility="visible"
+                app:fabSize="mini"
+                tools:layout_editor_absoluteX="172dp"
+                tools:layout_editor_absoluteY="247dp">
+
+            </android.support.design.widget.FloatingActionButton>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|center_horizontal"
+                android:background="@android:color/transparent"
+                android:paddingTop="3dp"
+                android:text="@string/fruits_amp_veggies"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="10sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/herbsAndSpicesButtonLayout"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="104dp"
+            android:orientation="vertical"
+            android:translationZ="1dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/miscellaneousLayout"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/herbsAndSpicesButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/ic_herbs_spices"
+                android:tint="@color/primaryText"
+                android:visibility="visible"
+                app:fabSize="mini">
+
+            </android.support.design.widget.FloatingActionButton>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|center_horizontal"
+                android:background="@android:color/transparent"
+                android:paddingTop="4dp"
+                android:text="@string/herbs_amp_spices"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="10sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/juicesLayout"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="104dp"
+            android:layout_marginBottom="13dp"
+            android:orientation="vertical"
+            android:translationZ="1dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/sweetsLayout"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/juicesButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/ic_juices"
+                android:tint="@color/primaryText"
+                android:visibility="visible"
+                app:fabSize="mini">
+
+            </android.support.design.widget.FloatingActionButton>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|center_horizontal"
+                android:background="@android:color/transparent"
+                android:paddingTop="4dp"
+                android:text="@string/juices"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="10sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/liqueursLayout"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:orientation="vertical"
+            android:translationZ="1dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/syrupsLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/liqueursButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/ic_liqueurs"
+                android:tint="@color/primaryText"
+                android:visibility="visible"
+                app:fabSize="mini"
+                tools:layout_editor_absoluteX="172dp"
+                tools:layout_editor_absoluteY="303dp">
+
+            </android.support.design.widget.FloatingActionButton>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|center_horizontal"
+                android:background="@android:color/transparent"
+                android:paddingTop="4dp"
+                android:text="@string/liqueurs"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="10sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/miscellaneousLayout"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="104dp"
+            android:layout_marginBottom="180dp"
+            android:orientation="vertical"
+            android:translationZ="1dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/miscellaneousButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/ic_misc"
+                android:tint="@color/primaryText"
+                android:visibility="visible"
+                app:fabSize="mini"
+                tools:layout_editor_absoluteX="112dp"
+                tools:layout_editor_absoluteY="332dp">
+
+            </android.support.design.widget.FloatingActionButton>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|center_horizontal"
+                android:background="@android:color/transparent"
+                android:paddingTop="4dp"
+                android:text="@string/miscellaneous"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="9sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/sweetsLayout"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="103dp"
+            android:layout_marginBottom="180dp"
+            android:orientation="vertical"
+            android:translationZ="1dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/sweetsButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/ic_sweets"
+                android:tint="@color/primaryText"
+                android:visibility="visible"
+                app:fabSize="mini"
+                tools:layout_editor_absoluteX="232dp"
+                tools:layout_editor_absoluteY="332dp">
+
+            </android.support.design.widget.FloatingActionButton>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|center_horizontal"
+                android:background="@android:color/transparent"
+                android:paddingTop="4dp"
+                android:text="@string/sweets"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="10sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/syrupsLayout"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="144dp"
+            android:orientation="vertical"
+            android:translationZ="1dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.501"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/syrupsButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/ic_syrups"
+                android:tint="@color/primaryText"
+                android:visibility="visible"
+                app:fabSize="mini"
+                tools:layout_editor_absoluteX="172dp"
+                tools:layout_editor_absoluteY="361dp">
+
+            </android.support.design.widget.FloatingActionButton>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|center_horizontal"
+                android:background="@android:color/transparent"
+                android:paddingTop="4dp"
+                android:text="@string/syrups"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/addViaCameraButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="12dp"
+            android:src="@drawable/ic_camera_add"
+            android:tint="@color/primaryText"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/addMenuButton"
+            app:layout_constraintEnd_toEndOf="parent">
+
+        </android.support.design.widget.FloatingActionButton>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/addMenuButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:src="@drawable/ic_add_icon"
+            android:tint="@color/primaryText"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+        </android.support.design.widget.FloatingActionButton>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/ingredients_recycler_view"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:scrollbars="vertical"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </android.support.constraint.ConstraintLayout>
+</android.support.design.widget.CoordinatorLayout>
