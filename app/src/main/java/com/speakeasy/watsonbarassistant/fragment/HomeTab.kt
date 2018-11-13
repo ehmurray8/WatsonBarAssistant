@@ -66,9 +66,11 @@ class HomeTab: Fragment() {
 
     fun refresh() {
         val mainMenu = activity as MainMenu
-        viewAdapter = FeedAdapter(mainMenu)
-        home_container.adapter = viewAdapter
-        home_container.refreshDrawableState()
-        viewAdapter?.notifyDataSetChanged()
+        mainMenu.runOnUiThread {
+            viewAdapter = FeedAdapter(mainMenu)
+            home_container.adapter = viewAdapter
+            home_container.refreshDrawableState()
+            viewAdapter?.notifyDataSetChanged()
+        }
     }
 }

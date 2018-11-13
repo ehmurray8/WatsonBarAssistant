@@ -1,6 +1,5 @@
 package com.speakeasy.watsonbarassistant
 
-import android.util.Log
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.DocumentSnapshot
@@ -99,8 +98,7 @@ private fun getPopularRecipes(fireStore: FirebaseFirestore): MutableList<FeedEle
 
 private fun getFriendRecipes(fireStore: FirebaseFirestore): MutableList<FeedElement> {
     val friendRecipes = mutableMapOf<String, MutableList<DiscoveryRecipe>>()
-    Log.d("Feed Algorithm", BarAssistant.friends.toString())
-    val friends = synchronized(BarAssistant.friends){BarAssistant.friends}
+    val friends = synchronized(BarAssistant.friends){BarAssistant.friends.toList()}
     val tasks = mutableListOf<Task<DocumentSnapshot>>()
     for(friend in friends) {
         friend.userId?.let { fid ->
@@ -108,8 +106,6 @@ private fun getFriendRecipes(fireStore: FirebaseFirestore): MutableList<FeedElem
             val document = Tasks.await(fireStore.favoritesDocument(fid).get())
             val storedIds = document.get(FAVORITES_LIST) as? ArrayList<*>
             val storedStringIds = storedIds?.toStringMutableList() ?: mutableListOf()
-            Log.d("Feed Algorithm", "Stored ids: " + storedIds?.toString())
-            Log.d("Feed Algorithm", "Stored string ids: " + storedStringIds.toString())
             for(rid in storedStringIds) {
                 val task = fireStore.recipeDocument(rid).get()
                 tasks.add(task)
@@ -122,7 +118,6 @@ private fun getFriendRecipes(fireStore: FirebaseFirestore): MutableList<FeedElem
     }
     Tasks.await(Tasks.whenAllComplete(tasks))
     val feedElements = mutableListOf<FeedElement>()
-    Log.d("Feed Algorithm", "Friend recipes" + friendRecipes.toString())
     do {
         var keepGoing = false
         for ((friendUsername, recipeList) in friendRecipes){
@@ -134,11 +129,9 @@ private fun getFriendRecipes(fireStore: FirebaseFirestore): MutableList<FeedElem
                 keepGoing = true
                 val recipe = recipeList.removeAt(count - 1)
                 val feedElement = FeedElement(recipe, FeedType.FRIEND, friendUsername)
-                Log.d("Feed Algorithm", feedElement.toString())
                 feedElements.add(feedElement)
             }
         }
     } while(keepGoing && feedElements.count() < MAX_FRIEND_RECIPES)
-    Log.d("Feed Algorithm", feedElements.toString())
     return feedElements
 }

@@ -310,7 +310,7 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
                 if (forceRefresh || lastDiscoveryRefreshTime == -1L ||
                         Date().time - lastDiscoveryRefreshTime >= 30_000) {
                     lastDiscoveryRefreshTime = Date().time
-                    val discovery = SearchDiscovery(HandleDiscovery(this))
+                    val discovery = SearchDiscovery(HandleDiscovery(this, fireStore))
                     discovery.execute(BarAssistant.ingredients.toTypedArray())
                 }
             }
