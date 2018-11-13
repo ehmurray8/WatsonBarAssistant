@@ -278,7 +278,7 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
             it.loadUserCreatedRecipesFromFireStore(authorization,fireStore)
             it.loadUserInfo(authorization, fireStore)
         }
-        Log.i("mainmenuUCR",BarAssistant.userCreatedRecipes.toString())
+
         loadRecentlyViewed()
         loadIngredients()
         refreshFragments()

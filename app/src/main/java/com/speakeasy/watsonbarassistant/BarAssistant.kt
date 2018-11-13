@@ -109,7 +109,7 @@ class BarAssistant: Application() {
         if (BarAssistant.isInternetConnected()) {
             synchronized(BarAssistant.userCreatedRecipes) {
                 newImageId = UUID.randomUUID().mostSignificantBits.toString().dropLast(4)
-                val imagePath = RECIPE_IMAGES + "/GSBimg" + newImageId + ".jpg"
+                val imagePath = RECIPE_IMAGES + "/GSBimg-" + newImageId + ".jpg"
                 Log.i("BarAssistantAddImage", "ImageId: " + newImageId)
                 var uploadTask = BarAssistant.storageReference?.child(imagePath)?.putBytes(newImage)
                 uploadTask?.addOnFailureListener{

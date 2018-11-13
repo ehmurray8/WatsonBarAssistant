@@ -39,11 +39,11 @@ data class DiscoveryRecipe(@Optional val title: String = "",
     @Optional var recipeImageUriString: String = ""
 
     fun toFireStoreRecipe(): FireStoreRecipe {
-        Log.i("RecipeConversion", "id as string: " + imageId + " id as long: " + imageId.toLong().toString())
+        //Log.i("RecipeConversion", "id as string: " + imageId + " id as long: " + imageId.toLong().toString())
         return FireStoreRecipe(title = title, imageUrl = imageUrl, reviewCount = reviewCount.toFloat().toLong(),
                 description = description, recipeUrl = recipeUrl, ingredientList = ingredientList,
                 instructionList = instructionList, prepTime = prepTime, cookTime = cookTime,
-                totalTime = totalTime, imageId = imageId.toLong(), googleBestImgUrl = googleBestImgUrl,
+                totalTime = totalTime, imageId = imageId.toFloat().toLong(), googleBestImgUrl = googleBestImgUrl,
                 googleBestImgScore = googleBestImgScore, count = count)
     }
 
@@ -76,7 +76,7 @@ data class DiscoveryRecipe(@Optional val title: String = "",
     }
 
     fun getImageName(): String {
-        return "recipe_images/GSBimg-${imageId.toFloat().toInt()}.jpg"
+        return "recipe_images/GSBimg-${imageId.toFloat().toLong()}.jpg"
     }
 
     fun getTags(): List<RecipeTag> {
