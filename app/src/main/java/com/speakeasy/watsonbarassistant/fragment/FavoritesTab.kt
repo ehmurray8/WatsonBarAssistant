@@ -78,6 +78,8 @@ class FavoritesTab : Fragment() {
     }
 
     fun refresh() {
-        viewAdapter?.notifyDataSetChanged()
+        activity?.runOnUiThread {
+            viewAdapter?.notifyDataSetChanged()
+        }
     }
 }

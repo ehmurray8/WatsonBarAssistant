@@ -221,6 +221,7 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
     override fun onPause() {
         super.onPause()
         if(!loadingUserInfo) {
+            (application as? BarAssistant)?.updateFavoriteFireStore(authorization, fireStore)
             searchMenuItem?.collapseActionView()
             val uid = currentUser?.uid
             if (uid != null) {
@@ -310,7 +311,7 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
                 if (forceRefresh || lastDiscoveryRefreshTime == -1L ||
                         Date().time - lastDiscoveryRefreshTime >= 30_000) {
                     lastDiscoveryRefreshTime = Date().time
-                    val discovery = SearchDiscovery(HandleDiscovery(this))
+                    val discovery = SearchDiscovery(HandleDiscovery(this, fireStore))
                     discovery.execute(BarAssistant.ingredients.toTypedArray())
                 }
             }

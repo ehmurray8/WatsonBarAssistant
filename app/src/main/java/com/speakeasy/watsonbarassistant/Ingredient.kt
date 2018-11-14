@@ -15,6 +15,6 @@ data class Ingredient(val name: String): Serializable, Comparable<Ingredient> {
      }
 
     fun getImageName(): String {
-        return "ingredient_images/${name.capitalize().replace(" ", "_")}.jpg"
+        return "ingredient_images/${name.toLowerCase().replace(" ", "_")}.jpg"
     }
 }
