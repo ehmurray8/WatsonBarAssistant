@@ -2,9 +2,6 @@ package com.speakeasy.watsonbarassistant.activity
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
-import android.view.View
-import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.speakeasy.watsonbarassistant.BarAssistant
@@ -45,6 +42,28 @@ class IngredientAdd : AppCompatActivity() {
     }
 
     private fun addToExpandableList(secondLevel: MutableList<MutableList<String>>?, thirdLevel: MutableList<MutableList<String>>?, indexStart: Int, indexEnd : Int) {
+        thirdLevel!!.forEach {temp ->
+            temp.sort()
+        }
+
+        /*secondLevel!!.forEach {temp ->
+            temp.sort()
+        }
+
+        val ingredientsMap: LinkedHashMap<String, MutableList<MutableList<String>>> = linkedMapOf()
+
+        secondLevel[currentIndex].forEach { index->
+            ingredientsMap.keys.add(index)
+        }
+        //lastViewedRecipes.keys.add(secondLevel[currentIndex])
+        ingredientsMap.values.add(thirdLevel!!.slice(indexStart until indexEnd).toMutableList())
+        ingredientsMap.keys.forEach{ index ->
+            index.toSortedSet()
+        }*/
         expandable_ingredient_list_view.setAdapter(FirstExpandableListAdapter(this, secondLevel!![currentIndex], thirdLevel!!.slice(indexStart until indexEnd).toMutableList(), expandable_ingredient_list_view))
+        //expandable_ingredient_list_view.setAdapter(FirstExpandableListAdapter(this, lastViewedRecipes.keys.toMutableList(), lastViewedRecipes.values, expandable_ingredient_list_view))
+        //expandable_ingredient_list_view.setAdapter(MapExpandableListAdapter(this, ingredientsMap, expandable_ingredient_list_view))
+        //ingredientsMap.clear()
+
     }
 }

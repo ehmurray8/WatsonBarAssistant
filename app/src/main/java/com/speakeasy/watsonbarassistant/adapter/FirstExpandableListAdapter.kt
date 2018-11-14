@@ -12,9 +12,12 @@ import com.speakeasy.watsonbarassistant.BarAssistant
 import com.speakeasy.watsonbarassistant.Ingredient
 import com.speakeasy.watsonbarassistant.R
 import com.speakeasy.watsonbarassistant.activity.IngredientAdd
-import kotlinx.android.synthetic.main.fragment_ingredient_add_main.view.*
+import com.speakeasy.watsonbarassistant.activity.MainMenu
+import kotlinx.android.synthetic.main.fragment_ingredient_add_main.*
 
 class FirstExpandableListAdapter(var context: Context, var firstLevel : MutableList<String>?, var secondLevel : MutableList<MutableList<String>>?, var expandableListView: ExpandableListView) : BaseExpandableListAdapter() {
+
+    val addedIngredients: MutableList<String> = mutableListOf()
 
     override fun getGroup(groupPosition: Int): String {
         return firstLevel!![groupPosition]
@@ -70,9 +73,7 @@ class FirstExpandableListAdapter(var context: Context, var firstLevel : MutableL
         title?.text = getChild(groupPosition, childPosition)
         title?.setOnClickListener{
             Toast.makeText(context, "Added "+getChild(groupPosition, childPosition)+" "+getGroup(groupPosition), Toast.LENGTH_SHORT).show()
-
-            //BarAssistant.ingredients.add()
-            //Log.d("TAG", "Child clicked")
+            addedIngredients.add(getChild(groupPosition, childPosition)+" "+getGroup(groupPosition))
         }
         return convertView
     }
