@@ -61,6 +61,8 @@ class BarAssistant: Application() {
         var secondLevelIngredients : MutableList<MutableList<String>>? = ArrayList()
         var thirdLevelIngredients : MutableList<MutableList<String>>? = ArrayList()
         var currentIndex: Int = 0
+        var emptyMutableList : MutableList<String> = ArrayList()
+
 
         fun isInternetConnected(): Boolean {
             return networkInfo?.isConnectedOrConnecting == true
@@ -275,14 +277,14 @@ class BarAssistant: Application() {
                 if (task.isSuccessful) {
                      task.result?.forEach { document ->
                          //firstLevelIngredients?.add(document.id)
-                         secondLevelIngredients?.add(document.data.keys)
+                         secondLevelIngredients?.add(document.data.keys.toMutableList())
                              document.data.entries.forEach { index  ->
                                  val temp = index.value as ArrayList<String>
                                  if(temp.size != 0) {
                                      thirdLevelIngredients?.add(temp)
                                  }
                                  else{
-                                     //thirdLevelIngredients?.add("")
+                                     thirdLevelIngredients?.add(emptyMutableList)
                              }
                          }
                     }

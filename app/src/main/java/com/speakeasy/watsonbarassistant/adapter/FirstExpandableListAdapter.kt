@@ -7,14 +7,19 @@ import android.view.ViewGroup
 import android.widget.*
 import com.speakeasy.watsonbarassistant.R
 
-class FirstExpandableListAdapter(var context: Context, var firstLevel : MutableList<MutableList<String>>?, var secondLevel : MutableList<MutableList<String>>?, var expandableListView: ExpandableListView, var index: Int) : BaseExpandableListAdapter() {
+class FirstExpandableListAdapter(var context: Context, var firstLevel : MutableList<String>?, var secondLevel : MutableList<MutableList<String>>?, var expandableListView: ExpandableListView) : BaseExpandableListAdapter() {
 
     override fun getGroup(groupPosition: Int): String {
-        return firstLevel!![groupPosition][index]
+        return firstLevel!![groupPosition]
     }
 
     override fun isChildSelectable(groupPosition: Int, childPosition: Int): Boolean {
-        return true
+        if(secondLevel!![groupPosition][childPosition].isNotEmpty()) {
+            return true
+        }
+        else{
+            return false
+        }
     }
 
     override fun hasStableIds(): Boolean {

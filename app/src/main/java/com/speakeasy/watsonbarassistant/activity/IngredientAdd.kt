@@ -30,52 +30,23 @@ class IngredientAdd : AppCompatActivity() {
 
         getIngredientMasterList()
 
-        /*firstLevel.add("Alcohols")
-        firstLevel.add("Beverages & Flavoring")
-        firstLevel.add("Bitters")
-
-        val alcohols : MutableList<String> = ArrayList()
-        alcohols.add("Absinthe")
-        alcohols.add("Amaretto")
-        alcohols.add("Beer")
-        alcohols.add("Brandy")
-
-        val beveragesAndFlavoring : MutableList<String> = ArrayList()
-        beveragesAndFlavoring.add("Apple Cider")
-        beveragesAndFlavoring.add("Bloody Mary")
-        beveragesAndFlavoring.add("Coconut Milk")
-
-        val bitters : MutableList<String> = ArrayList()
-        bitters.add("Absinthe")
-        bitters.add("Angostura")
-        bitters.add("Aromatic")
-
-        secondLevel.add(alcohols)
-        secondLevel.add(beveragesAndFlavoring)
-        secondLevel.add(bitters)*/
-
-
-
     }
 
-    fun getIngredientMasterList(){
+    fun getIngredientMasterList() {
 
         val barAssistant = application as? BarAssistant
         barAssistant?.loadMasterIngredientsFromFireStore(authorization, fireStore)
-
-        addToExpandableList(secondLevelIngredients, thirdLevelIngredients)
-
-        Log.d("TAG", secondLevelIngredients!!.toString())
-        /*thirdLevelIngredients?.forEach {index ->
-            Log.d("TAG", index)
-        }*/
-
-        //addToExpandableList(thirdLevelIngredients, secondLevelIngredients)
+        var temp = 0
+        var tempAdd = 0
+        for (i in currentIndex-1 downTo 0) {
+            temp += secondLevelIngredients!![i].size
+        }
+        tempAdd = temp + secondLevelIngredients!![currentIndex].size
+        addToExpandableList(secondLevelIngredients, thirdLevelIngredients, temp, tempAdd)
 
     }
 
-    private fun addToExpandableList( secondLevel : MutableList<MutableList<String>>?, thirdLevel : MutableList<MutableList<String>>?){
-        //expandable_ingredient_list_view.setAdapter(SecondExpandableListAdapter(this, secondLevel, thirdLevel, expandable_ingredient_list_view, 0))
-        expandable_ingredient_list_view.setAdapter(FirstExpandableListAdapter(this, secondLevel, thirdLevel, expandable_ingredient_list_view, currentIndex ))
+    private fun addToExpandableList(secondLevel: MutableList<MutableList<String>>?, thirdLevel: MutableList<MutableList<String>>?, indexStart: Int, indexEnd : Int) {
+        expandable_ingredient_list_view.setAdapter(FirstExpandableListAdapter(this, secondLevel!![currentIndex], thirdLevel!!.slice(indexStart until indexEnd).toMutableList(), expandable_ingredient_list_view))
     }
 }
