@@ -57,7 +57,6 @@ class BarAssistant: Application() {
         val lastViewedTimes: MutableList<Long> = mutableListOf()
         val homeCategories = listOf(SUGGESTIONS_CATEGORY, RECENTLY_VIEWED_CATEGORY)
 
-        var firstLevelIngredients : MutableList<String>? = ArrayList()
         var secondLevelIngredients : MutableList<MutableList<String>>? = ArrayList()
         var thirdLevelIngredients : MutableList<MutableList<String>>? = ArrayList()
         var currentIndex: Int = 0
@@ -291,14 +290,5 @@ class BarAssistant: Application() {
                 }
             }
         })
-        //firstLevelIngredients?.sort()
-        secondLevelIngredients?.forEach { index ->
-            index.sort()
-        }
-        thirdLevelIngredients?.forEach { index ->
-            index.sort()
-        }
-
-
     }
 }

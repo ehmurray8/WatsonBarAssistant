@@ -1,11 +1,18 @@
 package com.speakeasy.watsonbarassistant.adapter
 
+import android.app.Activity
+import android.app.Application
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import com.speakeasy.watsonbarassistant.BarAssistant
+import com.speakeasy.watsonbarassistant.Ingredient
 import com.speakeasy.watsonbarassistant.R
+import com.speakeasy.watsonbarassistant.activity.IngredientAdd
+import kotlinx.android.synthetic.main.fragment_ingredient_add_main.view.*
 
 class FirstExpandableListAdapter(var context: Context, var firstLevel : MutableList<String>?, var secondLevel : MutableList<MutableList<String>>?, var expandableListView: ExpandableListView) : BaseExpandableListAdapter() {
 
@@ -14,12 +21,7 @@ class FirstExpandableListAdapter(var context: Context, var firstLevel : MutableL
     }
 
     override fun isChildSelectable(groupPosition: Int, childPosition: Int): Boolean {
-        if(secondLevel!![groupPosition][childPosition].isNotEmpty()) {
-            return true
-        }
-        else{
-            return false
-        }
+        return secondLevel!![groupPosition][childPosition].isNotEmpty()
     }
 
     override fun hasStableIds(): Boolean {
@@ -41,7 +43,7 @@ class FirstExpandableListAdapter(var context: Context, var firstLevel : MutableL
             else{
                 expandableListView.expandGroup(groupPosition)
             }
-            //Toast.makeText(context, getGroup(groupPosition), Toast.LENGTH_SHORT)
+            //Log.d("TAG", "Parent clicked")
         }
         return convertView
     }
@@ -51,7 +53,6 @@ class FirstExpandableListAdapter(var context: Context, var firstLevel : MutableL
     }
 
     override fun getChild(groupPosition: Int, childPosition: Int): String {
-        //SecondExpandableListAdapter(context, secondLevel, thirdLevel, expandableListView,childPosition)
         return secondLevel!![groupPosition][childPosition]
     }
 
@@ -68,7 +69,10 @@ class FirstExpandableListAdapter(var context: Context, var firstLevel : MutableL
         val title = convertView?.findViewById<CheckBox>(R.id.expandedListItem)
         title?.text = getChild(groupPosition, childPosition)
         title?.setOnClickListener{
-            //Toast.makeText(context, "Added "+getChild(groupPosition, childPosition), Toast.LENGTH_SHORT)
+            Toast.makeText(context, "Added "+getChild(groupPosition, childPosition)+" "+getGroup(groupPosition), Toast.LENGTH_SHORT).show()
+
+            //BarAssistant.ingredients.add()
+            //Log.d("TAG", "Child clicked")
         }
         return convertView
     }
@@ -80,4 +84,5 @@ class FirstExpandableListAdapter(var context: Context, var firstLevel : MutableL
     override fun getGroupCount(): Int {
         return firstLevel!!.size
     }
+
 }
