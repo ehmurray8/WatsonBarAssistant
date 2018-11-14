@@ -18,6 +18,7 @@ import com.speakeasy.watsonbarassistant.loadImage
 class FeedAdapter(private var activity: Activity): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     class FeedViewHolder(val layout: ConstraintLayout): RecyclerView.ViewHolder(layout)
+    var clicked = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val layout = LayoutInflater.from(parent.context).inflate(R.layout.large_recipe_card,
@@ -41,25 +42,33 @@ class FeedAdapter(private var activity: Activity): RecyclerView.Adapter<Recycler
             val cardView = layout?.getChildAt(0) as? CardView
             val relativeLayout = cardView?.getChildAt(0) as? ConstraintLayout
 
-            val title = relativeLayout?.getChildAt(0) as? TextView
-            val imageView = relativeLayout?.getChildAt(1) as? SimpleDraweeView
-            val description = relativeLayout?.getChildAt(2) as? TextView
+            val title = relativeLayout?.findViewById(R.id.cardTitle) as? TextView
+            val imageView = relativeLayout?.findViewById(R.id.home_recipe_card) as? SimpleDraweeView
+            val description = relativeLayout?.findViewById(R.id.recipeCardDescription) as? TextView
+            val numberOfFavoritesView = relativeLayout?.findViewById(R.id.numberOfFavorites) as? TextView
 
             val element = BarAssistant.feed[position]
 
-            cardView?.setOnClickListener {
+            imageView?.setOnClickListener {
+                if(clicked) return@setOnClickListener
+                clicked = true
+                it.postDelayed({
+                    clicked = false
+                } , 500)
                 val intent = Intent(activity, RecipeDetail::class.java)
                 intent.putExtra("Recipe", element.recipe)
                 activity.startActivity(intent)
             }
 
-            title?.text = element.recipe.title
+            description?.text = element.recipe.title
             if (imageView != null) {
                 imageView.hierarchy.setPlaceholderImage(R.mipmap.ic_old_fashioned)
                 loadImage(activity.applicationContext, imageView, element.recipe)
             }
 
-            description?.text = "Test"
+            title?.text = element.getDescription()
+            val numFavorites = element.recipe.favoriteCount
+            numberOfFavoritesView?.text = if(numFavorites > 0) numFavorites.toString() else ""
         }
     }
 

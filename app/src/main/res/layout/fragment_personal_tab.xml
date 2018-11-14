@@ -1,85 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+
+<android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:ignore="HardcodedText"
-    tools:context=".fragment.PersonalTab">
+    android:layout_width="match_parent">
 
-    <RelativeLayout
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/floatingCreateRecipeButton"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:id="@+id/fullNameAccount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_margin="25dp"
-            android:textColor="@color/primaryText"
-            android:textSize="26sp" />
-
-        <TextView
-            android:id="@+id/usernameAccount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/fullNameAccount"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="35dp"
-            android:textColor="@color/primaryText"
-            android:textSize="20sp" />
-
-        <Button
-            android:id="@+id/fullAccountButton"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/usernameAccount"
-            android:layout_alignParentEnd="true"
-            android:layout_margin="15dp"
-            android:drawableEnd="@drawable/ic_chevron_right_accent_24dp"
-            android:text="Full Profile" />
-
-    </RelativeLayout>
-
-    <Button
-        android:id="@+id/addRecipeActivityButton"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add Recipe" />
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/browser_actions_context_menu_min_padding"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/ic_add_icon"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <android.support.design.widget.TabLayout
-        android:id="@+id/accountTabs"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:ignore="HardcodedText"
+        tools:context=".fragment.PersonalTab">
 
-        <android.support.design.widget.TabItem
-            android:text="Suggestions"
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/fullNameAccount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_margin="25dp"
+                android:textColor="@color/primaryText"
+                android:textSize="26sp" />
+
+            <TextView
+                android:id="@+id/usernameAccount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/fullNameAccount"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="35dp"
+                android:textColor="@color/primaryText"
+                android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/fullAccountButton"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/usernameAccount"
+                android:layout_alignParentEnd="true"
+                android:layout_margin="15dp"
+                android:drawableEnd="@drawable/ic_chevron_right_accent_24dp"
+                android:text="Full Profile" />
+
+        </RelativeLayout>
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/accountTabs"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_width="match_parent" />
+            tools:translationZ="1dp">
 
-        <android.support.design.widget.TabItem
-            android:text="Favorites"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"/>
+            <android.support.design.widget.TabItem
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Created" />
 
-        <android.support.design.widget.TabItem
-            android:text="Recent"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"/>
+            <android.support.design.widget.TabItem
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Favorites" />
 
-    </android.support.design.widget.TabLayout>
+            <android.support.design.widget.TabItem
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Recent" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/profileRecipeRecycler"
-        android:layout_marginTop="50dp"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        </android.support.design.widget.TabLayout>
 
-    </android.support.v7.widget.RecyclerView>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/profileRecipeRecycler"
+            android:layout_marginTop="50dp"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-</LinearLayout>
+        </android.support.v7.widget.RecyclerView>
+
+    </LinearLayout>
+</android.support.design.widget.CoordinatorLayout>

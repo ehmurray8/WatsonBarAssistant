@@ -6,6 +6,8 @@ import android.graphics.drawable.Drawable
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.util.Log
+import com.algolia.search.saas.Client
+import com.algolia.search.saas.RequestOptions
 import com.facebook.cache.disk.DiskCacheConfig
 import com.facebook.common.util.ByteConstants
 import com.facebook.drawee.backends.pipeline.Fresco
@@ -15,8 +17,13 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.StorageReference
 import com.google.gson.Gson
+import com.speakeasy.watsonbarassistant.activity.MainMenu
+import com.speakeasy.watsonbarassistant.com.speakeasy.watsonbarassistant.AddToAlgolia
 import java.util.*
 import com.speakeasy.watsonbarassistant.extensions.*
+import kotlinx.serialization.json.JSON
+import org.json.JSONObject
+import kotlin.concurrent.thread
 
 
 class BarAssistant: Application() {
@@ -27,6 +34,8 @@ class BarAssistant: Application() {
         var storageReference: StorageReference? = null
         var userInfo: UserInfo? = null
 
+        private val algoliaClient = Client(ALGOLIA_APP_ID, ALGOLIA_API_KEY)
+        val algoliaIndex = algoliaClient.getIndex("Recipe")
         val recipes = mutableListOf<MutableList<DiscoveryRecipe>>()
         val favoritesList = sortedSetOf<DiscoveryRecipe>()
         val userCreatedRecipes = sortedSetOf<DiscoveryRecipe>()
@@ -110,13 +119,10 @@ class BarAssistant: Application() {
             synchronized(BarAssistant.userCreatedRecipes) {
                 newImageId = UUID.randomUUID().mostSignificantBits.toString().dropLast(4)
                 val imagePath = RECIPE_IMAGES + "/GSBimg-" + newImageId + ".jpg"
-                Log.i("BarAssistantAddImage", "ImageId: " + newImageId)
                 var uploadTask = BarAssistant.storageReference?.child(imagePath)?.putBytes(newImage)
                 uploadTask?.addOnFailureListener{
-                    Log.e("BarAssistantAddImage","Failed to add image.")
                     //TODO failure thing
                 }?.addOnSuccessListener {
-                    Log.i("BarAssistantAddImage","Successfully added image.")
                     //TODO on success thing
                 }
             }
@@ -133,7 +139,6 @@ class BarAssistant: Application() {
                     //Add to master recipe list
                     val fireRecipe = newRecipe.toFireStoreRecipe()
                     fireStore.collection(RECIPE_COLLECTION).document(newRecipe.imageId).set(fireRecipe)
-                    Log.i("FireRecipeType","fire: " + fireRecipe.imageId + " dis: " + newRecipe.imageId)
                     //Add to user created list
                     synchronized(BarAssistant.userCreatedRecipes){
                         userCreatedRecipes.add(newRecipe)
@@ -142,7 +147,9 @@ class BarAssistant: Application() {
                     updateUserCreatedReipesFireStore(authorization,fireStore)
 
                     //Add to algolia
-
+                    //TODO add to algolia
+                    val addToAlgolia = AddToAlgolia()
+                    addToAlgolia.execute(newRecipe)
                     Log.i("BarAssistantAddingFirebaseRecipe", "id: " + newRecipe.imageId + " recipe: " + newRecipe.toString() + " uid: " + uid.toString())
 
                 }
@@ -247,7 +254,7 @@ class BarAssistant: Application() {
                     fireStore.recipeDocument(userRecipe.imageId).get().addOnSuccessListener {
                         val recipe = it.toObject(FireStoreRecipe::class.java)
                         if(recipe != null) {
-                            recipe.count++
+                            //recipe.count++
                             fireStore.recipeDocument(userRecipe.imageId).set(recipe)
                         }
                     }
@@ -268,7 +275,7 @@ class BarAssistant: Application() {
                     fireStore.recipeDocument(favorite.imageId).get().addOnSuccessListener {
                         val recipe = it.toObject(FireStoreRecipe::class.java)
                         if(recipe != null) {
-                            recipe.count++
+                            recipe.favoriteCount++
                             fireStore.recipeDocument(favorite.imageId).set(recipe)
                         }
                     }
@@ -286,6 +293,7 @@ class BarAssistant: Application() {
                 getUserInfoFromCollection(fireStore, uid, FRIENDS_COLLECTION, friends, FRIEND_LIST)
                 getUserInfoFromCollection(fireStore, uid, BLOCKED_COLLECTION, blockedUsers, BLOCKED_LIST)
                 getAllUsers(fireStore)
+                loadFeedRecipes(fireStore)
             }
         }
     }
@@ -295,7 +303,6 @@ class BarAssistant: Application() {
                                           identifier: String) {
         fireStore.appDocument(uid, collection).get().addOnSuccessListener {
             val requestIds = it.get(identifier) as? ArrayList<*>
-            Log.d("Load Users", "Collection: $collection, ${requestIds?.toStringMutableList()}")
             synchronized(outputList) {
                 outputList.clear()
             }
@@ -311,7 +318,6 @@ class BarAssistant: Application() {
                                   outputList: MutableList<UserInfo>, collection: String) {
         fireStore.userDocument(otherUserId).get().addOnSuccessListener {
             it.toObject(UserInfo::class.java)?.let { userInfo ->
-                Log.d("Load Users", "Collection: $collection, Id: $otherUserId, UserInfo: $userInfo")
                 synchronized(outputList) {
                     userInfo.userId = otherUserId
                     outputList.add(userInfo)

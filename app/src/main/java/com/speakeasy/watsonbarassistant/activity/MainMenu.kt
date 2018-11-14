@@ -15,6 +15,7 @@ import android.view.MenuItem
 import android.view.View
 import com.algolia.search.saas.Client
 import com.algolia.search.saas.Query
+import com.algolia.search.saas.RequestOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
@@ -33,6 +34,7 @@ import com.speakeasy.watsonbarassistant.fragment.PersonalTab
 import com.speakeasy.watsonbarassistant.fragment.SearchFragment
 import kotlinx.android.synthetic.main.activity_main_menu.*
 import kotlinx.serialization.json.JSON
+import org.json.JSONObject
 import java.util.*
 
 class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
@@ -51,7 +53,7 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
     private var lastDiscoveryRefreshTime = -1L
 
     private val client = Client(ALGOLIA_APP_ID, ALGOLIA_API_KEY)
-    private val recipeIndex = client.getIndex("Recipe")
+    val recipeIndex = client.getIndex("Recipe")
     private var searchMenuItem: MenuItem? = null
     private var loadingUserInfo = false
 
@@ -122,7 +124,6 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
                 }
             }
         }
-        loadFeed()
         val userInfoJson = preferences.getString(USER_INFO_PREFERENCES, "")
         val ingredientsJson = preferences.getString(INGREDIENT_PREFERENCES_ID, "")
         val lastViewedTimesJson = preferences.getString(LAST_VIEWED_RECIPE_TIMES, "")
@@ -211,15 +212,12 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        loadFeed()
-    }
-
     private fun refreshFragments() {
-        (fragment as? HomeTab)?.refresh()
-        (fragment as? IngredientsTab)?.refresh()
-        (fragment as? PersonalTab)?.refresh()
+        runOnUiThread {
+            (fragment as? HomeTab)?.refresh()
+            (fragment as? IngredientsTab)?.refresh()
+            (fragment as? PersonalTab)?.refresh()
+        }
     }
 
     override fun onPause() {
@@ -278,9 +276,9 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
             it.loadUserCreatedRecipesFromFireStore(authorization,fireStore)
             it.loadUserInfo(authorization, fireStore)
         }
-
         loadRecentlyViewed()
         loadIngredients()
+        loadFeed()
         refreshFragments()
     }
 
@@ -323,12 +321,8 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
     }
 
     fun loadFeed() {
-        synchronized(BarAssistant.feed) {
-            synchronized(BarAssistant.recipes) {
-                BarAssistant.feed.clear()
-                BarAssistant.feed.addAll(BarAssistant.recipes[0].shuffled().map { FeedElement(it) })
-                refreshFragments()
-            }
+        if(BarAssistant.feed.count() == 0) {
+            loadFeedRecipes(fireStore, this::refreshFragments)
         }
     }
 

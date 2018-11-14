@@ -23,6 +23,7 @@ class HorizontalRecipeAdapter(private val recipes: MutableList<DiscoveryRecipe>,
         RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     class ViewHolder(val card: CardView) : RecyclerView.ViewHolder(card)
+    var clicked = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val cardView = LayoutInflater.from(parent.context).inflate(R.layout.recipe_card,
@@ -43,6 +44,11 @@ class HorizontalRecipeAdapter(private val recipes: MutableList<DiscoveryRecipe>,
             val imageView = mainLayout.findViewById<SimpleDraweeView>(R.id.home_recipe_card)
             imageView.hierarchy.setPlaceholderImage(R.mipmap.ic_old_fashioned)
             holder.card.setOnClickListener {
+                if(clicked) return@setOnClickListener
+                clicked = true
+                it.postDelayed({
+                    clicked = false
+                } , 500)
                 RecipeCollection.recipesList = recipes
                 val intent = Intent(activity.baseContext, RecipeCollection::class.java)
                 intent.putExtra("Collection Name", collectionName)

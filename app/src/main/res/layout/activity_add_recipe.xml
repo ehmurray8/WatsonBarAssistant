@@ -25,10 +25,11 @@
                 android:layout_marginTop="15dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginBottom="10dp"
+                android:hint="Title"
+                android:inputType="text"
                 android:textColor="@color/primaryText"
                 android:textSize="25sp"
-                android:textStyle="bold"
-                android:hint="Title"/>
+                android:textStyle="bold" />
 
             <com.facebook.drawee.view.SimpleDraweeView
                 android:id="@+id/newPic"
@@ -63,6 +64,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Description"
+                android:inputType="text"
                 android:lines="4" />
 
             <!--Button
@@ -80,17 +82,12 @@
                 android:textColor="@color/primaryText"
                 android:text="@string/ingredients_header"
                 android:textSize="20sp" />
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:lines="4"
-                android:hint="Ingredients"/>
 
             <Button
                 android:id="@+id/addRecipeButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Add Recipe" />
+                android:text="Create Recipe" />
 
         </LinearLayout>
     </ScrollView>

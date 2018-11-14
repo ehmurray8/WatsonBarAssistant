@@ -2,8 +2,8 @@ package com.speakeasy.watsonbarassistant.extensions
 
 fun <T> ArrayList<T>.toStringMutableList(): MutableList<String> {
     val newArray = mutableListOf<String>()
-    this.forEach {
-        (it as? String)?.let {
+    forEach { element ->
+        (element.toString() as? String)?.let {
             newArray.add(it)
         }
     }

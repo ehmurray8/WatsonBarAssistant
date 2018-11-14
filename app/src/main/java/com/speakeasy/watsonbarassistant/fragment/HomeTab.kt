@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -53,6 +52,7 @@ class HomeTab: Fragment() {
             mainMenu.refreshDiscovery()
             mainRefreshLayout.isRefreshing = false
         }
+        mainRefreshLayout.isMotionEventSplittingEnabled = false
 
         home_container.isNestedScrollingEnabled = true
         home_container.apply {
@@ -65,7 +65,10 @@ class HomeTab: Fragment() {
     }
 
     fun refresh() {
-        Log.d("Refresh", "Refresh the home")
+        val mainMenu = activity as MainMenu
+        viewAdapter = FeedAdapter(mainMenu)
+        home_container.adapter = viewAdapter
+        home_container.refreshDrawableState()
         viewAdapter?.notifyDataSetChanged()
     }
 }
