@@ -64,6 +64,7 @@ class IngredientAdd : AppCompatActivity() {
         //expandable_ingredient_list_view.setAdapter(FirstExpandableListAdapter(this, lastViewedRecipes.keys.toMutableList(), lastViewedRecipes.values, expandable_ingredient_list_view))
         //expandable_ingredient_list_view.setAdapter(MapExpandableListAdapter(this, ingredientsMap, expandable_ingredient_list_view))
         //ingredientsMap.clear()
+        expandable_ingredient_list_view.solidColor
 
     }
 }
