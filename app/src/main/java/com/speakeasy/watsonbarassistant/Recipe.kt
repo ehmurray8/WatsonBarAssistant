@@ -1,6 +1,5 @@
 package com.speakeasy.watsonbarassistant
 
-import android.util.Log
 import kotlinx.serialization.Optional
 import java.io.Serializable
 
@@ -41,7 +40,6 @@ data class DiscoveryRecipe(@Optional val title: String = "",
     @Optional var recipeImageUriString: String = ""
 
     fun toFireStoreRecipe(): FireStoreRecipe {
-        //Log.i("RecipeConversion", "id as string: " + imageId + " id as long: " + imageId.toLong().toString())
         return FireStoreRecipe(title = title, imageUrl = imageUrl, reviewCount = reviewCount.toFloat().toLong(),
                 description = description, recipeUrl = recipeUrl, ingredientList = ingredientList,
                 instructionList = instructionList, prepTime = prepTime, cookTime = cookTime,
@@ -79,7 +77,6 @@ data class DiscoveryRecipe(@Optional val title: String = "",
 
     fun getImageName(): String {
         var id = imageId
-        Log.i("getImageId",imageId)
         if (id.contains(".")){
             id = id.dropLast(2)
         }

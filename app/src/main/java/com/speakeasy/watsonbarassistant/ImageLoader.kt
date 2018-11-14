@@ -2,7 +2,6 @@ package com.speakeasy.watsonbarassistant
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import com.facebook.drawee.view.SimpleDraweeView
 
 
@@ -12,9 +11,7 @@ fun loadImage(context: Context, imageView: SimpleDraweeView, recipe: DiscoveryRe
     if(recipe != null) {
         val imageUriString = recipe.recipeImageUriString
         if(imageUriString == "") {
-            Log.d("GetRecipePic", recipe.toString())
             val imageName = recipe.getImageName()
-            Log.d("imageName", imageName)
             val imageReference = BarAssistant.storageReference?.child(imageName)
             imageReference?.downloadUrl?.addOnSuccessListener {
                 recipe.recipeImageUriString = it.toString()

@@ -18,10 +18,8 @@ import android.view.View
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.speakeasy.watsonbarassistant.*
-import com.speakeasy.watsonbarassistant.activity.MainMenu
 import kotlinx.android.synthetic.main.activity_add_recipe.*
 import java.io.ByteArrayOutputStream
-import java.util.*
 
 class AddRecipeActivity : AppCompatActivity() {
     var newImageBitmap: Bitmap? = null
@@ -99,7 +97,7 @@ class AddRecipeActivity : AppCompatActivity() {
         }
     }
 
-    fun addRecipe(){
+    private fun addRecipe(){
         Log.i("AddRecipeActivity","Adding the recipe.")
         val assistant = BarAssistant()
 
@@ -112,7 +110,7 @@ class AddRecipeActivity : AppCompatActivity() {
         if (newImageId == "-1"){
             //TODO failed to save image message
         }else{
-            var newRecipe = DiscoveryRecipe(title = title_text.text.toString(), description = description_text.text.toString(), imageId = newImageId, ingredientList = emptyList())
+            val newRecipe = DiscoveryRecipe(title = title_text.text.toString(), description = description_text.text.toString(), imageId = newImageId, ingredientList = emptyList())
             Log.i("AddRecipeActivity",newRecipe.toString())
             assistant.storeNewRecipeInFireStore(FirebaseAuth.getInstance(),FirebaseFirestore.getInstance(), newRecipe)
         }
@@ -141,20 +139,5 @@ class AddRecipeActivity : AppCompatActivity() {
             newPic.setImageBitmap(bitmap)
             setAddButtonVisibility()
         }
-    }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
-        val intent = Intent(this, MainMenu::class.java)
-        startActivity(intent)
-        finish()
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun encodeBitmapToBase64(bitmap: Bitmap):String{
-        val byteArrayOutputStream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG,30, byteArrayOutputStream)
-        val byteArray = byteArrayOutputStream.toByteArray()
-        return Base64.getEncoder().encodeToString(byteArray)
     }
 }

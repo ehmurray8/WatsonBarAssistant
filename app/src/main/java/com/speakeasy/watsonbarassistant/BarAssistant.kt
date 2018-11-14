@@ -7,7 +7,6 @@ import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.util.Log
 import com.algolia.search.saas.Client
-import com.algolia.search.saas.RequestOptions
 import com.facebook.cache.disk.DiskCacheConfig
 import com.facebook.common.util.ByteConstants
 import com.facebook.drawee.backends.pipeline.Fresco
@@ -17,13 +16,9 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.StorageReference
 import com.google.gson.Gson
-import com.speakeasy.watsonbarassistant.activity.MainMenu
 import com.speakeasy.watsonbarassistant.com.speakeasy.watsonbarassistant.AddToAlgolia
-import java.util.*
 import com.speakeasy.watsonbarassistant.extensions.*
-import kotlinx.serialization.json.JSON
-import org.json.JSONObject
-import kotlin.concurrent.thread
+import java.util.*
 
 
 class BarAssistant: Application() {
@@ -118,8 +113,8 @@ class BarAssistant: Application() {
         if (BarAssistant.isInternetConnected()) {
             synchronized(BarAssistant.userCreatedRecipes) {
                 newImageId = UUID.randomUUID().mostSignificantBits.toString().dropLast(4)
-                val imagePath = RECIPE_IMAGES + "/GSBimg-" + newImageId + ".jpg"
-                var uploadTask = BarAssistant.storageReference?.child(imagePath)?.putBytes(newImage)
+                val imagePath = "$RECIPE_IMAGES/GSBimg-$newImageId.jpg"
+                val uploadTask = BarAssistant.storageReference?.child(imagePath)?.putBytes(newImage)
                 uploadTask?.addOnFailureListener{
                     //TODO failure thing
                 }?.addOnSuccessListener {
@@ -146,8 +141,6 @@ class BarAssistant: Application() {
 
                     updateUserCreatedReipesFireStore(authorization,fireStore)
 
-                    //Add to algolia
-                    //TODO add to algolia
                     val addToAlgolia = AddToAlgolia()
                     addToAlgolia.execute(newRecipe)
                     Log.i("BarAssistantAddingFirebaseRecipe", "id: " + newRecipe.imageId + " recipe: " + newRecipe.toString() + " uid: " + uid.toString())
@@ -208,7 +201,6 @@ class BarAssistant: Application() {
                     val recipeDocument = it.result ?: return@addOnCompleteListener
                     val recipe = recipeDocument.toObject(FireStoreRecipe::class.java)
                     temporaryList.add(recipe?.toDiscoveryRecipe() ?: return@addOnCompleteListener)
-                    count++
                     if(++count >= recipeIds.count()) {
                         synchronized(BarAssistant.userCreatedRecipes) {
                             userCreatedRecipes.clear()
@@ -230,7 +222,6 @@ class BarAssistant: Application() {
                     val recipeDocument = it.result ?: return@addOnCompleteListener
                     val favorite = recipeDocument.toObject(FireStoreRecipe::class.java)
                     temporaryList.add(favorite?.toDiscoveryRecipe() ?: return@addOnCompleteListener)
-                    count++
                     if(++count >= favoriteIds.count()) {
                         synchronized(BarAssistant.favoritesList) {
                             favoritesList.clear()
@@ -242,7 +233,7 @@ class BarAssistant: Application() {
         }
     }
 
-    fun updateUserCreatedReipesFireStore(authorization: FirebaseAuth, fireStore: FirebaseFirestore) {
+    private fun updateUserCreatedReipesFireStore(authorization: FirebaseAuth, fireStore: FirebaseFirestore) {
         if (BarAssistant.isInternetConnected()) {
             val uid = authorization.currentUser?.uid
             val recipesMap = synchronized(BarAssistant.userCreatedRecipes) {
@@ -254,7 +245,7 @@ class BarAssistant: Application() {
                     fireStore.recipeDocument(userRecipe.imageId).get().addOnSuccessListener {
                         val recipe = it.toObject(FireStoreRecipe::class.java)
                         if(recipe != null) {
-                            //recipe.count++
+                            recipe.favoriteCount
                             fireStore.recipeDocument(userRecipe.imageId).set(recipe)
                         }
                     }
