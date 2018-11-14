@@ -221,6 +221,7 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
     override fun onPause() {
         super.onPause()
         if(!loadingUserInfo) {
+            (application as? BarAssistant)?.updateFavoriteFireStore(authorization, fireStore)
             searchMenuItem?.collapseActionView()
             val uid = currentUser?.uid
             if (uid != null) {

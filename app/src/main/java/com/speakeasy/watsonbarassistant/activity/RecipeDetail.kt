@@ -94,20 +94,21 @@ class RecipeDetail : AppCompatActivity() {
             parallaxSetup(recipe)
 
             button_favorite.setOnClickListener {
-                synchronized(BarAssistant.favoritesList) {
-                    if (favorited) {
-                        favorited = false
+                if (favorited) {
+                    favorited = false
+                    synchronized(BarAssistant.favoritesList) {
                         BarAssistant.favoritesList.removeIf { favorite ->
                             favorite.imageId == recipe.imageId
                         }
-                    } else {
-                        favorited = true
-                        button_favorite.startAnimation(favoriteAnim)
-                        if (!favoriteIds.contains(recipe.imageId)) {
+                    }
+                } else {
+                    favorited = true
+                    button_favorite.startAnimation(favoriteAnim)
+                    if (!favoriteIds.contains(recipe.imageId)) {
+                        synchronized(BarAssistant.favoritesList) {
                             BarAssistant.favoritesList.add(recipe)
                         }
                     }
-                    Unit
                 }
             }
             thread {

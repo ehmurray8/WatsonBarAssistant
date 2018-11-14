@@ -31,16 +31,20 @@ fun loadFeedRecipes(fireStore: FirebaseFirestore, refresh: (() -> Unit)? = null)
         val friendRecipes = getFriendRecipes(fireStore)
         synchronized(BarAssistant.feed) {
             BarAssistant.feed.clear()
-            BarAssistant.feed.addAll(randomRecipes)
-            BarAssistant.feed.addAll(friendRecipes)
-            BarAssistant.feed.addAll(popularRecipes)
+            addUnique(randomRecipes)
+            addUnique(friendRecipes)
+            addUnique(popularRecipes)
         }
+        var suggested: MutableList<FeedElement>? = null
         if (BarAssistant.friends.count() > 0 && ingredientsList.count() > 0) {
-            addSuggestions(BarAssistant.feed, 15)
+            suggested = addSuggestions(15)
         } else if (BarAssistant.friends.count() > 0) {
-            addSuggestions(BarAssistant.feed, 10)
+            suggested = addSuggestions(10)
         } else if (BarAssistant.ingredients.count() > 0) {
-            addSuggestions(BarAssistant.feed, 30)
+            suggested = addSuggestions(30)
+        }
+        if (suggested != null) {
+            addUnique(suggested)
         }
         synchronized(BarAssistant.feed) {
             BarAssistant.feed.shuffle()
@@ -49,7 +53,14 @@ fun loadFeedRecipes(fireStore: FirebaseFirestore, refresh: (() -> Unit)? = null)
     }
 }
 
-private fun addSuggestions(feedElements: MutableList<FeedElement>, count: Int) {
+private fun addUnique(recipes: MutableList<FeedElement>) {
+    synchronized(BarAssistant.feed) {
+        BarAssistant.feed.addAll(recipes.filter { it.recipe.imageId !in BarAssistant.feed.map { f -> f.recipe.imageId } })
+    }
+}
+
+private fun addSuggestions(count: Int): MutableList<FeedElement> {
+    val feedElements = mutableListOf<FeedElement>()
     if(BarAssistant.recipes[0].count() >= count) {
         synchronized(BarAssistant.feed) {
             feedElements.addAll(BarAssistant.recipes[0].slice(0 until count).map{ FeedElement(it, FeedType.SUGGESTION) })
@@ -61,6 +72,7 @@ private fun addSuggestions(feedElements: MutableList<FeedElement>, count: Int) {
             })
         }
     }
+    return feedElements
 }
 
 private fun getRandomRecipes(count: Int, fireStore: FirebaseFirestore): MutableList<FeedElement> {
