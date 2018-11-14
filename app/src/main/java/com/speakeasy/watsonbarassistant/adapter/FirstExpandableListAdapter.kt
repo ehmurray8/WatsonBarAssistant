@@ -7,10 +7,10 @@ import android.view.ViewGroup
 import android.widget.*
 import com.speakeasy.watsonbarassistant.R
 
-class FirstExpandableListAdapter(var context: Context, var firstLevel : MutableList<String>?, var secondLevel : MutableList<MutableList<String>>?, var thirdLevel : MutableList<String>?, var expandableListView: ExpandableListView) : BaseExpandableListAdapter() {
+class FirstExpandableListAdapter(var context: Context, var firstLevel : MutableList<MutableList<String>>?, var secondLevel : MutableList<MutableList<String>>?, var expandableListView: ExpandableListView, var index: Int) : BaseExpandableListAdapter() {
 
     override fun getGroup(groupPosition: Int): String {
-        return firstLevel!![groupPosition]
+        return firstLevel!![groupPosition][index]
     }
 
     override fun isChildSelectable(groupPosition: Int, childPosition: Int): Boolean {
@@ -27,7 +27,7 @@ class FirstExpandableListAdapter(var context: Context, var firstLevel : MutableL
             val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
             convertView = inflater.inflate(R.layout.fragment_ingredient_add_group, null)
         }
-        val title = convertView?.findViewById<TextView>(R.id.listTitle)
+        val title = convertView?.findViewById<CheckBox>(R.id.listTitle)
         title?.text = getGroup(groupPosition)
         title?.setOnClickListener{
             if(expandableListView.isGroupExpanded(groupPosition)){
@@ -60,7 +60,7 @@ class FirstExpandableListAdapter(var context: Context, var firstLevel : MutableL
             val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
             convertView = inflater.inflate(R.layout.fragment_ingredient_add_item, null)
         }
-        val title = convertView?.findViewById<CheckedTextView>(R.id.expandedListItem)
+        val title = convertView?.findViewById<CheckBox>(R.id.expandedListItem)
         title?.text = getChild(groupPosition, childPosition)
         title?.setOnClickListener{
             //Toast.makeText(context, "Added "+getChild(groupPosition, childPosition), Toast.LENGTH_SHORT)

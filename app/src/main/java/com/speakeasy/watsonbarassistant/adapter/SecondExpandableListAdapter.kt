@@ -39,7 +39,7 @@ class SecondExpandableListAdapter(var context: Context, var secondLevel : Mutabl
             else{
                 expandableListView.expandGroup(groupPosition)
             }
-            Toast.makeText(context, getGroup(groupPosition), Toast.LENGTH_SHORT)
+            //Toast.makeText(context, getGroup(groupPosition), Toast.LENGTH_SHORT)
         }
         return convertView
     }

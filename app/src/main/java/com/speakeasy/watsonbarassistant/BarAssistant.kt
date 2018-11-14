@@ -59,7 +59,8 @@ class BarAssistant: Application() {
 
         var firstLevelIngredients : MutableList<String>? = ArrayList()
         var secondLevelIngredients : MutableList<MutableList<String>>? = ArrayList()
-        var thirdLevelIngredients : MutableList<String>? = ArrayList()
+        var thirdLevelIngredients : MutableList<MutableList<String>>? = ArrayList()
+        var currentIndex: Int = 0
 
         fun isInternetConnected(): Boolean {
             return networkInfo?.isConnectedOrConnecting == true
@@ -258,7 +259,7 @@ class BarAssistant: Application() {
         val uid = authorization.currentUser?.uid
         if(isInternetConnected() && uid != null) {
             fireStore.collection(INGREDIENT_COLLECTION).get().addOnSuccessListener {
-                firstLevelIngredients?.clear()
+                //firstLevelIngredients?.clear()
                 secondLevelIngredients?.clear()
                 thirdLevelIngredients?.clear()
                 loadMasterIngredients(fireStore)
@@ -273,26 +274,29 @@ class BarAssistant: Application() {
             override fun onComplete(task: Task<QuerySnapshot>) {
                 if (task.isSuccessful) {
                      task.result?.forEach { document ->
-                        firstLevelIngredients?.add(document.id)
-                         secondLevelIngredients?.add(document.data.keys.toMutableList())
-                             document.data.entries.forEach { index ->
-                                 if(!index.value.toString().isEmpty()) {
-                                     thirdLevelIngredients?.add(index.value.toString())
+                         //firstLevelIngredients?.add(document.id)
+                         secondLevelIngredients?.add(document.data.keys)
+                             document.data.entries.forEach { index  ->
+                                 val temp = index.value as ArrayList<String>
+                                 if(temp.size != 0) {
+                                     thirdLevelIngredients?.add(temp)
                                  }
                                  else{
-                                     thirdLevelIngredients?.add("")
+                                     //thirdLevelIngredients?.add("")
                              }
                          }
                     }
                 }
             }
         })
-        firstLevelIngredients?.sort()
+        //firstLevelIngredients?.sort()
         secondLevelIngredients?.forEach { index ->
             index.sort()
         }
-        thirdLevelIngredients?.sort()
+        thirdLevelIngredients?.forEach { index ->
+            index.sort()
+        }
 
-        //Toast.makeText(baseContext, "REEEEEEE", Toast.LENGTH_SHORT).show()
+
     }
 }

@@ -21,6 +21,7 @@ import com.speakeasy.watsonbarassistant.activity.IngredientAdd
 import com.speakeasy.watsonbarassistant.activity.MainMenu
 import com.speakeasy.watsonbarassistant.activity.VisionActivity
 import com.speakeasy.watsonbarassistant.adapter.IngredientGridAdapter
+import com.speakeasy.watsonbarassistant.BarAssistant.Companion.currentIndex
 import kotlinx.android.synthetic.main.fragment_ingredient_tab_radial.*
 
 
@@ -67,42 +68,52 @@ class IngredientsTab : Fragment() {
         }
 
         alcoholsButton.setOnClickListener {
+            currentIndex = 0
             val intent = Intent(activity, IngredientAdd::class.java)
             startActivity(intent)
         }
         beveragesAndFlavoringButton.setOnClickListener {
+            currentIndex = 1
             val intent = Intent(activity, IngredientAdd::class.java)
             startActivity(intent)
         }
         bittersButton.setOnClickListener {
+            currentIndex = 2
             val intent = Intent(activity, IngredientAdd::class.java)
             startActivity(intent)
         }
         fruitsAndVegetablesButton.setOnClickListener {
+            currentIndex = 3
             val intent = Intent(activity, IngredientAdd::class.java)
             startActivity(intent)
         }
         herbsAndSpicesButton.setOnClickListener {
+            currentIndex = 4
             val intent = Intent(activity, IngredientAdd::class.java)
             startActivity(intent)
         }
         juicesButton.setOnClickListener {
+            currentIndex = 5
             val intent = Intent(activity, IngredientAdd::class.java)
             startActivity(intent)
         }
         liqueursButton.setOnClickListener {
+            currentIndex = 6
             val intent = Intent(activity, IngredientAdd::class.java)
             startActivity(intent)
         }
         miscellaneousButton.setOnClickListener {
+            currentIndex = 7
             val intent = Intent(activity, IngredientAdd::class.java)
             startActivity(intent)
         }
         sweetsButton.setOnClickListener {
+            currentIndex = 8
             val intent = Intent(activity, IngredientAdd::class.java)
             startActivity(intent)
         }
         syrupsButton.setOnClickListener {
+            currentIndex = 9
             val intent = Intent(activity, IngredientAdd::class.java)
             startActivity(intent)
         }
