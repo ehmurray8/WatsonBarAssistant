@@ -6,13 +6,13 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
-import android.view.inputmethod.EditorInfo
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 import com.speakeasy.watsonbarassistant.*
-import com.speakeasy.watsonbarassistant.extensions.shoppingCartDocument
-import com.speakeasy.watsonbarassistant.extensions.toast
+import com.speakeasy.watsonbarassistant.extensions.*
 import kotlinx.android.synthetic.main.activity_shopping_cart.*
 import java.util.*
 
@@ -27,6 +27,13 @@ class ShoppingCart : AppCompatActivity() {
     private var authorization = FirebaseAuth.getInstance()
     private var fireStore = FirebaseFirestore.getInstance()
 
+     private var menuAnimClose: Animation? = null
+     private var menuAnimOpen: Animation? = null
+     private var menuAnimRotateBack: Animation? = null
+     private var menuAnimRotateOut: Animation? = null
+
+    private var isAddMenuOpen = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_shopping_cart)
@@ -40,30 +47,40 @@ class ShoppingCart : AppCompatActivity() {
             layoutManager = manager
             adapter = viewAdapter
         }
-        addShoppingCartInput.setOnEditorActionListener { _, actionId, _ ->
-            return@setOnEditorActionListener when (actionId) {
-                    EditorInfo.IME_ACTION_DONE -> {
-                        val name = addShoppingCartInput.text.toString()
-                        val ingredient = Ingredient(name)
-                        addIngredient(ingredient)
-                        addShoppingCartInput.selectAll()
-                        addShoppingCartInput.setText("")
-                        true
-                    }
-                    else -> false
-                }
+
+        menuAnimOpen = AnimationUtils.loadAnimation(applicationContext, R.anim.menu_anim_open)
+        menuAnimClose = AnimationUtils.loadAnimation(applicationContext, R.anim.menu_anim_close)
+        menuAnimRotateOut = AnimationUtils.loadAnimation(applicationContext, R.anim.menu_anim_rotate_out)
+        menuAnimRotateBack = AnimationUtils.loadAnimation(applicationContext, R.anim.menu_anim_rotate_back)
+
+        addMenuButtonShopping.setOnClickListener {
+            when {
+                isAddMenuOpen -> closeMenus()
+                else -> openMenus()
+            }
         }
+
+        shoppingCartContainer.bringToFront()
+        addMenuButtonShopping.bringToFront()
+        addIngredientHandlers(this::addIngredients)
         setupSwipeHandler()
         loadFromFireStore()
     }
 
-    private fun addIngredient(ingredient: Ingredient) {
-        if(!orderedItems.contains(ingredient)) {
-            shoppingCartItems[ingredient] = true
-            orderedItems.add(ingredient)
-            viewAdapter?.notifyDataSetChanged()
-        } else {
-            applicationContext.toast("${ingredient.name} is already in the grocery list.")
+    override fun onResume() {
+        super.onResume()
+        closeMenus()
+    }
+
+    private fun addIngredients(ingredients: MutableList<Ingredient>, context: Context) {
+        ingredients.filter { it.name != "" }.forEach { ingredient ->
+            if(!orderedItems.contains(ingredient)) {
+                shoppingCartItems[ingredient] = true
+                orderedItems.add(ingredient)
+                viewAdapter?.notifyDataSetChanged()
+            } else {
+                applicationContext.toast("${ingredient.name} is already in the grocery list.")
+            }
         }
     }
 
@@ -164,4 +181,19 @@ class ShoppingCart : AppCompatActivity() {
          val itemTouchHelper = ItemTouchHelper(swipeHandler)
          itemTouchHelper.attachToRecyclerView(shoppingCartContainer)
      }
+
+    private fun closeMenus(){
+        addMenuButtonShopping.startAnimation(menuAnimRotateBack)
+        closeIngredientRadial()
+        shoppingCartContainer.alpha = 1.0F
+        isAddMenuOpen = false
+    }
+
+    private fun openMenus(){
+        addMenuButtonShopping.startAnimation(menuAnimRotateOut)
+        shoppingCartIngredientRadial.bringToFront()
+        openIngredientRadial()
+        shoppingCartContainer.alpha = 0.4F
+        isAddMenuOpen = true
+    }
 }

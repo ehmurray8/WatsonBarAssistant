@@ -9,12 +9,9 @@ import com.facebook.cache.disk.DiskCacheConfig
 import com.facebook.common.util.ByteConstants
 import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.imagepipeline.core.ImagePipelineConfig
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.storage.StorageReference
 import com.google.gson.Gson
 import com.speakeasy.watsonbarassistant.com.speakeasy.watsonbarassistant.AddToAlgolia
@@ -54,9 +51,7 @@ class BarAssistant: Application() {
 
         var secondLevelIngredients : MutableList<MutableList<String>>? = ArrayList()
         var thirdLevelIngredients : MutableList<MutableList<String>>? = ArrayList()
-        var currentIndex: Int = 0
-        var emptyMutableList : MutableList<String> = ArrayList()
-
+        var currentIngredientCategoryIndex: Int = 0
 
         fun isInternetConnected(): Boolean {
             return networkInfo?.isConnectedOrConnecting == true
@@ -303,14 +298,14 @@ class BarAssistant: Application() {
             }
             requestIds?.forEach { rid ->
                 (rid as? String)?.let { otherUserId ->
-                    addUserInfoToList(fireStore, otherUserId, outputList, collection)
+                    addUserInfoToList(fireStore, otherUserId, outputList)
                 }
             }
         }
     }
 
     private fun addUserInfoToList(fireStore: FirebaseFirestore, otherUserId: String,
-                                  outputList: MutableList<UserInfo>, collection: String) {
+                                  outputList: MutableList<UserInfo>) {
         fireStore.userDocument(otherUserId).get().addOnSuccessListener {
             it.toObject(UserInfo::class.java)?.let { userInfo ->
                 synchronized(outputList) {
@@ -347,7 +342,6 @@ class BarAssistant: Application() {
         val uid = authorization.currentUser?.uid
         if(isInternetConnected() && uid != null) {
             fireStore.collection(INGREDIENT_COLLECTION).get().addOnSuccessListener {
-                //firstLevelIngredients?.clear()
                 secondLevelIngredients?.clear()
                 thirdLevelIngredients?.clear()
                 loadMasterIngredients(fireStore)
@@ -356,25 +350,20 @@ class BarAssistant: Application() {
     }
 
     private fun loadMasterIngredients(fireStore: FirebaseFirestore) {
-
-
-        fireStore.collection(INGREDIENT_COLLECTION).get().addOnCompleteListener(object : OnCompleteListener<QuerySnapshot> {
-            override fun onComplete(task: Task<QuerySnapshot>) {
-                if (task.isSuccessful) {
-                     task.result?.forEach { document ->
-                         secondLevelIngredients?.add(document.data.keys.toMutableList())
-                             document.data.entries.forEach { index  ->
-                                 val temp = index.value as ArrayList<String>
-                                 if(temp.size != 0) {
-                                     thirdLevelIngredients?.add(temp)
-                                 }
-                                 else{
-                                     thirdLevelIngredients?.add(emptyMutableList)
-                             }
-                         }
+        fireStore.collection(INGREDIENT_COLLECTION).get().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                task.result?.forEach { document ->
+                    secondLevelIngredients?.add(document.data.keys.toMutableList())
+                    document.data.entries.forEach { index  ->
+                        val temp = index.value as ArrayList<*>
+                        if(temp.size != 0) {
+                            thirdLevelIngredients?.add(temp.toStringMutableList())
+                        } else{
+                            thirdLevelIngredients?.add(mutableListOf())
+                        }
                     }
                 }
             }
-        })
+        }
     }
 }

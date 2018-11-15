@@ -2,7 +2,6 @@ package com.speakeasy.watsonbarassistant.fragment
 
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -14,15 +13,14 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import com.speakeasy.watsonbarassistant.BarAssistant
-import com.speakeasy.watsonbarassistant.BarAssistant.Companion.currentIndex
-import com.speakeasy.watsonbarassistant.Ingredient
 import com.speakeasy.watsonbarassistant.R
-import com.speakeasy.watsonbarassistant.activity.IngredientAdd
 import com.speakeasy.watsonbarassistant.activity.VisionActivity
 import com.speakeasy.watsonbarassistant.adapter.IngredientGridAdapter
-import com.speakeasy.watsonbarassistant.addIngredient
+import com.speakeasy.watsonbarassistant.extensions.addIngredientHandlers
+import com.speakeasy.watsonbarassistant.extensions.addMainIngredients
+import com.speakeasy.watsonbarassistant.extensions.closeIngredientRadial
+import com.speakeasy.watsonbarassistant.extensions.openIngredientRadial
 import kotlinx.android.synthetic.main.fragment_ingredient_tab_radial.*
-
 
 
 class IngredientsTab : Fragment() {
@@ -65,66 +63,17 @@ class IngredientsTab : Fragment() {
             }
         }
 
-        alcoholsButton.setOnClickListener {
-            currentIndex = 0
-            showIngredientAdd()
-        }
-        beveragesAndFlavoringButton.setOnClickListener {
-            currentIndex = 1
-            showIngredientAdd()
-        }
-        bittersButton.setOnClickListener {
-            currentIndex = 2
-            showIngredientAdd()
-        }
-        fruitsAndVegetablesButton.setOnClickListener {
-            currentIndex = 3
-            showIngredientAdd()
-        }
-        herbsAndSpicesButton.setOnClickListener {
-            currentIndex = 4
-            showIngredientAdd()
-        }
-        juicesButton.setOnClickListener {
-            currentIndex = 5
-            showIngredientAdd()
-        }
-        liqueursButton.setOnClickListener {
-            currentIndex = 6
-            showIngredientAdd()
-        }
-        miscellaneousButton.setOnClickListener {
-            currentIndex = 7
-            showIngredientAdd()
-        }
-        sweetsButton.setOnClickListener {
-            currentIndex = 8
-            showIngredientAdd()
-        }
-        syrupsButton.setOnClickListener {
-            currentIndex = 9
-            showIngredientAdd()
-        }
+        activity?.addIngredientHandlers(::addMainIngredients)
 
         addViaCameraButton.setOnClickListener {
             val intent = Intent(activity, VisionActivity::class.java)
             startActivity(intent)
         }
 
+        closeMenus()
         refresh()
     }
 
-    private fun showIngredientAdd() {
-        IngredientAdd.addIngredientFunc = this::addIngredients
-        val intent = Intent(activity, IngredientAdd::class.java)
-        startActivity(intent)
-    }
-
-    private fun addIngredients(ingredients: MutableList<Ingredient>, context: Context) {
-        ingredients.forEachIndexed { index, it ->
-            addIngredient(newIngredient = it, refreshDiscovery = index == ingredients.count() - 1, context = context)
-        }
-    }
 
     fun refresh() {
         activity?.runOnUiThread {
@@ -137,36 +86,7 @@ class IngredientsTab : Fragment() {
         addViaCameraButton.startAnimation(menuAnimClose)
         addViaCameraButton.isClickable = false
         addViaCameraButton.hide()
-        alcoholsLayout.visibility = View.GONE
-        alcoholsButton.isClickable = false
-        alcoholsButton.hide()
-        beveragesAndFlavoringLayout.visibility = View.GONE
-        beveragesAndFlavoringButton.isClickable = false
-        beveragesAndFlavoringButton.hide()
-        bittersLayout.visibility = View.GONE
-        bittersButton.isClickable = false
-        bittersButton.hide()
-        fruitsAndVegetablesLayout.visibility = View.GONE
-        fruitsAndVegetablesButton.isClickable = false
-        fruitsAndVegetablesButton.hide()
-        herbsAndSpicesButtonLayout.visibility = View.GONE
-        herbsAndSpicesButton.isClickable = false
-        herbsAndSpicesButton.hide()
-        juicesLayout.visibility = View.GONE
-        juicesButton.isClickable = false
-        juicesButton.hide()
-        liqueursLayout.visibility = View.GONE
-        liqueursButton.isClickable = false
-        liqueursButton.hide()
-        miscellaneousLayout.visibility = View.GONE
-        miscellaneousButton.isClickable = false
-        miscellaneousButton.hide()
-        sweetsLayout.visibility = View.GONE
-        sweetsButton.isClickable = false
-        sweetsButton.hide()
-        syrupsLayout.visibility = View.GONE
-        syrupsButton.isClickable = false
-        syrupsButton.hide()
+        activity?.closeIngredientRadial()
         ingredients_recycler_view.alpha = 1.0F
         isAddMenuOpen = false
     }
@@ -176,36 +96,8 @@ class IngredientsTab : Fragment() {
         addViaCameraButton.startAnimation(menuAnimOpen)
         addViaCameraButton.isClickable = true
         addViaCameraButton.show()
-        alcoholsLayout.visibility = View.VISIBLE
-        alcoholsButton.isClickable = true
-        alcoholsButton.show()
-        beveragesAndFlavoringLayout.visibility = View.VISIBLE
-        beveragesAndFlavoringButton.isClickable = true
-        beveragesAndFlavoringButton.show()
-        bittersLayout.visibility = View.VISIBLE
-        bittersButton.isClickable = true
-        bittersButton.show()
-        fruitsAndVegetablesLayout.visibility = View.VISIBLE
-        fruitsAndVegetablesButton.isClickable = true
-        fruitsAndVegetablesButton.show()
-        herbsAndSpicesButtonLayout.visibility = View.VISIBLE
-        herbsAndSpicesButton.isClickable = true
-        herbsAndSpicesButton.show()
-        juicesLayout.visibility = View.VISIBLE
-        juicesButton.isClickable = true
-        juicesButton.show()
-        liqueursLayout.visibility = View.VISIBLE
-        liqueursButton.isClickable = true
-        liqueursButton.show()
-        miscellaneousLayout.visibility = View.VISIBLE
-        miscellaneousButton.isClickable = true
-        miscellaneousButton.show()
-        sweetsLayout.visibility = View.VISIBLE
-        sweetsButton.isClickable = true
-        sweetsButton.show()
-        syrupsLayout.visibility = View.VISIBLE
-        syrupsButton.isClickable = true
-        syrupsButton.show()
+        ingredientsTabRadial.bringToFront()
+        activity?.openIngredientRadial()
         ingredients_recycler_view.alpha = 0.4F
         isAddMenuOpen = true
     }

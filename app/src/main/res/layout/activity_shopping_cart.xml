@@ -1,38 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<android.support.design.widget.CoordinatorLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".activity.ShoppingCart">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="start"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="15dp"
-        android:gravity="center_horizontal"
-        android:text="@string/shopping_cart_header"
-        android:textColor="@color/primaryText"
-        android:textSize="25sp"
-        android:textStyle="bold" />
-
-    <EditText
-        android:id="@+id/addShoppingCartInput"
-        android:textColor="@color/primaryText"
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:layout_margin="15dp"
-        android:imeOptions="actionDone"
-        android:hint="@string/shopping_cart_add_hint"
-        android:inputType="textAutoCorrect" />
+        android:layout_height="match_parent">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/shoppingCartContainer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/shoppingCartHeader"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_gravity="start"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:gravity="center_horizontal"
+            android:text="@string/shopping_cart_header"
+            android:textColor="@color/primaryText"
+            android:textSize="25sp"
+            android:textStyle="bold" />
 
-</LinearLayout>
+        <include android:id="@+id/shoppingCartIngredientRadial" layout="@layout/ingredients_radial_overlay"/>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/addMenuButtonShopping"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:src="@drawable/ic_add_icon"
+            android:tint="@color/primaryText"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/shoppingCartContainer"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="75dp"
+            android:layout_marginStart="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </android.support.constraint.ConstraintLayout>
+</android.support.design.widget.CoordinatorLayout>

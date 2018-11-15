@@ -6,9 +6,8 @@ import android.support.v7.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.speakeasy.watsonbarassistant.BarAssistant
-import com.speakeasy.watsonbarassistant.BarAssistant.Companion.currentIndex
+import com.speakeasy.watsonbarassistant.BarAssistant.Companion.currentIngredientCategoryIndex
 import com.speakeasy.watsonbarassistant.BarAssistant.Companion.secondLevelIngredients
-import com.speakeasy.watsonbarassistant.BarAssistant.Companion.thirdLevelIngredients
 import com.speakeasy.watsonbarassistant.Ingredient
 import com.speakeasy.watsonbarassistant.R
 import com.speakeasy.watsonbarassistant.adapter.IngredientExpandableListAdapter
@@ -34,26 +33,23 @@ class IngredientAdd : AppCompatActivity() {
     }
 
     private fun getIngredientMasterList() {
-
-        val barAssistant = application as? BarAssistant
-        barAssistant?.loadMasterIngredientsFromFireStore(authorization, fireStore)
+        if(secondLevelIngredients?.count() == 0) {
+            (application as? BarAssistant)?.loadMasterIngredientsFromFireStore(authorization, fireStore)
+        }
         var temp = 0
-        for (i in currentIndex-1 downTo 0) {
+        for (i in currentIngredientCategoryIndex - 1 downTo 0) {
             temp += secondLevelIngredients?.get(i)?.size ?: 0
         }
-        val tempAdd = temp + (secondLevelIngredients?.get(currentIndex)?.size ?: 0)
-        addToExpandableList(secondLevelIngredients, thirdLevelIngredients, temp, tempAdd)
-
+        val tempAdd = temp + (secondLevelIngredients?.get(currentIngredientCategoryIndex)?.size ?: 0)
+        addToExpandableList(secondLevelIngredients, BarAssistant.thirdLevelIngredients, temp, tempAdd)
     }
 
     private fun addToExpandableList(secondLevel: MutableList<MutableList<String>>?, thirdLevel: MutableList<MutableList<String>>?, indexStart: Int, indexEnd : Int) {
         thirdLevel?.forEach {temp ->
             temp.sort()
         }
-        val adapter = IngredientExpandableListAdapter(this, secondLevel?.get(currentIndex),
-                        thirdLevel?.slice(indexStart until indexEnd)?.toMutableList(), expandable_ingredient_list_view,
-                currentIndex)
+        val adapter = IngredientExpandableListAdapter(this, secondLevel?.get(currentIngredientCategoryIndex),
+                        thirdLevel?.slice(indexStart until indexEnd)?.toMutableList(), expandable_ingredient_list_view, currentIngredientCategoryIndex)
         expandable_ingredient_list_view.setAdapter(adapter)
     }
-
 }

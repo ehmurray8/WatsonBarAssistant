@@ -42,15 +42,15 @@
     <string name="liqueurs">Liqueurs</string>
     <string name="alcohols">Alcohols</string>
     <string name="syrups">Syrups</string>
-    <string name="beverages_amp_flavoring"><![CDATA[Beverages & Flavoring]]></string>
-    <string name="miscellaneous">Miscellaneous</string>
+    <string name="beverages_amp_flavoring"><![CDATA[Beverages]]></string>
+    <string name="miscellaneous">Misc</string>
     <string name="fruits_amp_veggies"><![CDATA[Fruits & Veggies]]></string>
     <string name="confirm">Confirm</string>
 
     <string-array name="masterList">
         <item>	Vodka	</item>
         <item>	Citron Vodka	</item>
-        <item>	Vanilla Vodka	</item>
+        <item>	Vanilla Vodka	</item  >
         <item>	Raspberry Vodka	</item>
         <item>	Pear Vodka	</item>
         <item>	Chocolate Vodka	</item>
