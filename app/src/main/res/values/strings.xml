@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">Bar Assistant</string>
     <string name="home_tab">Home</string>
-
     <string name="ingredient_hint">Ingredients to add</string>
     <string name="placeholder_header">Header</string>
     <string name="recipe_name_placeholder">Recipe Name</string>
@@ -35,5 +34,510 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="account_tab">Account</string>
+
+    <string-array name="masterList">
+        <item>	Vodka	</item>
+        <item>	Citron Vodka	</item>
+        <item>	Vanilla Vodka	</item>
+        <item>	Raspberry Vodka	</item>
+        <item>	Pear Vodka	</item>
+        <item>	Chocolate Vodka	</item>
+        <item>	Cherry Vodka	</item>
+        <item>	Orange Vodka	</item>
+        <item>	Strawberry Vodka	</item>
+        <item>	Blueberry Vodka	</item>
+        <item>	Lemon Vodka	</item>
+        <item>	Watermellon Vodka	</item>
+        <item>	Blackcurrant Vodka	</item>
+        <item>	Grapefruit Vodka	</item>
+        <item>	Pepper Vodka	</item>
+        <item>	Pomegranate Vodka	</item>
+        <item>	Peach Vodka	</item>
+        <item>	Mandarin Vodka	</item>
+        <item>	Triple Berry Vodka	</item>
+        <item>	Gin	</item>
+        <item>	Dry Gin	</item>
+        <item>	Sloe Gin	</item>
+        <item>	Tequila	</item>
+        <item>	Gold Tequila	</item>
+        <item>	White Tequila	</item>
+        <item>	Reposado Tequila	</item>
+        <item>	Aged Tequila	</item>
+        <item>	Mezcal	</item>
+        <item>	Whisky	</item>
+        <item>	Irish Whisky	</item>
+        <item>	Canadian Whisky	</item>
+        <item>	Japanese Whisky	</item>
+        <item>	Bourbon Whisky	</item>
+        <item>	Rye Whisky	</item>
+        <item>	Scotch Whisky	</item>
+        <item>	Single Malt Whisky	</item>
+        <item>	Cinnamon Whisky	</item>
+        <item>	Rum	</item>
+        <item>	Dark Rum	</item>
+        <item>	Light Rum	</item>
+        <item>	Spiced Rum	</item>
+        <item>	White Rum	</item>
+        <item>	Amber Rum	</item>
+        <item>	Gold Rum	</item>
+        <item>	Lime Rum	</item>
+        <item>	Lemon Rum	</item>
+        <item>	Limon Rum	</item>
+        <item>	Brandy	</item>
+        <item>	Pisco Brandy	</item>
+        <item>	Cherry Brandy	</item>
+        <item>	Blackberry Brandy	</item>
+        <item>	Pear Brandy	</item>
+        <item>	Apricot Brandy	</item>
+        <item>	Peach Brandy	</item>
+        <item>	Soju	</item>
+        <item>	Wine	</item>
+        <item>	White Wine	</item>
+        <item>	Red Wine	</item>
+        <item>	Sparkling Wine	</item>
+        <item>	Vermouth Wine	</item>
+        <item>	Schnapps	</item>
+        <item>	Peach Schnapps	</item>
+        <item>	Butterscotch Schnapps	</item>
+        <item>	Apple Schnapps	</item>
+        <item>	Vanilla Schnapps	</item>
+        <item>	Peppermint Schnapps	</item>
+        <item>	Watermellon Schnapps	</item>
+        <item>	Cinnamon Schnapps	</item>
+        <item>	Strawberry Schnapps	</item>
+        <item>	Root Beer Schnapps	</item>
+        <item>	Cactus Juice Schnapps	</item>
+        <item>	Pineapple Schnapps	</item>
+        <item>	Grape Schnapps	</item>
+        <item>	Curacao	</item>
+        <item>	Beer	</item>
+        <item>	Amber Beer	</item>
+        <item>	Stout Beer	</item>
+        <item>	IPA Beer	</item>
+        <item>	Cider	</item>
+        <item>	Cachaca	</item>
+        <item>	Grain Alcohol	</item>
+        <item>	Soda	</item>
+        <item>	Club Soda	</item>
+        <item>	Lemonlime Soda	</item>
+        <item>	Rhubarb Soda	</item>
+        <item>	Lime Soda	</item>
+        <item>	Dr. Pepper Soda	</item>
+        <item>	Grapefruit Soda	</item>
+        <item>	Cherry Vanilla Soda	</item>
+        <item>	Citrus Soda	</item>
+        <item>	Cream Soda	</item>
+        <item>	Lemonade	</item>
+        <item>	Ginger Beer	</item>
+        <item>	Ginger Ale	</item>
+        <item>	Tea	</item>
+        <item>	Black Tea	</item>
+        <item>	Green Tea	</item>
+        <item>	Earl Grey Tea	</item>
+        <item>	Chai Tea	</item>
+        <item>	Apple Cider	</item>
+        <item>	Coconut Milk	</item>
+        <item>	Root Beer	</item>
+        <item>	Condensed Milk	</item>
+        <item>	Limeade	</item>
+        <item>	Eggnog	</item>
+        <item>	Rosewater	</item>
+        <item>	Fruit Juice	</item>
+        <item>	Fruit Punch	</item>
+        <item>	Kefir	</item>
+        <item>	Milk	</item>
+        <item>	Chocolate Milk	</item>
+        <item>	Strawberry Milk	</item>
+        <item>	Seltzer	</item>
+        <item>	Strawberry Daiquiri	</item>
+        <item>	Horchata	</item>
+        <item>	Tonic	</item>
+        <item>	Bloody Mary	</item>
+        <item>	Energy Drink	</item>
+        <item>	Aromatic	</item>
+        <item>	Angostura	</item>
+        <item>	Orange	</item>
+        <item>	Peychaud	</item>
+        <item>	Absinthe	</item>
+        <item>	Vanilla	</item>
+        <item>	Lime	</item>
+        <item>	Lemon	</item>
+        <item>	Cherry	</item>
+        <item>	Maraschino Cherry	</item>
+        <item>	Strawberry	</item>
+        <item>	Pineapple	</item>
+        <item>	Cucumber	</item>
+        <item>	Raspberry	</item>
+        <item>	Olive	</item>
+        <item>	Green Olive	</item>
+        <item>	Black Olive	</item>
+        <item>	Watermelon	</item>
+        <item>	Peach	</item>
+        <item>	White Peach	</item>
+        <item>	Banana	</item>
+        <item>	Mango	</item>
+        <item>	Celery	</item>
+        <item>	Seed Celery	</item>
+        <item>	Cantaloupe	</item>
+        <item>	Pepper	</item>
+        <item>	Jalapeno Pepper	</item>
+        <item>	Serrano Pepper	</item>
+        <item>	Chile de Arbol Pepper	</item>
+        <item>	Poblano Pepper	</item>
+        <item>	Habanero Pepper	</item>
+        <item>	Cayanne Pepper	</item>
+        <item>	Blueberry	</item>
+        <item>	Tomato	</item>
+        <item>	Blackberry	</item>
+        <item>	Apple	</item>
+        <item>	Grapefruit	</item>
+        <item>	Red Grapefruit	</item>
+        <item>	White Grapefruit	</item>
+        <item>	Pomegranate	</item>
+        <item>	Seed Pomegranate	</item>
+        <item>	Pickle	</item>
+        <item>	Dill Pickle	</item>
+        <item>	Cranberry	</item>
+        <item>	Garlic	</item>
+        <item>	Onion	</item>
+        <item>	Grape	</item>
+        <item>	Pumpkin	</item>
+        <item>	Bell Pepper	</item>
+        <item>	Red Bell Pepper	</item>
+        <item>	Green Bell Pepper	</item>
+        <item>	Pear	</item>
+        <item>	Rhubarb	</item>
+        <item>	Kiwi	</item>
+        <item>	Raisins	</item>
+        <item>	Carrot	</item>
+        <item>	Asparagus	</item>
+        <item>	Avocado	</item>
+        <item>	Clementine	</item>
+        <item>	Currant	</item>
+        <item>	Blood Orange	</item>
+        <item>	Tangerine	</item>
+        <item>	Dragon Fruit	</item>
+        <item>	Star Fruit	</item>
+        <item>	Nutmeg	</item>
+        <item>	Mint	</item>
+        <item>	Cinnamon	</item>
+        <item>	Cinnamon Stick	</item>
+        <item>	Stick Cinnamon	</item>
+        <item>	Basil	</item>
+        <item>	Rosemary	</item>
+        <item>	Salt	</item>
+        <item>	Garlic Salt	</item>
+        <item>	Margarita Salt	</item>
+        <item>	Cilantro	</item>
+        <item>	Oregano	</item>
+        <item>	Garlic Powder	</item>
+        <item>	Cumin	</item>
+        <item>	Onion Powder	</item>
+        <item>	Cocoa Powder	</item>
+        <item>	Thyme	</item>
+        <item>	Dill	</item>
+        <item>	Cardamom Pod	</item>
+        <item>	Beef Boullion Powder	</item>
+        <item>	Hot Chili Powder	</item>
+        <item>	Cajun Seasoning	</item>
+        <item>	Chili Powder	</item>
+        <item>	Crystallized Ginger	</item>
+        <item>	Peppercorn	</item>
+        <item>	Tarragon	</item>
+        <item>	Sage	</item>
+        <item>	Lavender	</item>
+        <item>	Guarana Powder	</item>
+        <item>	Cayanne Pepper Powder	</item>
+        <item>	Seafood Seasoning	</item>
+        <item>	Pumpkin Pie Spice	</item>
+        <item>	Lime juice	</item>
+        <item>	Lemon juice	</item>
+        <item>	Orange juice	</item>
+        <item>	Pineapple juice	</item>
+        <item>	Cranberry juice	</item>
+        <item>	White Cranberry juice	</item>
+        <item>	White Cranberry	</item>
+        <item>	Pomegranite juice	</item>
+        <item>	Tomato juice	</item>
+        <item>	Vegetable juice	</item>
+        <item>	Apple juice	</item>
+        <item>	Cherry juice	</item>
+        <item>	Black Cherry juice	</item>
+        <item>	Black Cherry	</item>
+        <item>	Maraschino Cherry juice	</item>
+        <item>	Tangerine juice	</item>
+        <item>	Pickle juice	</item>
+        <item>	Grapefruit juice	</item>
+        <item>	Olive juice	</item>
+        <item>	Clam juice	</item>
+        <item>	Coconut juice	</item>
+        <item>	Mango juice	</item>
+        <item>	Watermelon juice	</item>
+        <item>	Lychee juice	</item>
+        <item>	Grape juice	</item>
+        <item>	White Grape juice	</item>
+        <item>	White Grape	</item>
+        <item>	Green Grape juice	</item>
+        <item>	Green Grape	</item>
+        <item>	Red Grape juice	</item>
+        <item>	Red Grape	</item>
+        <item>	Pepper juice	</item>
+        <item>	Raspberry juice	</item>
+        <item>	Pear juice	</item>
+        <item>	Cactus juice	</item>
+        <item>	Guava juice	</item>
+        <item>	Carrot juice	</item>
+        <item>	Mangosteen juice	</item>
+        <item>	Papaya juice	</item>
+        <item>	Peach juice	</item>
+        <item>	Banana juice	</item>
+        <item>	Blackberry juice	</item>
+        <item>	Ginger juice	</item>
+        <item>	Acai juice	</item>
+        <item>	Amaretto	</item>
+        <item>	Irish Cream	</item>
+        <item>	Coffee	</item>
+        <item>	Espresso Coffee	</item>
+        <item>	Melon	</item>
+        <item>	Chocolate	</item>
+        <item>	White Chocolate	</item>
+        <item>	Black Raspberry	</item>
+        <item>	Hazelnut	</item>
+        <item>	Benedictine	</item>
+        <item>	Blue Curacao	</item>
+        <item>	Orange Curacao	</item>
+        <item>	White Mint	</item>
+        <item>	Amaro	</item>
+        <item>	Limoncello	</item>
+        <item>	Galliano	</item>
+        <item>	Pumpkin Spice Pumpkin	</item>
+        <item>	Pumpkin Pie Pumpkin	</item>
+        <item>	Jagermeister	</item>
+        <item>	Elderflower	</item>
+        <item>	Maraschino	</item>
+        <item>	Ginger	</item>
+        <item>	Blackcurrant	</item>
+        <item>	Horchata (Rum cream)	</item>
+        <item>	Anise	</item>
+        <item>	Lychee	</item>
+        <item>	Almond	</item>
+        <item>	Maple	</item>
+        <item>	Coconut	</item>
+        <item>	Apricot	</item>
+        <item>	Drambuie	</item>
+        <item>	Caramel	</item>
+        <item>	Chartreuse	</item>
+        <item>	Campari	</item>
+        <item>	Cream	</item>
+        <item>	Light Cream	</item>
+        <item>	Heavy Cream	</item>
+        <item>	Half and Half Cream	</item>
+        <item>	Coconut Cream	</item>
+        <item>	Powdered Cream	</item>
+        <item>	Horchata Mix	</item>
+        <item>	Brine	</item>
+        <item>	Egg	</item>
+        <item>	Egg Egg White	</item>
+        <item>	Egg White Egg	</item>
+        <item>	Egg Yolk	</item>
+        <item>	Yolk Egg	</item>
+        <item>	Worcestershire Sauce	</item>
+        <item>	Horseradish	</item>
+        <item>	Hot Pepper Sauce	</item>
+        <item>	Sweet and Sour	</item>
+        <item>	Butter	</item>
+        <item>	Hot Sauce	</item>
+        <item>	Steak Sauce	</item>
+        <item>	Almonds	</item>
+        <item>	Vinegar	</item>
+        <item>	Red Wine Vinegar	</item>
+        <item>	Champagne Vinegar	</item>
+        <item>	Balsamic Vinegar	</item>
+        <item>	Soy Sauce	</item>
+        <item>	Condensed Beef Consomme	</item>
+        <item>	Butter Flavoring	</item>
+        <item>	Espresso Beans	</item>
+        <item>	Chia Seeds	</item>
+        <item>	Bacon	</item>
+        <item>	Cheese	</item>
+        <item>	Blue Cheese	</item>
+        <item>	Brie Cheese	</item>
+        <item>	Stilton Cheese	</item>
+        <item>	Olive Oil	</item>
+        <item>	Pepper Sauce	</item>
+        <item>	Orange Flower	</item>
+        <item>	Pumpkin Pie Filling	</item>
+        <item>	Balsamic Glaze	</item>
+        <item>	Tomato Sauce	</item>
+        <item>	Dijon Mustard	</item>
+        <item>	Sriracha Sauce	</item>
+        <item>	Sugar	</item>
+        <item>	White Sugar	</item>
+        <item>	Brown Sugar	</item>
+        <item>	Cinnamon Sugar	</item>
+        <item>	Butterscotch Sauce	</item>
+        <item>	Honey	</item>
+        <item>	Whipped Cream	</item>
+        <item>	Sauce Chocolate	</item>
+        <item>	Graham Cracker	</item>
+        <item>	Marshmallow	</item>
+        <item>	Gelatin	</item>
+        <item>	Jello	</item>
+        <item>	Ice Cream	</item>
+        <item>	Vanilla Ice Cream	</item>
+        <item>	Chocolate Ice Cream	</item>
+        <item>	Strawberry Ice Cream	</item>
+        <item>	Candy Cane	</item>
+        <item>	Whipped Flavored Vodka	</item>
+        <item>	Jelly Beans	</item>
+        <item>	Caramel sauce	</item>
+        <item>	Chocolate Hazelnut Spread	</item>
+        <item>	Nutella	</item>
+        <item>	Sherbet	</item>
+        <item>	Cotton Candy	</item>
+        <item>	Gummy Bears	</item>
+        <item>	Mint Extract	</item>
+        <item>	Vanilla Extract	</item>
+        <item>	Simple syrup	</item>
+        <item>	Grenadine syrup	</item>
+        <item>	Chocolate syrup	</item>
+        <item>	Maple syrup	</item>
+        <item>	Almond syrup	</item>
+        <item>	Rock Candy syrup	</item>
+        <item>	Orgeat syrup	</item>
+        <item>	Strawberry syrup	</item>
+        <item>	Mint syrup	</item>
+        <item>	Rosemary syrup	</item>
+        <item>	Ginger syrup	</item>
+        <item>	Coconut syrup	</item>
+        <item>	Jalapeno syrup	</item>
+        <item>	Honey syrup	</item>
+        <item>	Pomegranate syrup	</item>
+        <item>	Celery syrup	</item>
+        <item>	Pumpkin syrup	</item>
+        <item>	Basil syrup	</item>
+        <item>	Peach syrup	</item>
+        <item>	Lemon syrup	</item>
+        <item>	Thyme syrup	</item>
+        <item>	Hibiscus syrup	</item>
+        <item>	ice	</item>
+        <item>	water	</item>
+        <item>	sec	</item>
+        <item>	whole cloves	</item>
+        <item>	champagne	</item>
+        <item>	cointreau	</item>
+        <item>	vermouth	</item>
+        <item>	bitters	</item>
+        <item>	creme de cacao	</item>
+        <item>	creme de cassis	</item>
+        <item>	agave nectar	</item>
+        <item>	agave syrup	</item>
+        <item>	sour mix	</item>
+        <item>	sour candy powder	</item>
+        <item>	grenadine	</item>
+        <item>	bay leaves	</item>
+        <item>	sherry	</item>
+        <item>	Stolichnaya Stoli Razberi	</item>
+        <item>	passion fruit frozen concentrate	</item>
+        <item>	creme de menthe	</item>
+        <item>	barbeque sauce	</item>
+        <item>	passion fruit	</item>
+        <item>	kirschwasser	</item>
+        <item>	pale ale	</item>
+        <item>	stout	</item>
+        <item>	7up	</item>
+        <item>	sweetener	</item>
+        <item>	aquavit	</item>
+        <item>	cognac	</item>
+        <item>	framboise	</item>
+        <item>	acai berry	</item>
+        <item>	drink mix	</item>
+        <item>	guava nectar	</item>
+        <item>	Collins	</item>
+        <item>	sangria	</item>
+        <item>	carbonated beverage	</item>
+        <item>	Chambord	</item>
+        <item>	Pimm	</item>
+        <item>	cornichons	</item>
+        <item>	Zinfandel	</item>
+        <item>	French Garnier Orgeat	</item>
+        <item>	Calvados	</item>
+        <item>	tropical fruit	</item>
+        <item>	sangrita	</item>
+        <item>	passion fruit syrup	</item>
+        <item>	whipped cream vodka	</item>
+        <item>	orange liqueur	</item>
+        <item>	coffee liqueur	</item>
+        <item>	Aperol	</item>
+        <item>	sprig yerba buena	</item>
+        <item>	sour	</item>
+        <item>	Jell o	</item>
+        <item>	cola	</item>
+        <item>	Bourbon Whiskey	</item>
+        <item>	Whiskey	</item>
+        <item>	pisco	</item>
+        <item>	half and half	</item>
+        <item>	southern comfort	</item>
+        <item>	beef bouillon powder	</item>
+        <item>	bourbon	</item>
+        <item>	sake	</item>
+        <item>	Lillet	</item>
+        <item>	espresso	</item>
+        <item>	margarita	</item>
+        <item>	whipped topping	</item>
+        <item>	coconut rum	</item>
+        <item>	candies	</item>
+        <item>	Frangelico	</item>
+        <item>	frozen mixed fruit	</item>
+        <item>	Amaretto liqueur	</item>
+        <item>	Herbal liqueur	</item>
+        <item>	Irish Cream liqueur	</item>
+        <item>	Orange liqueur	</item>
+        <item>	Coffee liqueur	</item>
+        <item>	Espresso Coffee liqueur	</item>
+        <item>	Melon liqueur	</item>
+        <item>	Chocolate liqueur	</item>
+        <item>	White Chocolate liqueur	</item>
+        <item>	Banana liqueur	</item>
+        <item>	Raspberry liqueur	</item>
+        <item>	Black Raspberry liqueur	</item>
+        <item>	Hazelnut liqueur	</item>
+        <item>	Curacao liqueur	</item>
+        <item>	Blue Curacao liqueur	</item>
+        <item>	Orange Curacao liqueur	</item>
+        <item>	Mint liqueur	</item>
+        <item>	White Mint liqueur	</item>
+        <item>	Amaro liqueur	</item>
+        <item>	Pumpkin liqueur	</item>
+        <item>	Pumpkin Spice Pumpkin liqueur	</item>
+        <item>	Pumpkin Pie Pumpkin liqueur	</item>
+        <item>	Jagermeister liqueur	</item>
+        <item>	Elderflower liqueur	</item>
+        <item>	Maraschino liqueur	</item>
+        <item>	Cherry liqueur	</item>
+        <item>	Ginger liqueur	</item>
+        <item>	Blackcurrant liqueur	</item>
+        <item>	Horchata (Rum cream) liqueur	</item>
+        <item>	Anise liqueur	</item>
+        <item>	Lychee liqueur	</item>
+        <item>	Pomegranate liqueur	</item>
+        <item>	Almond liqueur	</item>
+        <item>	Amaretto liqueur	</item>
+        <item>	Maple liqueur	</item>
+        <item>	Coconut liqueur	</item>
+        <item>	Apricot liqueur	</item>
+        <item>	Vanilla liqueur	</item>
+        <item>	Drambuie liqueur	</item>
+        <item>	Caramel liqueur	</item>
+        <item>	Chartreuse liqueur	</item>
+        <item>	Campari liqueur	</item>
+        <item>	Lemon liqueur	</item>
+        <item>	Triple Sec liqueur	</item>
+        <item>	Creme de Cassis liqueur	</item>
+        <item>	Pimm liqueur	</item>
+        <item>	Aperol liqueur	</item>
+        <item>	Anisette liqueur	</item>
+        <item>	Pimms liqueur	</item>
+    </string-array>
 
 </resources>

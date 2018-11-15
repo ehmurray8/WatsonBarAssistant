@@ -25,6 +25,9 @@ import com.speakeasy.watsonbarassistant.activity.MainMenu
 import com.speakeasy.watsonbarassistant.activity.VisionActivity
 import com.speakeasy.watsonbarassistant.adapter.IngredientGridAdapter
 import kotlinx.android.synthetic.main.fragment_ingredient_tab.*
+import android.text.Editable
+import android.text.TextWatcher
+import com.speakeasy.watsonbarassistant.extensions.toast
 
 
 class IngredientsTab : Fragment() {
@@ -164,8 +167,24 @@ class IngredientsTab : Fragment() {
                 if (keypadHeight <= screenHeight * 0.15) {
                     ingredientInputView.clearFocus()
                     ingredientInputView.visibility = View.GONE
+//                    ingredientInputView.addTextChangedListener(filterTextWatcher)
                 }
             }
+        }
+    }
+
+    private val filterTextWatcher = object : TextWatcher {
+
+        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+//            context?.toast("User Input: ${s}")
+        }
+
+        override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
+
+        }
+
+        override fun afterTextChanged(s: Editable) {
+
         }
     }
 }

@@ -11,17 +11,21 @@ import android.support.annotation.RequiresApi
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
+import android.view.View
 import android.widget.Button
 import com.speakeasy.watsonbarassistant.CAMERA_PERMISSION_REQUEST_CODE
 import com.speakeasy.watsonbarassistant.R
 import com.speakeasy.watsonbarassistant.REQUEST_TAKE_PHOTO
 import com.speakeasy.watsonbarassistant.VISION_URL
+import com.speakeasy.watsonbarassistant.extensions.toast
 import khttp.responses.Response
 import kotlinx.android.synthetic.main.activity_vision.*
+import org.apache.commons.lang3.ObjectUtils
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 import java.util.*
+import kotlin.collections.ArrayList
 
 class VisionActivity : AppCompatActivity() {
 
@@ -92,17 +96,51 @@ class VisionActivity : AppCompatActivity() {
             }
         }
 
-        val size = if(responseList.size < 5) responseList.size else 5
+        val filteredIngredientList = normalizeResponseList(responseList)
+        val size = if(filteredIngredientList.size < 5) filteredIngredientList.size else 5
         for (i in 0 until size){
             val button = choices.getChildAt(i) as Button
             button.setOnClickListener { _ ->
                 val resultIntent = Intent(this@VisionActivity, MainMenu::class.java)
-                resultIntent.putExtra("Ingredient", responseList[i])
+                resultIntent.putExtra("Ingredient", filteredIngredientList[i])
                 this@VisionActivity.startActivity(resultIntent)
                 finish()
             }
-            runOnUiThread { kotlin.run { button.text = responseList[i] } }
+            runOnUiThread { kotlin.run {
+                button.text = filteredIngredientList[i]
+                button.visibility = View.VISIBLE
+            } }
         }
+        if (size == 0){
+            runOnUiThread {
+                applicationContext.toast("Sorry, no ingredient found in the picture.")
+            }
+        }
+    }
+
+    fun normalizeResponseList(responseList: ArrayList<String>):ArrayList<String>{
+        val masterList = resources.getStringArray(R.array.masterList)
+        val filteredIngredientList = ArrayList<String>()
+        for (ingredient in responseList){
+            var ingredientSplit = ingredient.split("\\s+")
+            var matchedIngredient = ""
+            for (partialIngredient in ingredientSplit){
+                for(master in masterList){
+                    if (partialIngredient in master){
+                        matchedIngredient = master
+                        break
+                    }
+                }
+                if (matchedIngredient.length>0){
+                    break
+                }
+            }
+            if (matchedIngredient.length>0 && !(matchedIngredient in filteredIngredientList)){
+                filteredIngredientList.add(matchedIngredient)
+            }
+        }
+
+        return filteredIngredientList
     }
 
     override fun onBackPressed() {
