@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +11,7 @@ import com.speakeasy.watsonbarassistant.BarAssistant
 import com.speakeasy.watsonbarassistant.R
 import com.speakeasy.watsonbarassistant.activity.MainMenu
 import com.speakeasy.watsonbarassistant.adapter.FeedAdapter
+import com.speakeasy.watsonbarassistant.refreshDiscovery
 import kotlinx.android.synthetic.main.fragment_home_tab.*
 
 
@@ -50,9 +50,10 @@ class HomeTab: Fragment() {
         viewAdapter = FeedAdapter(mainMenu)
 
         mainRefreshLayout.setOnRefreshListener {
-            mainMenu.refreshDiscovery()
+            refreshDiscovery()
             mainRefreshLayout.isRefreshing = false
         }
+        mainRefreshLayout.isMotionEventSplittingEnabled = false
 
         home_container.isNestedScrollingEnabled = true
         home_container.apply {
@@ -65,7 +66,12 @@ class HomeTab: Fragment() {
     }
 
     fun refresh() {
-        Log.d("Refresh", "Refresh the home")
-        viewAdapter?.notifyDataSetChanged()
+        val mainMenu = activity as MainMenu
+        mainMenu.runOnUiThread {
+            viewAdapter = FeedAdapter(mainMenu)
+            home_container.adapter = viewAdapter
+            home_container.refreshDrawableState()
+            viewAdapter?.notifyDataSetChanged()
+        }
     }
 }

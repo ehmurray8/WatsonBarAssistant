@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
@@ -14,16 +15,23 @@ import com.speakeasy.watsonbarassistant.DiscoveryRecipe
 import com.speakeasy.watsonbarassistant.R
 import com.speakeasy.watsonbarassistant.activity.UserProfile
 import com.speakeasy.watsonbarassistant.adapter.HorizontalRecipeAdapter
+import com.speakeasy.watsonbarassistant.com.speakeasy.watsonbarassistant.activity.AddRecipeActivity
+import kotlinx.android.synthetic.main.activity_add_recipe.*
 import kotlinx.android.synthetic.main.fragment_personal_tab.*
 
 class PersonalTab : Fragment(), TabLayout.OnTabSelectedListener {
 
-    private var tabIndex = 0
+    companion object {
+        private var tabIndex = 0
+        private var scrollPosition = 0
+    }
     private var viewAdapter: HorizontalRecipeAdapter? = null
+    private var viewManager: LinearLayoutManager? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val viewManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
+        viewManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
+        (activity as? AppCompatActivity)?.supportActionBar?.title = "Account"
 
         setUserInfo()
 
@@ -34,12 +42,26 @@ class PersonalTab : Fragment(), TabLayout.OnTabSelectedListener {
             setHasFixedSize(true)
             layoutManager = viewManager
         }
+        profileRecipeRecycler.isMotionEventSplittingEnabled = false
 
         fullAccountButton.setOnClickListener {
             val intent = Intent(activity, UserProfile::class.java)
+            activity?.startActivityForResult(intent, 401)
+        }
+
+        floatingCreateRecipeButton.setOnClickListener {
+            val intent = Intent(activity, AddRecipeActivity::class.java)
             startActivity(intent)
         }
+        showCreateButton()
         updateRecyclerView()
+        viewManager?.scrollToPosition(scrollPosition)
+    }
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        scrollPosition = viewManager?.findFirstVisibleItemPosition() ?: 0
     }
 
     fun setUserInfo() {
@@ -60,8 +82,22 @@ class PersonalTab : Fragment(), TabLayout.OnTabSelectedListener {
     override fun onTabUnselected(tab: TabLayout.Tab?) { }
 
     override fun onTabSelected(tab: TabLayout.Tab?) {
-        tabIndex = tab?.position ?: 0
+        val newIndex = tab?.position ?: 0
+        if(newIndex != tabIndex) {
+            scrollPosition = 0
+        }
+        addRecipeButton
+        tabIndex = newIndex
+        showCreateButton()
         updateRecyclerView()
+    }
+
+    private fun showCreateButton() {
+        if(tabIndex == 2) {
+            floatingCreateRecipeButton.visibility = View.VISIBLE
+        } else {
+            floatingCreateRecipeButton.visibility = View.GONE
+        }
     }
 
     private fun updateRecyclerView() {
@@ -69,16 +105,16 @@ class PersonalTab : Fragment(), TabLayout.OnTabSelectedListener {
         val collectionName: String
         when(tabIndex) {
             0 -> {
-                recipes = BarAssistant.recipes[0]
-                collectionName = "Suggestions"
-            }
-            1 -> {
                 recipes = BarAssistant.favoritesList.toMutableList()
                 collectionName = "Favorites"
             }
-            else -> {
+            1 -> {
                 recipes = BarAssistant.recipes[1]
                 collectionName = "Recently Viewed"
+            }
+            else -> {
+                recipes = BarAssistant.userCreatedRecipes.toMutableList()
+                collectionName = "Created"
             }
         }
         viewAdapter = HorizontalRecipeAdapter(recipes, activity as Activity, collectionName)

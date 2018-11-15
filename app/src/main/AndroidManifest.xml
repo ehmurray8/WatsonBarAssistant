@@ -39,6 +39,7 @@
         <activity android:name=".activity.UserProfile" />
         <activity android:name=".activity.RecipeCollection" />
         <activity android:name=".activity.VisionActivity" />
+        <activity android:name=".com.speakeasy.watsonbarassistant.activity.AddRecipeActivity" />
         <activity android:name=".activity.ShoppingCart" />
         <activity android:name=".activity.FriendActivity" />
 

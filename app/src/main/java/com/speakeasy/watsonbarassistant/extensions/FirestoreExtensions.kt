@@ -32,6 +32,10 @@ fun FirebaseFirestore.recentlyViewedDocument(userId: String): DocumentReference 
     return appDocument(userId, RECENTLY_VIEWED_COLLECTION)
 }
 
+fun FirebaseFirestore.userCreatedRecipesDocument(userId: String): DocumentReference {
+    return appDocument(userId, USER_CREATED_RECIPES)
+}
+
 fun FirebaseFirestore.favoritesDocument(userId: String): DocumentReference {
     return appDocument(userId, FAVORITES_COLLECTION)
 }
@@ -52,6 +56,6 @@ fun FirebaseFirestore.appDocument(userId: String, collection: String): DocumentR
     return collection(APP_COLLECTION).document(userId).collection(collection).document(MAIN_DOCUMENT)
 }
 
-/*fun FirebaseFirestore.masterIngredientsDocument(): DocumentReference {
-    return collection(INGREDIENT_COLLECTION)
-}*/
+fun FirebaseFirestore.allRecipesDocument(): DocumentReference {
+    return collection(ALL_RECIPES_COLLECTION).document(MAIN_DOCUMENT)
+}

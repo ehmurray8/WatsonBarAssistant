@@ -18,10 +18,9 @@ import com.speakeasy.watsonbarassistant.BarAssistant.Companion.currentIndex
 import com.speakeasy.watsonbarassistant.Ingredient
 import com.speakeasy.watsonbarassistant.R
 import com.speakeasy.watsonbarassistant.activity.IngredientAdd
-import com.speakeasy.watsonbarassistant.activity.MainMenu
 import com.speakeasy.watsonbarassistant.activity.VisionActivity
 import com.speakeasy.watsonbarassistant.adapter.IngredientGridAdapter
-import com.speakeasy.watsonbarassistant.extensions.addIngredient
+import com.speakeasy.watsonbarassistant.addIngredient
 import kotlinx.android.synthetic.main.fragment_ingredient_tab_radial.*
 
 

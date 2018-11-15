@@ -1,6 +1,6 @@
 package com.speakeasy.watsonbarassistant.activity
 
-import android.content.Context
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -8,7 +8,6 @@ import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
 import com.speakeasy.watsonbarassistant.BarAssistant
 import com.speakeasy.watsonbarassistant.R
-import com.speakeasy.watsonbarassistant.SHARED_PREFERENCES_SETTINGS
 import kotlinx.android.synthetic.main.activity_user_profile.*
 
 
@@ -35,22 +34,10 @@ class UserProfile : AppCompatActivity() {
     }
 
     private fun signOut() {
-        synchronized(BarAssistant.recipes) {
-            BarAssistant.recipes.forEach { it.clear() }
-        }
-        synchronized(BarAssistant.lastViewedRecipes) {
-            BarAssistant.lastViewedRecipes.clear()
-        }
-        synchronized(BarAssistant.lastViewedTimes) {
-            BarAssistant.lastViewedTimes.clear()
-        }
         AuthUI.getInstance().signOut(this).addOnCompleteListener {
-            val intent = Intent(this, Login::class.java)
-            val preferences = getSharedPreferences(SHARED_PREFERENCES_SETTINGS, Context.MODE_PRIVATE)
-            val editor = preferences.edit()
-            editor.clear()
-            editor.apply()
-            startActivity(intent)
+            val returnIntent = Intent()
+            returnIntent.putExtra("SignOut", true)
+            setResult(Activity.RESULT_OK, returnIntent)
             finish()
         }
     }
