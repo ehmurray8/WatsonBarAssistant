@@ -34,7 +34,9 @@
             android:layout_marginTop="74dp"
             android:text="@string/vision_button_placeholder"
             tools:layout_editor_absoluteX="0dp"
-            tools:layout_editor_absoluteY="0dp" />
+            tools:layout_editor_absoluteY="0dp"
+            android:visibility="gone"
+            />
 
         <Button
             android:id="@+id/button5"
@@ -42,7 +44,9 @@
             android:layout_height="wrap_content"
             android:text="@string/vision_button_placeholder"
             tools:layout_editor_absoluteX="0dp"
-            tools:layout_editor_absoluteY="0dp" />
+            tools:layout_editor_absoluteY="0dp"
+            android:visibility="gone"
+            />
 
         <Button
             android:id="@+id/button4"
@@ -50,7 +54,9 @@
             android:layout_height="wrap_content"
             android:text="@string/vision_button_placeholder"
             tools:layout_editor_absoluteX="0dp"
-            tools:layout_editor_absoluteY="0dp" />
+            tools:layout_editor_absoluteY="0dp"
+            android:visibility="gone"
+            />
 
         <Button
             android:id="@+id/button3"
@@ -58,7 +64,9 @@
             android:layout_height="wrap_content"
             android:text="@string/button_placeholder"
             tools:layout_editor_absoluteX="0dp"
-            tools:layout_editor_absoluteY="0dp" />
+            tools:layout_editor_absoluteY="0dp"
+            android:visibility="gone"
+            />
 
         <Button
             android:id="@+id/button6"
@@ -66,7 +74,9 @@
             android:layout_height="wrap_content"
             android:text="@string/button_placeholder"
             tools:layout_editor_absoluteX="0dp"
-            tools:layout_editor_absoluteY="0dp" />
+            tools:layout_editor_absoluteY="0dp"
+            android:visibility="gone"
+            />
     </LinearLayout>
 
     <Button
