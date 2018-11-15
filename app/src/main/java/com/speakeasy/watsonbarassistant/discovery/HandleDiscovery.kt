@@ -7,12 +7,11 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.speakeasy.watsonbarassistant.BarAssistant
 import com.speakeasy.watsonbarassistant.DiscoveryRecipe
 import com.speakeasy.watsonbarassistant.FireStoreRecipe
-import com.speakeasy.watsonbarassistant.activity.MainMenu
 import com.speakeasy.watsonbarassistant.extensions.recipeDocument
 import kotlin.concurrent.thread
 
 
-open class HandleDiscovery(private val mainMenu: MainMenu?, private val fireStore: FirebaseFirestore): CompletedDiscovery {
+open class HandleDiscovery: CompletedDiscovery {
 
     override fun onTaskCompleted(recipes: MutableList<DiscoveryRecipe>) {
         thread {
@@ -26,6 +25,7 @@ open class HandleDiscovery(private val mainMenu: MainMenu?, private val fireStor
                 if(dotIndex > 0) {
                     id = id.slice(0 until dotIndex)
                 }
+                val fireStore = FirebaseFirestore.getInstance()
                 val task = fireStore.recipeDocument(id).get()
                 tasks.add(task)
                 task.addOnSuccessListener {
@@ -35,7 +35,6 @@ open class HandleDiscovery(private val mainMenu: MainMenu?, private val fireStor
                 }
             }
             Tasks.await(Tasks.whenAllComplete(tasks))
-            mainMenu?.loadFeed()
         }
     }
 }

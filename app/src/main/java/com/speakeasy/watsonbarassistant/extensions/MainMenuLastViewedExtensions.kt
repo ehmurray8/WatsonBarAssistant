@@ -100,3 +100,4 @@ private fun MainMenu.addLastViewedRecipe(recipeDocument: DocumentSnapshot, index
         }
     }
 }
+

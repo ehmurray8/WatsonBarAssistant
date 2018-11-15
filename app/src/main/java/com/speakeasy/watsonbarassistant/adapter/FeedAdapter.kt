@@ -56,9 +56,7 @@ class FeedAdapter(private var activity: Activity): RecyclerView.Adapter<Recycler
 
             val element = BarAssistant.feed[position]
 
-            if(favoriteIds.contains(element.recipe.imageId)) {
-                favoriteButton?.isChecked = true
-            }
+            favoriteButton?.isChecked = favoriteIds.contains(element.recipe.imageId)
             favoriteButton?.setOnClickListener {
                 if (favoriteIds.contains(element.recipe.imageId)) {
                     synchronized(BarAssistant.favoritesList) {

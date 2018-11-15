@@ -49,6 +49,10 @@ class BarAssistant: Application() {
         val lastViewedTimes: MutableList<Long> = mutableListOf()
         val homeCategories = listOf(SUGGESTIONS_CATEGORY, RECENTLY_VIEWED_CATEGORY)
 
+        var secondLevelIngredients : MutableList<MutableList<String>>? = ArrayList()
+        var thirdLevelIngredients : MutableList<MutableList<String>>? = ArrayList()
+        var currentIngredientCategoryIndex: Int = 0
+
         fun isInternetConnected(): Boolean {
             return networkInfo?.isConnectedOrConnecting == true
         }
@@ -280,6 +284,7 @@ class BarAssistant: Application() {
                 getAllUsers(fireStore)
                 loadFeedRecipes(fireStore)
             }
+            loadMasterIngredientsFromFireStore(authorization, fireStore)
         }
     }
 
@@ -293,14 +298,14 @@ class BarAssistant: Application() {
             }
             requestIds?.forEach { rid ->
                 (rid as? String)?.let { otherUserId ->
-                    addUserInfoToList(fireStore, otherUserId, outputList, collection)
+                    addUserInfoToList(fireStore, otherUserId, outputList)
                 }
             }
         }
     }
 
     private fun addUserInfoToList(fireStore: FirebaseFirestore, otherUserId: String,
-                                  outputList: MutableList<UserInfo>, collection: String) {
+                                  outputList: MutableList<UserInfo>) {
         fireStore.userDocument(otherUserId).get().addOnSuccessListener {
             it.toObject(UserInfo::class.java)?.let { userInfo ->
                 synchronized(outputList) {
@@ -326,6 +331,35 @@ class BarAssistant: Application() {
                                 user.userId = userId
                                 BarAssistant.allUsers.add(user)
                             }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fun loadMasterIngredientsFromFireStore(authorization: FirebaseAuth, fireStore: FirebaseFirestore) {
+        val uid = authorization.currentUser?.uid
+        if(isInternetConnected() && uid != null) {
+            fireStore.collection(INGREDIENT_COLLECTION).get().addOnSuccessListener {
+                secondLevelIngredients?.clear()
+                thirdLevelIngredients?.clear()
+                loadMasterIngredients(fireStore)
+            }
+        }
+    }
+
+    private fun loadMasterIngredients(fireStore: FirebaseFirestore) {
+        fireStore.collection(INGREDIENT_COLLECTION).get().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                task.result?.forEach { document ->
+                    secondLevelIngredients?.add(document.data.keys.toMutableList())
+                    document.data.entries.forEach { index  ->
+                        val temp = index.value as ArrayList<*>
+                        if(temp.size != 0) {
+                            thirdLevelIngredients?.add(temp.toStringMutableList())
+                        } else{
+                            thirdLevelIngredients?.add(mutableListOf())
                         }
                     }
                 }

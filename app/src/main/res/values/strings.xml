@@ -35,11 +35,22 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="account_tab">Account</string>
+    <string name="juices">Juices</string>
+    <string name="herbs_amp_spices"><![CDATA[Herbs & Spices]]></string>
+    <string name="bitters">Bitters</string>
+    <string name="sweets">Sweets</string>
+    <string name="liqueurs">Liqueurs</string>
+    <string name="alcohols">Alcohols</string>
+    <string name="syrups">Syrups</string>
+    <string name="beverages_amp_flavoring"><![CDATA[Beverages]]></string>
+    <string name="miscellaneous">Misc</string>
+    <string name="fruits_amp_veggies"><![CDATA[Fruits & Veggies]]></string>
+    <string name="confirm">Confirm</string>
 
     <string-array name="masterList">
         <item>	Vodka	</item>
         <item>	Citron Vodka	</item>
-        <item>	Vanilla Vodka	</item>
+        <item>	Vanilla Vodka	</item  >
         <item>	Raspberry Vodka	</item>
         <item>	Pear Vodka	</item>
         <item>	Chocolate Vodka	</item>

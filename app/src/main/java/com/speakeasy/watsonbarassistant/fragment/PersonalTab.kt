@@ -13,9 +13,9 @@ import android.view.ViewGroup
 import com.speakeasy.watsonbarassistant.BarAssistant
 import com.speakeasy.watsonbarassistant.DiscoveryRecipe
 import com.speakeasy.watsonbarassistant.R
+import com.speakeasy.watsonbarassistant.activity.AddRecipeActivity
 import com.speakeasy.watsonbarassistant.activity.UserProfile
 import com.speakeasy.watsonbarassistant.adapter.HorizontalRecipeAdapter
-import com.speakeasy.watsonbarassistant.com.speakeasy.watsonbarassistant.activity.AddRecipeActivity
 import kotlinx.android.synthetic.main.activity_add_recipe.*
 import kotlinx.android.synthetic.main.fragment_personal_tab.*
 
@@ -51,6 +51,7 @@ class PersonalTab : Fragment(), TabLayout.OnTabSelectedListener {
 
         floatingCreateRecipeButton.setOnClickListener {
             val intent = Intent(activity, AddRecipeActivity::class.java)
+            intent.putExtra("Clear", true)
             startActivity(intent)
         }
         showCreateButton()
@@ -68,8 +69,8 @@ class PersonalTab : Fragment(), TabLayout.OnTabSelectedListener {
         val firstName = BarAssistant.userInfo?.firstName ?: ""
         val lastName = BarAssistant.userInfo?.lastName ?: ""
         val fullName = "$firstName $lastName"
-        fullNameAccount.text = fullName
-        usernameAccount.text = BarAssistant.userInfo?.username
+        fullNameAccount?.text = fullName
+        usernameAccount?.text = BarAssistant.userInfo?.username
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,

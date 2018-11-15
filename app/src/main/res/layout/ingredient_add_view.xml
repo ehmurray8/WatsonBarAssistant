@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:visibility="visible"
+    tools:layout_editor_absoluteY="25dp"
+    tools:layout_width="300dp">
+
+    <ExpandableListView
+        style="@android:style/Widget.DeviceDefault.Light.ExpandableListView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:entries="@drawable/recipe_tag_shape">
+
+
+    </ExpandableListView>
+
+
+</android.support.constraint.ConstraintLayout>

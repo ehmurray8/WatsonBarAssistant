@@ -11,6 +11,7 @@ import com.speakeasy.watsonbarassistant.BarAssistant
 import com.speakeasy.watsonbarassistant.R
 import com.speakeasy.watsonbarassistant.activity.MainMenu
 import com.speakeasy.watsonbarassistant.adapter.FeedAdapter
+import com.speakeasy.watsonbarassistant.refreshDiscovery
 import kotlinx.android.synthetic.main.fragment_home_tab.*
 
 
@@ -49,7 +50,7 @@ class HomeTab: Fragment() {
         viewAdapter = FeedAdapter(mainMenu)
 
         mainRefreshLayout.setOnRefreshListener {
-            mainMenu.refreshDiscovery()
+            refreshDiscovery()
             mainRefreshLayout.isRefreshing = false
         }
         mainRefreshLayout.isMotionEventSplittingEnabled = false

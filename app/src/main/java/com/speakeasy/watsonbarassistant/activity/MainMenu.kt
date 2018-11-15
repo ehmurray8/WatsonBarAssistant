@@ -21,8 +21,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.gson.Gson
 import com.speakeasy.watsonbarassistant.*
-import com.speakeasy.watsonbarassistant.discovery.HandleDiscovery
-import com.speakeasy.watsonbarassistant.discovery.SearchDiscovery
 import com.speakeasy.watsonbarassistant.extensions.loadRecentlyViewed
 import com.speakeasy.watsonbarassistant.extensions.loadRecentlyViewedRecipesSharedPreferences
 import com.speakeasy.watsonbarassistant.extensions.toast
@@ -49,10 +47,10 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
 
     internal val fireStore = FirebaseFirestore.getInstance()
     private var authorization = FirebaseAuth.getInstance()
-    private var lastDiscoveryRefreshTime = -1L
 
-    private val client = Client(ALGOLIA_APP_ID, ALGOLIA_API_KEY)
-    val recipeIndex = client.getIndex("Recipe")
+    private val client = Client(ALGOLIA_APP_ID, ALGOLIA_SEARCH_KEY)
+    private val recipeIndex = client.getIndex("Recipe")
+
     private var searchMenuItem: MenuItem? = null
     private var loadingUserInfo = false
     private var menu: Menu? = null
@@ -68,7 +66,7 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
 
         val ingredientName = intent.getStringExtra("Ingredient")
         if(ingredientName != null) {
-            addIngredient(ingredientName)
+            addIngredient(name = ingredientName, context=this)
         } else {
             loadUserData()
         }
@@ -324,19 +322,6 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
         }
     }
 
-    fun refreshDiscovery(forceRefresh: Boolean = false) {
-        synchronized(BarAssistant.ingredients) {
-            if (BarAssistant.ingredients.count() > 0 ) {
-                if (forceRefresh || lastDiscoveryRefreshTime == -1L ||
-                        Date().time - lastDiscoveryRefreshTime >= 30_000) {
-                    lastDiscoveryRefreshTime = Date().time
-                    val discovery = SearchDiscovery(HandleDiscovery(this, fireStore))
-                    discovery.execute(BarAssistant.ingredients.toTypedArray())
-                }
-            }
-        }
-    }
-
     fun loadFeed() {
         if(BarAssistant.feed.count() == 0) {
             loadFeedRecipes(fireStore, this::refreshFragments)
@@ -384,18 +369,6 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
             }
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    fun addIngredient(name: String) {
-        val ingredient = Ingredient(name)
-        synchronized(BarAssistant.ingredients) {
-            if (BarAssistant.ingredients.any { it.name.toLowerCase() == ingredient.name.toLowerCase() }) {
-                applicationContext?.toast("${ingredient.name} is already stored as an ingredient.")
-            } else {
-                BarAssistant.ingredients.add(ingredient)
-                refreshDiscovery(true)
-            }
-        }
     }
 
     override fun onResume() {
