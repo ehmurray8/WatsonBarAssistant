@@ -23,13 +23,11 @@
             android:id="@+id/alcoholsLayout"
             android:layout_width="60dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="16dp"
             android:orientation="vertical"
             android:translationZ="1dp"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintBottom_toTopOf="@+id/fruitsAndVegetablesLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -39,12 +37,12 @@
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/alcoholsButton"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_gravity="center_horizontal"
                 android:src="@drawable/ic_alcohols"
                 android:tint="@color/primaryText"
                 android:visibility="visible"
-                app:fabSize="mini"
+                app:fabSize="normal"
                 tools:layout_editor_absoluteX="172dp"
                 tools:layout_editor_absoluteY="188dp"
                 tools:src="@drawable/ic_alcohols">
@@ -68,12 +66,12 @@
             android:id="@+id/beveragesAndFlavoringLayout"
             android:layout_width="60dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="104dp"
+            android:layout_marginStart="90dp"
             android:layout_marginTop="8dp"
-            android:layout_marginBottom="1dp"
+            android:layout_marginBottom="8dp"
             android:orientation="vertical"
             android:translationZ="1dp"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintBottom_toTopOf="@+id/herbsAndSpicesButtonLayout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -87,7 +85,7 @@
                 android:src="@drawable/ic_beverage"
                 android:tint="@color/primaryText"
                 android:visibility="visible"
-                app:fabSize="mini"
+                app:fabSize="normal"
                 tools:layout_editor_absoluteX="112dp"
                 tools:layout_editor_absoluteY="215dp">
 
@@ -111,11 +109,11 @@
             android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="104dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginEnd="90dp"
+            android:layout_marginBottom="8dp"
             android:orientation="vertical"
             android:translationZ="1dp"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintBottom_toTopOf="@+id/juicesLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -129,7 +127,7 @@
                 android:src="@drawable/ic_bitters"
                 android:tint="@color/primaryText"
                 android:visibility="visible"
-                app:fabSize="mini"
+                app:fabSize="normal"
                 tools:layout_editor_absoluteX="232dp"
                 tools:layout_editor_absoluteY="215dp">
 
@@ -157,7 +155,7 @@
             android:layout_marginBottom="8dp"
             android:orientation="vertical"
             android:translationZ="1dp"
-            android:visibility="gone"
+            android:visibility="visible"
             android:weightSum="10000"
             app:layout_constraintBottom_toTopOf="@+id/liqueursLayout"
             app:layout_constraintEnd_toEndOf="parent"
@@ -171,7 +169,7 @@
                 android:src="@drawable/ic_fruits_veggies"
                 android:tint="@color/primaryText"
                 android:visibility="visible"
-                app:fabSize="mini"
+                app:fabSize="normal"
                 tools:layout_editor_absoluteX="172dp"
                 tools:layout_editor_absoluteY="247dp">
 
@@ -194,10 +192,10 @@
             android:id="@+id/herbsAndSpicesButtonLayout"
             android:layout_width="60dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="104dp"
+            android:layout_marginStart="90dp"
             android:orientation="vertical"
             android:translationZ="1dp"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintBottom_toTopOf="@+id/miscellaneousLayout"
             app:layout_constraintStart_toStartOf="parent">
 
@@ -209,7 +207,7 @@
                 android:src="@drawable/ic_herbs_spices"
                 android:tint="@color/primaryText"
                 android:visibility="visible"
-                app:fabSize="mini">
+                app:fabSize="normal">
 
             </android.support.design.widget.FloatingActionButton>
 
@@ -230,11 +228,11 @@
             android:id="@+id/juicesLayout"
             android:layout_width="60dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="104dp"
+            android:layout_marginEnd="90dp"
             android:layout_marginBottom="13dp"
             android:orientation="vertical"
             android:translationZ="1dp"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintBottom_toTopOf="@+id/sweetsLayout"
             app:layout_constraintEnd_toEndOf="parent">
 
@@ -246,7 +244,7 @@
                 android:src="@drawable/ic_juices"
                 android:tint="@color/primaryText"
                 android:visibility="visible"
-                app:fabSize="mini">
+                app:fabSize="normal">
 
             </android.support.design.widget.FloatingActionButton>
 
@@ -272,7 +270,7 @@
             android:layout_marginBottom="8dp"
             android:orientation="vertical"
             android:translationZ="1dp"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintBottom_toTopOf="@+id/syrupsLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
@@ -285,7 +283,7 @@
                 android:src="@drawable/ic_liqueurs"
                 android:tint="@color/primaryText"
                 android:visibility="visible"
-                app:fabSize="mini"
+                app:fabSize="normal"
                 tools:layout_editor_absoluteX="172dp"
                 tools:layout_editor_absoluteY="303dp">
 
@@ -308,11 +306,11 @@
             android:id="@+id/miscellaneousLayout"
             android:layout_width="60dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="104dp"
+            android:layout_marginStart="90dp"
             android:layout_marginBottom="180dp"
             android:orientation="vertical"
             android:translationZ="1dp"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
@@ -324,7 +322,7 @@
                 android:src="@drawable/ic_misc"
                 android:tint="@color/primaryText"
                 android:visibility="visible"
-                app:fabSize="mini"
+                app:fabSize="normal"
                 tools:layout_editor_absoluteX="112dp"
                 tools:layout_editor_absoluteY="332dp">
 
@@ -347,11 +345,11 @@
             android:id="@+id/sweetsLayout"
             android:layout_width="60dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="103dp"
+            android:layout_marginEnd="90dp"
             android:layout_marginBottom="180dp"
             android:orientation="vertical"
             android:translationZ="1dp"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
@@ -363,7 +361,7 @@
                 android:src="@drawable/ic_sweets"
                 android:tint="@color/primaryText"
                 android:visibility="visible"
-                app:fabSize="mini"
+                app:fabSize="normal"
                 tools:layout_editor_absoluteX="232dp"
                 tools:layout_editor_absoluteY="332dp">
 
@@ -391,7 +389,7 @@
             android:layout_marginBottom="144dp"
             android:orientation="vertical"
             android:translationZ="1dp"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.501"
@@ -405,7 +403,7 @@
                 android:src="@drawable/ic_syrups"
                 android:tint="@color/primaryText"
                 android:visibility="visible"
-                app:fabSize="mini"
+                app:fabSize="normal"
                 tools:layout_editor_absoluteX="172dp"
                 tools:layout_editor_absoluteY="361dp">
 
