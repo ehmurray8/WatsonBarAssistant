@@ -100,10 +100,10 @@ class IngredientExpandableListAdapter(var activity: Activity, var firstLevel : M
         return firstLevel!!.size
     }
     fun onConfirmClicked(){
-
+        Toast.makeText(activity.baseContext, "Ingredients Added!", Toast.LENGTH_SHORT).show()
         addedIngredients.forEach { name ->
             if (name != null) {
-                IngredientAdd.addIngredients
+                IngredientAdd.addIngredient(name)
             }
         }
         addedIngredients.clear()

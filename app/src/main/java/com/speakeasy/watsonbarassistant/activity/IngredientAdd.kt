@@ -3,6 +3,7 @@ package com.speakeasy.watsonbarassistant.activity
 import android.app.Activity
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.speakeasy.watsonbarassistant.BarAssistant
@@ -15,6 +16,7 @@ import com.speakeasy.watsonbarassistant.BarAssistant.Companion.currentIndex
 import com.speakeasy.watsonbarassistant.Ingredient
 import com.speakeasy.watsonbarassistant.R.id.expandable_ingredient_list_view
 import com.speakeasy.watsonbarassistant.activity.MainMenu
+import com.speakeasy.watsonbarassistant.extensions.toast
 
 
 class IngredientAdd : AppCompatActivity() {
@@ -23,7 +25,14 @@ class IngredientAdd : AppCompatActivity() {
     private var fireStore = FirebaseFirestore.getInstance()
 
     companion object {
-       var addIngredients:((MutableList<Ingredient>)-> Unit)?=null
+       fun addIngredient(name: String){
+           val ingredient = Ingredient(name)
+           synchronized(BarAssistant.ingredients) {
+               if (!BarAssistant.ingredients.any { it.name.toLowerCase() == ingredient.name.toLowerCase() }) {
+                   BarAssistant.ingredients.add(ingredient)
+               }
+           }
+       }
     }
 
     override fun onCreate(savedInstanceState: Bundle?){
@@ -31,8 +40,6 @@ class IngredientAdd : AppCompatActivity() {
         setContentView(R.layout.fragment_ingredient_add_main)
 
         title = "Add Ingredients"
-
-
 
         getIngredientMasterList()
     }
@@ -59,7 +66,4 @@ class IngredientAdd : AppCompatActivity() {
         //expandable_ingredient_list_view.setAdapter(MapExpandableListAdapter(this, ingredientsMap, expandable_ingredient_list_view))
     }
 
-    fun addIngredients(){
-        //val mainMenu : MainMenu = Activity
-    }
 }
