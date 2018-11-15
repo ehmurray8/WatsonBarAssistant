@@ -39,9 +39,9 @@ before_install:
 - openssl aes-256-cbc -K $encrypted_71632d04a37f_key -iv $encrypted_71632d04a37f_iv
   -in travis.tar.enc -out travis.tar -d
 - tar xvf travis.tar
-- mv Keys.kt app/src/main/com/speakeasy/watsonbarassistant/main/java/
-- mv google-services.json app/google-services.json
-- mv travis.keystore.jks app/travis.keystore.jks
+- mv ./Keys.kt app/src/main/com/speakeasy/watsonbarassistant/main/java/
+- mv ./google-services.json app/google-services.json
+- mv ./travis.keystore.jks app/travis.keystore.jks
 - ls
 - ls app
 - ls app/src/main/java/com/speakeasy/watsonbarassistant/
