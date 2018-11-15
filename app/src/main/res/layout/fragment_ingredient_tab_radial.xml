@@ -27,7 +27,7 @@
             android:layout_marginBottom="16dp"
             android:orientation="vertical"
             android:translationZ="1dp"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/fruitsAndVegetablesLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -71,7 +71,7 @@
             android:layout_marginBottom="8dp"
             android:orientation="vertical"
             android:translationZ="1dp"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/herbsAndSpicesButtonLayout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -113,7 +113,7 @@
             android:layout_marginBottom="8dp"
             android:orientation="vertical"
             android:translationZ="1dp"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/juicesLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -155,7 +155,7 @@
             android:layout_marginBottom="8dp"
             android:orientation="vertical"
             android:translationZ="1dp"
-            android:visibility="visible"
+            android:visibility="gone"
             android:weightSum="10000"
             app:layout_constraintBottom_toTopOf="@+id/liqueursLayout"
             app:layout_constraintEnd_toEndOf="parent"
@@ -195,7 +195,7 @@
             android:layout_marginStart="90dp"
             android:orientation="vertical"
             android:translationZ="1dp"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/miscellaneousLayout"
             app:layout_constraintStart_toStartOf="parent">
 
@@ -232,7 +232,7 @@
             android:layout_marginBottom="13dp"
             android:orientation="vertical"
             android:translationZ="1dp"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/sweetsLayout"
             app:layout_constraintEnd_toEndOf="parent">
 
@@ -270,7 +270,7 @@
             android:layout_marginBottom="8dp"
             android:orientation="vertical"
             android:translationZ="1dp"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/syrupsLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
@@ -310,7 +310,7 @@
             android:layout_marginBottom="180dp"
             android:orientation="vertical"
             android:translationZ="1dp"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
@@ -349,7 +349,7 @@
             android:layout_marginBottom="180dp"
             android:orientation="vertical"
             android:translationZ="1dp"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
@@ -389,7 +389,7 @@
             android:layout_marginBottom="144dp"
             android:orientation="vertical"
             android:translationZ="1dp"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.501"
