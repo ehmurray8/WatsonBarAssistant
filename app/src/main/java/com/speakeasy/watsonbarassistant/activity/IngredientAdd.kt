@@ -51,7 +51,8 @@ class IngredientAdd : AppCompatActivity() {
             temp.sort()
         }
         val adapter = IngredientExpandableListAdapter(this, secondLevel?.get(currentIndex),
-                        thirdLevel?.slice(indexStart until indexEnd)?.toMutableList(), expandable_ingredient_list_view)
+                        thirdLevel?.slice(indexStart until indexEnd)?.toMutableList(), expandable_ingredient_list_view,
+                currentIndex)
         expandable_ingredient_list_view.setAdapter(adapter)
     }
 
