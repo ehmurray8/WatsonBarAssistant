@@ -75,7 +75,8 @@ class IngredientExpandableListAdapter(var activity: Activity, var firstLevel : M
             val inflater = activity.baseContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
             inflater.inflate(R.layout.fragment_ingredient_add_item, null)
         }()
-        val title = view?.findViewById<CheckBox>(R.id.expandedListItem)
+        val title = view.findViewById<CheckBox>(R.id.expandedListItem)
+        title.isChecked = false
         title?.text = getChild(groupPosition, childPosition)
         title?.setOnClickListener{
             if(title.isChecked) {

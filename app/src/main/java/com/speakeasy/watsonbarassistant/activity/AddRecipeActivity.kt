@@ -117,6 +117,9 @@ class AddRecipeActivity : AppCompatActivity() {
                 this.finish()
             } else { }
         }
+
+        setupSwipeHandler()
+
         menuAnimOpen = AnimationUtils.loadAnimation(applicationContext, R.anim.menu_anim_open)
         menuAnimClose = AnimationUtils.loadAnimation(applicationContext, R.anim.menu_anim_close)
         menuAnimRotateOut = AnimationUtils.loadAnimation(applicationContext, R.anim.menu_anim_rotate_out)
@@ -136,10 +139,11 @@ class AddRecipeActivity : AppCompatActivity() {
         viewAdapter = IngredientAdapter(ingredients, normalIngredients, applicationContext)
         addRecipeIngredients.adapter = viewAdapter
         addRecipeIngredients.refreshDrawableState()
+        setAddButtonVisibility()
     }
 
     private fun setTitleTextState(state: Boolean){
-        this.titleNotNull = state
+        titleNotNull = state
         val algoliaClient = Client(ALGOLIA_APP_ID, ALGOLIA_API_KEY)
         val algoliaIndex = algoliaClient.getIndex("Recipe")
         algoliaIndex.searchAsync(Query(title_text.text.toString())) { content, error ->
@@ -159,9 +163,9 @@ class AddRecipeActivity : AppCompatActivity() {
                         }
                     }
                 }
-                if(titleNotNull) {
-                    setAddButtonVisibility()
-                }
+            }
+            if(error != null && titleNotNull) {
+                setAddButtonVisibility()
             }
         }
     }
@@ -172,9 +176,11 @@ class AddRecipeActivity : AppCompatActivity() {
     }
 
     private fun setAddButtonVisibility(){
-        val buttonVisible = this.ingredientsUnique and this.titleNotNull and this.descriptionNotNull and this.pictureNotDefualt
+        val buttonVisible = ingredientsUnique && titleNotNull &&
+                descriptionNotNull && pictureNotDefualt && ingredients.count() > 1
         if (buttonVisible){
             addRecipeButton.visibility = View.VISIBLE
+            addRecipeButton.bringToFront()
         } else {
             addRecipeButton.visibility = View.INVISIBLE
         }
@@ -267,14 +273,17 @@ class AddRecipeActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == Activity.RESULT_OK) {
             val bitmap = data?.extras?.get("data") as Bitmap
-            this.newImageBitmap = bitmap
-            this.pictureNotDefualt = true
+            newImageBitmap = bitmap
+            pictureNotDefualt = true
             newPic.setImageBitmap(bitmap)
             setAddButtonVisibility()
         } else if (requestCode == 8 && resultCode == Activity.RESULT_OK) {
+            pictureNotDefualt = true
             val selectedImage = data?.data
             newPic.setImageURI(selectedImage)
+            newImageBitmap = MediaStore.Images.Media.getBitmap(contentResolver, selectedImage)
         }
+        setAddButtonVisibility()
     }
 
     private fun closeMenus(){
@@ -284,6 +293,7 @@ class AddRecipeActivity : AppCompatActivity() {
         isAddMenuOpen = false
         title_text.isEnabled = true
         description_text.isEnabled = true
+        newPic.isEnabled = true
     }
 
     private fun openMenus(){
@@ -294,5 +304,6 @@ class AddRecipeActivity : AppCompatActivity() {
         isAddMenuOpen = true
         description_text.isEnabled = false
         title_text.isEnabled = false
+        newPic.isEnabled = false
     }
 }

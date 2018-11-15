@@ -45,8 +45,21 @@ class IngredientAdd : AppCompatActivity() {
     }
 
     private fun addToExpandableList(secondLevel: MutableList<MutableList<String>>?, thirdLevel: MutableList<MutableList<String>>?, indexStart: Int, indexEnd : Int) {
-        thirdLevel?.forEach {temp ->
-            temp.sort()
+        thirdLevel?.forEach {
+            it.sort()
+        }
+        var count = 0
+        secondLevel?.forEachIndexed { index, it ->
+            val oldCount = count
+            count += it.count()
+            if(thirdLevel != null) {
+                val currList = thirdLevel.slice(oldCount until count)
+                val sorted = it.zip(currList).sortedBy { it.first }
+                secondLevel[index] = sorted.map { it.first } as MutableList<String>
+                sorted.forEachIndexed { indexInner, pair ->
+                    thirdLevel[oldCount + indexInner] = pair.second
+                }
+            }
         }
         val adapter = IngredientExpandableListAdapter(this, secondLevel?.get(currentIngredientCategoryIndex),
                         thirdLevel?.slice(indexStart until indexEnd)?.toMutableList(), expandable_ingredient_list_view, currentIngredientCategoryIndex)

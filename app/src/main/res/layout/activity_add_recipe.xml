@@ -22,7 +22,6 @@
             android:layout_height="match_parent"
             android:layout_width="match_parent">
 
-            <!--android.support.design.widget.CoordinatorLayout-->
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_marginBottom="20dp"
@@ -93,14 +92,14 @@
 
                     <Button
                         android:id="@+id/addRecipeButton"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:padding="10dp"
+                        android:layout_gravity="center_horizontal"
                         android:layout_margin="25dp"
                         android:text="Create Recipe" />
 
 
-                <!--/android.support.constraint.ConstraintLayout>
-            </android.support.design.widget.CoordinatorLayout-->
             </LinearLayout>
         </android.support.v4.widget.NestedScrollView>
 
