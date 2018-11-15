@@ -1,5 +1,6 @@
 package com.speakeasy.watsonbarassistant.extensions
 
+import android.content.Context
 import com.google.firebase.firestore.DocumentSnapshot
 import com.speakeasy.watsonbarassistant.*
 import com.speakeasy.watsonbarassistant.activity.MainMenu
@@ -97,6 +98,21 @@ private fun MainMenu.addLastViewedRecipe(recipeDocument: DocumentSnapshot, index
                     (fragment as? HomeTab)?.refresh()
                 }
             }
+        }
+    }
+}
+fun addIngredient(name: String = "", newIngredient: Ingredient? = null, context: Context, refreshDiscovery: Boolean = false) {
+    val ingredient = if(name != "") {
+        Ingredient(name)
+    } else {
+        newIngredient ?: return
+    }
+    synchronized(BarAssistant.ingredients) {
+        if (BarAssistant.ingredients.any { it.name.toLowerCase() == ingredient.name.toLowerCase() }) {
+            context.toast("${ingredient.name} is already stored as an ingredient.")
+        } else {
+            BarAssistant.ingredients.add(ingredient)
+            // refreshDiscovery(refreshDiscovery)
         }
     }
 }

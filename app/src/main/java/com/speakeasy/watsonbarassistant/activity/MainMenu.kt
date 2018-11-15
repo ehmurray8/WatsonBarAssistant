@@ -25,10 +25,7 @@ import com.google.gson.Gson
 import com.speakeasy.watsonbarassistant.*
 import com.speakeasy.watsonbarassistant.discovery.HandleDiscovery
 import com.speakeasy.watsonbarassistant.discovery.SearchDiscovery
-import com.speakeasy.watsonbarassistant.extensions.loadRecentlyViewed
-import com.speakeasy.watsonbarassistant.extensions.loadRecentlyViewedRecipesSharedPreferences
-import com.speakeasy.watsonbarassistant.extensions.toast
-import com.speakeasy.watsonbarassistant.extensions.userIngredientsDocument
+import com.speakeasy.watsonbarassistant.extensions.*
 import com.speakeasy.watsonbarassistant.fragment.HomeTab
 import com.speakeasy.watsonbarassistant.fragment.IngredientsTab
 import com.speakeasy.watsonbarassistant.fragment.PersonalTab
@@ -68,7 +65,7 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
 
         val ingredientName = intent.getStringExtra("Ingredient")
         if(ingredientName != null) {
-            addIngredient(ingredientName)
+            addIngredient(name = ingredientName, context=this)
         } else {
             loadUserData()
         }
@@ -367,18 +364,6 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
             }
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    fun addIngredient(name: String) {
-        val ingredient = Ingredient(name)
-        synchronized(BarAssistant.ingredients) {
-            if (BarAssistant.ingredients.any { it.name.toLowerCase() == ingredient.name.toLowerCase() }) {
-                applicationContext?.toast("${ingredient.name} is already stored as an ingredient.")
-            } else {
-                BarAssistant.ingredients.add(ingredient)
-                refreshDiscovery(true)
-            }
-        }
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {

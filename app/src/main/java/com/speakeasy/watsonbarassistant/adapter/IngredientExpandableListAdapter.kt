@@ -1,30 +1,29 @@
 package com.speakeasy.watsonbarassistant.adapter
 
 import android.app.Activity
-import android.app.Application
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.BaseExpandableListAdapter
+import android.widget.CheckBox
+import android.widget.ExpandableListView
+import com.speakeasy.watsonbarassistant.Ingredient
 import com.speakeasy.watsonbarassistant.R
 import com.speakeasy.watsonbarassistant.activity.IngredientAdd
-
 import kotlinx.android.synthetic.main.fragment_ingredient_add_main.*
-import java.util.ArrayList
 
 class IngredientExpandableListAdapter(var activity: Activity, var firstLevel : MutableList<String>?, var secondLevel : MutableList<MutableList<String>>?, var expandableListView: ExpandableListView) : BaseExpandableListAdapter() {
 
-    val addedIngredients: MutableList<String> = mutableListOf()
+    private val addedIngredients: MutableList<String> = mutableListOf()
 
     override fun getGroup(groupPosition: Int): String {
 
-        return firstLevel!![groupPosition]
+        return firstLevel?.get(groupPosition) ?: ""
     }
 
     override fun isChildSelectable(groupPosition: Int, childPosition: Int): Boolean {
-        return secondLevel!![groupPosition][childPosition].isNotEmpty()
+        return secondLevel?.get(groupPosition)?.get(childPosition)?.isNotEmpty() ?: false
     }
 
     override fun hasStableIds(): Boolean {
@@ -32,39 +31,35 @@ class IngredientExpandableListAdapter(var activity: Activity, var firstLevel : M
     }
 
     override fun getGroupView(groupPosition: Int, isExpanded: Boolean, convertView: View?, parent: ViewGroup?): View? {
-        var convertView = convertView
-        if(convertView == null){
+        val view = convertView ?: {
             val inflater = activity.baseContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-            convertView = inflater.inflate(R.layout.fragment_ingredient_add_group, null)
-        }
-        val title = convertView?.findViewById<CheckBox>(R.id.listTitle)
+            inflater.inflate(R.layout.fragment_ingredient_add_group, null)
+        }()
+        val title = view.findViewById<CheckBox>(R.id.listTitle)
         title?.text = getGroup(groupPosition)
         title?.setOnClickListener{
             if(expandableListView.isGroupExpanded(groupPosition)){
                 expandableListView.collapseGroup(groupPosition)
                 addedIngredients.remove(getGroup(groupPosition))
-                Toast.makeText(activity.baseContext, "Removed " + getGroup(groupPosition), Toast.LENGTH_SHORT).show()
             }
             else{
                 activity.confirmButton.visibility = View.VISIBLE
-                activity.confirmButton.setOnClickListener{
+                activity.confirmButton.setOnClickListener{ _ ->
                     onConfirmClicked()
                 }
                 addedIngredients.add(getGroup(groupPosition))
-                Toast.makeText(activity.baseContext, "Added " + getGroup(groupPosition), Toast.LENGTH_SHORT).show()
                 expandableListView.expandGroup(groupPosition)
             }
-            //Log.d("TAG", "Parent clicked")
         }
-        return convertView
+        return view
     }
 
     override fun getChildrenCount(groupPosition: Int): Int {
-        return secondLevel!![groupPosition].size
+        return secondLevel?.get(groupPosition)?.size ?: 0
     }
 
     override fun getChild(groupPosition: Int, childPosition: Int): String {
-        return secondLevel!![groupPosition][childPosition]
+        return secondLevel?.get(groupPosition)?.get(childPosition) ?: ""
     }
 
     override fun getGroupId(groupPosition: Int): Long {
@@ -72,24 +67,21 @@ class IngredientExpandableListAdapter(var activity: Activity, var firstLevel : M
     }
 
     override fun getChildView(groupPosition: Int, childPosition: Int, isLastChild: Boolean, convertView: View?, parent: ViewGroup?): View? {
-        var convertView = convertView
-        if(convertView == null){
+        val view = convertView ?: {
             val inflater = activity.baseContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-            convertView = inflater.inflate(R.layout.fragment_ingredient_add_item, null)
-        }
-        val title = convertView?.findViewById<CheckBox>(R.id.expandedListItem)
+            inflater.inflate(R.layout.fragment_ingredient_add_item, null)
+        }()
+        val title = view?.findViewById<CheckBox>(R.id.expandedListItem)
         title?.text = getChild(groupPosition, childPosition)
         title?.setOnClickListener{
             if(title.isChecked) {
-                Toast.makeText(activity.baseContext, "Added " + getChild(groupPosition, childPosition) + " " + getGroup(groupPosition), Toast.LENGTH_SHORT).show()
                 addedIngredients.add(getChild(groupPosition, childPosition) + " " + getGroup(groupPosition))
             }
             else{
                 addedIngredients.remove(getChild(groupPosition, childPosition) + " " + getGroup(groupPosition))
-                Toast.makeText(activity.baseContext, "Removed " + getChild(groupPosition, childPosition) + " " + getGroup(groupPosition), Toast.LENGTH_SHORT).show()
             }
         }
-        return convertView
+        return view
     }
 
     override fun getChildId(groupPosition: Int, childPosition: Int): Long {
@@ -97,16 +89,11 @@ class IngredientExpandableListAdapter(var activity: Activity, var firstLevel : M
     }
 
     override fun getGroupCount(): Int {
-        return firstLevel!!.size
+        return firstLevel?.size ?: 0
     }
-    fun onConfirmClicked(){
-        Toast.makeText(activity.baseContext, "Ingredients Added!", Toast.LENGTH_SHORT).show()
-        addedIngredients.forEach { name ->
-            if (name != null) {
-                IngredientAdd.addIngredient(name)
-            }
-        }
+    private fun onConfirmClicked(){
+        IngredientAdd.addIngredientFunc?.invoke(addedIngredients.asSequence().map { Ingredient(it) }.toMutableList(), activity)
         addedIngredients.clear()
+        activity.finish()
     }
-
 }

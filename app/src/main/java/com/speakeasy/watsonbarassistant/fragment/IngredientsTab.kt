@@ -2,26 +2,26 @@ package com.speakeasy.watsonbarassistant.fragment
 
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import com.speakeasy.watsonbarassistant.BarAssistant
+import com.speakeasy.watsonbarassistant.BarAssistant.Companion.currentIndex
+import com.speakeasy.watsonbarassistant.Ingredient
 import com.speakeasy.watsonbarassistant.R
-import com.speakeasy.watsonbarassistant.SwipeToDeleteCallback
 import com.speakeasy.watsonbarassistant.activity.IngredientAdd
 import com.speakeasy.watsonbarassistant.activity.MainMenu
 import com.speakeasy.watsonbarassistant.activity.VisionActivity
 import com.speakeasy.watsonbarassistant.adapter.IngredientGridAdapter
-import com.speakeasy.watsonbarassistant.BarAssistant.Companion.currentIndex
+import com.speakeasy.watsonbarassistant.extensions.addIngredient
 import kotlinx.android.synthetic.main.fragment_ingredient_tab_radial.*
 
 
@@ -46,7 +46,6 @@ class IngredientsTab : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val viewManager = GridLayoutManager(activity, 2)
-        val mainMenu = activity as MainMenu
         viewAdapter = IngredientGridAdapter(synchronized(BarAssistant.ingredients) { BarAssistant.ingredients }, activity as Activity)
 
         ingredients_recycler_view.apply {
@@ -69,53 +68,43 @@ class IngredientsTab : Fragment() {
 
         alcoholsButton.setOnClickListener {
             currentIndex = 0
-            val intent = Intent(activity, IngredientAdd::class.java)
-            startActivity(intent)
+            showIngredientAdd()
         }
         beveragesAndFlavoringButton.setOnClickListener {
             currentIndex = 1
-            val intent = Intent(activity, IngredientAdd::class.java)
-            startActivity(intent)
+            showIngredientAdd()
         }
         bittersButton.setOnClickListener {
             currentIndex = 2
-            val intent = Intent(activity, IngredientAdd::class.java)
-            startActivity(intent)
+            showIngredientAdd()
         }
         fruitsAndVegetablesButton.setOnClickListener {
             currentIndex = 3
-            val intent = Intent(activity, IngredientAdd::class.java)
-            startActivity(intent)
+            showIngredientAdd()
         }
         herbsAndSpicesButton.setOnClickListener {
             currentIndex = 4
-            val intent = Intent(activity, IngredientAdd::class.java)
-            startActivity(intent)
+            showIngredientAdd()
         }
         juicesButton.setOnClickListener {
             currentIndex = 5
-            val intent = Intent(activity, IngredientAdd::class.java)
-            startActivity(intent)
+            showIngredientAdd()
         }
         liqueursButton.setOnClickListener {
             currentIndex = 6
-            val intent = Intent(activity, IngredientAdd::class.java)
-            startActivity(intent)
+            showIngredientAdd()
         }
         miscellaneousButton.setOnClickListener {
             currentIndex = 7
-            val intent = Intent(activity, IngredientAdd::class.java)
-            startActivity(intent)
+            showIngredientAdd()
         }
         sweetsButton.setOnClickListener {
             currentIndex = 8
-            val intent = Intent(activity, IngredientAdd::class.java)
-            startActivity(intent)
+            showIngredientAdd()
         }
         syrupsButton.setOnClickListener {
             currentIndex = 9
-            val intent = Intent(activity, IngredientAdd::class.java)
-            startActivity(intent)
+            showIngredientAdd()
         }
 
         addViaCameraButton.setOnClickListener {
@@ -126,19 +115,17 @@ class IngredientsTab : Fragment() {
         refresh()
     }
 
+    private fun showIngredientAdd() {
+        IngredientAdd.addIngredientFunc = this::addIngredients
+        val intent = Intent(activity, IngredientAdd::class.java)
+        startActivity(intent)
+    }
 
-     private fun setupSwipeHandler() {
-         val context = activity?.baseContext ?: return
-         val swipeHandler = object : SwipeToDeleteCallback(context) {
-
-             override fun onSwiped(p0: RecyclerView.ViewHolder, direction: Int) {
-                 val position = p0.adapterPosition
-                 viewAdapter?.removeAt(position)
-             }
-         }
-         val itemTouchHelper = ItemTouchHelper(swipeHandler)
-         itemTouchHelper.attachToRecyclerView(ingredients_recycler_view)
-     }
+    private fun addIngredients(ingredients: MutableList<Ingredient>, context: Context) {
+        ingredients.forEachIndexed { index, it ->
+            addIngredient(newIngredient = it, refreshDiscovery = index == ingredients.count() - 1, context = context)
+        }
+    }
 
     fun refresh() {
         activity?.runOnUiThread {
@@ -223,21 +210,4 @@ class IngredientsTab : Fragment() {
         ingredients_recycler_view.alpha = 0.4F
         isAddMenuOpen = true
     }
-
-    /*private fun setupKeyboardListener() {
-        coordinateLayout.viewTreeObserver.addOnGlobalLayoutListener {
-            val rect = Rect()
-            if(coordinateLayout != null && ingredientInputView.hasFocus()) {
-                coordinateLayout.getWindowVisibleDisplayFrame(rect)
-                val screenHeight = coordinateLayout.rootView.height
-
-                val keypadHeight = screenHeight - rect.bottom
-
-                if (keypadHeight <= screenHeight * 0.15) {
-                    ingredientInputView.clearFocus()
-                    ingredientInputView.visibility = View.GONE
-                }
-            }
-        }
-    }*/
 }
