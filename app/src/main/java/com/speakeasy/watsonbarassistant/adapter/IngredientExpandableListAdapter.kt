@@ -8,14 +8,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import com.speakeasy.watsonbarassistant.BarAssistant
-import com.speakeasy.watsonbarassistant.Ingredient
 import com.speakeasy.watsonbarassistant.R
 import com.speakeasy.watsonbarassistant.activity.IngredientAdd
-import com.speakeasy.watsonbarassistant.activity.MainMenu
-import kotlinx.android.synthetic.main.fragment_ingredient_add_main.*
 
-class FirstExpandableListAdapter(var activity: Activity, var firstLevel : MutableList<String>?, var secondLevel : MutableList<MutableList<String>>?, var expandableListView: ExpandableListView) : BaseExpandableListAdapter() {
+import kotlinx.android.synthetic.main.fragment_ingredient_add_main.*
+import java.util.ArrayList
+
+class IngredientExpandableListAdapter(var activity: Activity, var firstLevel : MutableList<String>?, var secondLevel : MutableList<MutableList<String>>?, var expandableListView: ExpandableListView) : BaseExpandableListAdapter() {
 
     val addedIngredients: MutableList<String> = mutableListOf()
 
@@ -43,9 +42,16 @@ class FirstExpandableListAdapter(var activity: Activity, var firstLevel : Mutabl
         title?.setOnClickListener{
             if(expandableListView.isGroupExpanded(groupPosition)){
                 expandableListView.collapseGroup(groupPosition)
+                addedIngredients.remove(getGroup(groupPosition))
+                Toast.makeText(activity.baseContext, "Removed " + getGroup(groupPosition), Toast.LENGTH_SHORT).show()
             }
             else{
                 activity.confirmButton.visibility = View.VISIBLE
+                activity.confirmButton.setOnClickListener{
+                    onConfirmClicked()
+                }
+                addedIngredients.add(getGroup(groupPosition))
+                Toast.makeText(activity.baseContext, "Added " + getGroup(groupPosition), Toast.LENGTH_SHORT).show()
                 expandableListView.expandGroup(groupPosition)
             }
             //Log.d("TAG", "Parent clicked")
@@ -80,6 +86,7 @@ class FirstExpandableListAdapter(var activity: Activity, var firstLevel : Mutabl
             }
             else{
                 addedIngredients.remove(getChild(groupPosition, childPosition) + " " + getGroup(groupPosition))
+                Toast.makeText(activity.baseContext, "Removed " + getChild(groupPosition, childPosition) + " " + getGroup(groupPosition), Toast.LENGTH_SHORT).show()
             }
         }
         return convertView
@@ -93,9 +100,13 @@ class FirstExpandableListAdapter(var activity: Activity, var firstLevel : Mutabl
         return firstLevel!!.size
     }
     fun onConfirmClicked(){
-        activity.confirmButton.setOnClickListener{
-            addedIngredients.clear()
+
+        addedIngredients.forEach { name ->
+            if (name != null) {
+                IngredientAdd.addIngredients
+            }
         }
+        addedIngredients.clear()
     }
 
 }

@@ -1,5 +1,6 @@
 package com.speakeasy.watsonbarassistant.activity
 
+import android.app.Activity
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -8,9 +9,12 @@ import com.speakeasy.watsonbarassistant.BarAssistant
 import com.speakeasy.watsonbarassistant.BarAssistant.Companion.secondLevelIngredients
 import com.speakeasy.watsonbarassistant.BarAssistant.Companion.thirdLevelIngredients
 import com.speakeasy.watsonbarassistant.R
-import com.speakeasy.watsonbarassistant.adapter.FirstExpandableListAdapter
+import com.speakeasy.watsonbarassistant.adapter.IngredientExpandableListAdapter
 import kotlinx.android.synthetic.main.fragment_ingredient_add_main.*
 import com.speakeasy.watsonbarassistant.BarAssistant.Companion.currentIndex
+import com.speakeasy.watsonbarassistant.Ingredient
+import com.speakeasy.watsonbarassistant.R.id.expandable_ingredient_list_view
+import com.speakeasy.watsonbarassistant.activity.MainMenu
 
 
 class IngredientAdd : AppCompatActivity() {
@@ -18,11 +22,17 @@ class IngredientAdd : AppCompatActivity() {
     private var authorization = FirebaseAuth.getInstance()
     private var fireStore = FirebaseFirestore.getInstance()
 
+    companion object {
+       var addIngredients:((MutableList<Ingredient>)-> Unit)?=null
+    }
+
     override fun onCreate(savedInstanceState: Bundle?){
         super.onCreate(savedInstanceState)
         setContentView(R.layout.fragment_ingredient_add_main)
 
         title = "Add Ingredients"
+
+
 
         getIngredientMasterList()
     }
@@ -45,8 +55,11 @@ class IngredientAdd : AppCompatActivity() {
             temp.sort()
         }
 
-        expandable_ingredient_list_view.setAdapter(FirstExpandableListAdapter(this, secondLevel!![currentIndex], thirdLevel!!.slice(indexStart until indexEnd).toMutableList(), expandable_ingredient_list_view))
+        expandable_ingredient_list_view.setAdapter(IngredientExpandableListAdapter(this, secondLevel!![currentIndex], thirdLevel!!.slice(indexStart until indexEnd).toMutableList(), expandable_ingredient_list_view))
         //expandable_ingredient_list_view.setAdapter(MapExpandableListAdapter(this, ingredientsMap, expandable_ingredient_list_view))
+    }
 
+    fun addIngredients(){
+        //val mainMenu : MainMenu = Activity
     }
 }

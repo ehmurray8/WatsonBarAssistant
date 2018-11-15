@@ -1,5 +1,6 @@
 package com.speakeasy.watsonbarassistant
 
+import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.graphics.drawable.Drawable
@@ -22,10 +23,7 @@ import android.widget.Toast
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.DocumentReference
-
-
-
-
+import com.speakeasy.watsonbarassistant.activity.MainMenu
 
 
 class BarAssistant: Application() {
@@ -290,5 +288,8 @@ class BarAssistant: Application() {
                 }
             }
         })
+    }
+    fun addIngredients(){
+
     }
 }
