@@ -62,7 +62,7 @@ class IngredientAdd : AppCompatActivity() {
             temp.sort()
         }
 
-        expandable_ingredient_list_view.setAdapter(IngredientExpandableListAdapter(this, secondLevel!![currentIndex], thirdLevel!!.slice(indexStart until indexEnd).toMutableList(), expandable_ingredient_list_view))
+        expandable_ingredient_list_view.setAdapter(IngredientExpandableListAdapter(this, secondLevel!![currentIndex], thirdLevel!!.slice(indexStart until indexEnd).toMutableList(), expandable_ingredient_list_view, currentIndex))
         //expandable_ingredient_list_view.setAdapter(MapExpandableListAdapter(this, ingredientsMap, expandable_ingredient_list_view))
     }
 

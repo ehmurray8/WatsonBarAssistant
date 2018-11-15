@@ -14,13 +14,23 @@ import com.speakeasy.watsonbarassistant.activity.IngredientAdd
 import kotlinx.android.synthetic.main.fragment_ingredient_add_main.*
 import java.util.ArrayList
 
-class IngredientExpandableListAdapter(var activity: Activity, var firstLevel : MutableList<String>?, var secondLevel : MutableList<MutableList<String>>?, var expandableListView: ExpandableListView) : BaseExpandableListAdapter() {
+class IngredientExpandableListAdapter(var activity: Activity, var firstLevel : MutableList<String>?, var secondLevel : MutableList<MutableList<String>>?, var expandableListView: ExpandableListView, var currentIndex:Int) : BaseExpandableListAdapter() {
 
     val addedIngredients: MutableList<String> = mutableListOf()
 
     override fun getGroup(groupPosition: Int): String {
-
-        return firstLevel!![groupPosition]
+        if(currentIndex==5){
+            return firstLevel!![groupPosition]+" Juice"
+        }
+        else if(currentIndex==6){
+            return firstLevel!![groupPosition]+" Liqueur"
+        }
+        else if(currentIndex==9){
+            return firstLevel!![groupPosition]+" Syrup"
+        }
+        else {
+            return firstLevel!![groupPosition]
+        }
     }
 
     override fun isChildSelectable(groupPosition: Int, childPosition: Int): Boolean {
