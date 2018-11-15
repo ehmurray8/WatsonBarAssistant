@@ -15,17 +15,16 @@ import android.view.MenuItem
 import android.view.View
 import com.algolia.search.saas.Client
 import com.algolia.search.saas.Query
-import com.algolia.search.saas.android.BuildConfig.ALGOLIA_API_KEY
-import com.algolia.search.saas.android.BuildConfig.ALGOLIA_APPLICATION_ID
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.gson.Gson
 import com.speakeasy.watsonbarassistant.*
-import com.speakeasy.watsonbarassistant.discovery.HandleDiscovery
-import com.speakeasy.watsonbarassistant.discovery.SearchDiscovery
-import com.speakeasy.watsonbarassistant.extensions.*
+import com.speakeasy.watsonbarassistant.extensions.loadRecentlyViewed
+import com.speakeasy.watsonbarassistant.extensions.loadRecentlyViewedRecipesSharedPreferences
+import com.speakeasy.watsonbarassistant.extensions.toast
+import com.speakeasy.watsonbarassistant.extensions.userIngredientsDocument
 import com.speakeasy.watsonbarassistant.fragment.HomeTab
 import com.speakeasy.watsonbarassistant.fragment.IngredientsTab
 import com.speakeasy.watsonbarassistant.fragment.PersonalTab
@@ -49,7 +48,7 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
     internal val fireStore = FirebaseFirestore.getInstance()
     private var authorization = FirebaseAuth.getInstance()
 
-    private val client = Client(ALGOLIA_APP_ID, ALGOLIA_API_KEY)
+    private val client = Client(ALGOLIA_APP_ID, ALGOLIA_SEARCH_KEY)
     private val recipeIndex = client.getIndex("Recipe")
 
     private var searchMenuItem: MenuItem? = null

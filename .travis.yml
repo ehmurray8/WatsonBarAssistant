@@ -37,7 +37,7 @@ script:
 - "/bin/sh ./upload.sh"
 before_install:
 - openssl aes-256-cbc -K $encrypted_71632d04a37f_key -iv $encrypted_71632d04a37f_iv
-  -in travis-files.tar.enc -out travis-files.tar -d
+  -in travis.tar.enc -out travis.tar -d
 - tar xvf travis-files.tar
 - ls
 - ls app

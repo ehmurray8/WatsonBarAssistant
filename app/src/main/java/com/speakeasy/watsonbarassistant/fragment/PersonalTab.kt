@@ -69,8 +69,8 @@ class PersonalTab : Fragment(), TabLayout.OnTabSelectedListener {
         val firstName = BarAssistant.userInfo?.firstName ?: ""
         val lastName = BarAssistant.userInfo?.lastName ?: ""
         val fullName = "$firstName $lastName"
-        fullNameAccount.text = fullName
-        usernameAccount.text = BarAssistant.userInfo?.username
+        fullNameAccount?.text = fullName
+        usernameAccount?.text = BarAssistant.userInfo?.username
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
