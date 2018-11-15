@@ -15,7 +15,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.speakeasy.watsonbarassistant.*
 import com.speakeasy.watsonbarassistant.extensions.*
 
-class FriendAdapter(private val context: Context, private val users: MutableList<UserInfo>):
+class FriendAdapter(private val context: Context, private val users: MutableList<UserInfo>,
+                    private val refresh: (() -> Unit)):
         RecyclerView.Adapter<FriendAdapter.ViewHolder>() {
 
     class ViewHolder(val layout: RelativeLayout) : RecyclerView.ViewHolder(layout)
@@ -31,13 +32,15 @@ class FriendAdapter(private val context: Context, private val users: MutableList
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val layout = holder.layout
-        val textView = layout.findViewById<TextView>(R.id.friendUsername)
-
         val user = users[position]
-        textView.text = user.username
 
+        setView(layout, user)
+    }
+
+    private fun setView(layout: RelativeLayout, user: UserInfo) {
         val friendId = user.userId
-
+        val textView = layout.findViewById<TextView>(R.id.friendUsername)
+        textView.text = user.username
         val requestButton = layout.findViewById<Button>(R.id.friendRequestButton)
         val acceptButton = layout.findViewById<Button>(R.id.acceptRequestButton)
         val denyButton = layout.findViewById<Button>(R.id.denyRequestButton)
@@ -49,7 +52,7 @@ class FriendAdapter(private val context: Context, private val users: MutableList
                 requestButton.setOnClickListener { _ ->
                     fireAuth.currentUser?.uid?.let { uid ->
                         friendId?.let { fid ->
-                            removeFriend(uid, fid, user)
+                            removeFriend(uid, fid, user, layout)
                         }
                     }
                 }
@@ -62,7 +65,7 @@ class FriendAdapter(private val context: Context, private val users: MutableList
                     val currentUid = fireAuth.currentUser?.uid
                     currentUid?.let { uid ->
                         friendId?.let { fid ->
-                            acceptFriendRequest(uid, fid, user)
+                            acceptFriendRequest(uid, fid, user, layout)
                         }
                     }
                 }
@@ -70,7 +73,7 @@ class FriendAdapter(private val context: Context, private val users: MutableList
                 denyButton.setOnClickListener {
                     fireAuth.currentUser?.uid?.let { uid ->
                         friendId?.let { fid ->
-                            denyFriend(uid, fid, user)
+                            denyFriend(uid, fid, user, layout)
                         }
                     }
                 }
@@ -80,7 +83,7 @@ class FriendAdapter(private val context: Context, private val users: MutableList
                 requestButton.setOnClickListener {
                     fireAuth.currentUser?.uid?.let { uid ->
                         friendId?.let { fid ->
-                            cancelRequest(uid, fid, user)
+                            cancelRequest(uid, fid, user, layout)
                         }
                     }
                 }
@@ -90,7 +93,7 @@ class FriendAdapter(private val context: Context, private val users: MutableList
                     val currentUid = fireAuth.currentUser?.uid
                     currentUid?.let { uid ->
                         friendId?.let { fid ->
-                            createFriendRequest(uid, fid, user)
+                            createFriendRequest(uid, fid, user, layout)
                         }
                     }
                 }
@@ -98,7 +101,7 @@ class FriendAdapter(private val context: Context, private val users: MutableList
         }
     }
 
-    private fun createFriendRequest(userId: String, friendId: String, user: UserInfo) {
+    private fun createFriendRequest(userId: String, friendId: String, user: UserInfo, layout: RelativeLayout) {
         fireStore.blockedDocument(friendId).get().addOnSuccessListener { blockedDocument ->
             val blockedList = getIdList(blockedDocument, BLOCKED_LIST)
             if(userId !in blockedList) {
@@ -115,14 +118,16 @@ class FriendAdapter(private val context: Context, private val users: MutableList
                         fireStore.pendingDocument(userId).set(newPending)
                         BarAssistant.pendingRequests.add(user)
                         context.toast("Requesting ${user.username} as a friend.")
-                        notifyDataSetChanged()
+                        setView(layout, user)
+                        refresh()
+                        //notifyDataSetChanged()
                     }.addOnFailureListener {
                         context.toast("Failed to request ${user.username} as a friend.")
                     }
                     fireStore.pendingDocument(friendId).get().addOnSuccessListener {
                         val storedIds = getIdList(it, PENDING_LIST)
                         if(userId in storedIds) {
-                            acceptFriendRequest(userId, friendId, user)
+                            acceptFriendRequest(userId, friendId, user, layout)
                         }
                     }
                 }.addOnFailureListener { _ ->
@@ -132,7 +137,7 @@ class FriendAdapter(private val context: Context, private val users: MutableList
         }
     }
 
-    private fun acceptFriendRequest(userId: String, friendId: String, user: UserInfo) {
+    private fun acceptFriendRequest(userId: String, friendId: String, user: UserInfo, layout: RelativeLayout) {
         fireStore.pendingDocument(friendId).get().addOnSuccessListener {
             val storedIds = it.get(PENDING_LIST) as? ArrayList<*>
             val pendingIds = storedIds?.toStringMutableList()
@@ -144,7 +149,7 @@ class FriendAdapter(private val context: Context, private val users: MutableList
                 val newFriendIds = addId(friendDocument, FRIEND_LIST, userId)
                 val newFriends = mapOf(FRIEND_LIST to newFriendIds)
                 fireStore.friendDocument(friendId).set(newFriends).addOnSuccessListener { _ ->
-                    removePendingRequest(user, userId)
+                    removePendingRequest(user, userId, layout)
                 }.addOnFailureListener { _ ->
                     context.toast("Failed to accept friend request.")
                 }
@@ -156,20 +161,24 @@ class FriendAdapter(private val context: Context, private val users: MutableList
         }
     }
 
-    private fun removePendingRequest(user: UserInfo, userId: String) {
+    private fun removePendingRequest(user: UserInfo, userId: String, layout: RelativeLayout) {
         fireStore.requestDocument(userId).get().addOnSuccessListener {
             user.userId?.let { uid ->
                 val storedStringIds = removeId(it, REQUEST_LIST, uid)
                 val newFriendRequests = mapOf(REQUEST_LIST to storedStringIds)
             fireStore.requestDocument(userId).set(newFriendRequests).addOnSuccessListener { _ ->
-                    addFriend(user, userId)
+                    addFriend(user, userId, layout)
                 }
             }
         }
-
+        fireStore.pendingDocument(user.userId.toString()).get().addOnSuccessListener {
+            val storedStringIds = removeId(it, PENDING_LIST, userId)
+            val newFriendPending = mapOf(REQUEST_LIST to storedStringIds)
+            fireStore.pendingDocument(user.userId.toString()).set(newFriendPending)
+        }
     }
 
-    private fun addFriend(user: UserInfo, userId: String) {
+    private fun addFriend(user: UserInfo, userId: String, layout: RelativeLayout) {
         fireStore.friendDocument(userId).get().addOnSuccessListener {
             user.userId?.let { friendId ->
                 val storedIds = addId(it, FRIEND_LIST, friendId)
@@ -177,7 +186,9 @@ class FriendAdapter(private val context: Context, private val users: MutableList
                 fireStore.friendDocument(userId).set(newFriends)
                 BarAssistant.requestsInProgress.remove(user)
                 BarAssistant.friends.add(user)
-                notifyDataSetChanged()
+                // notifyDataSetChanged()
+                setView(layout, user)
+                refresh()
                 context.toast("Added ${user.username} as a friend.")
             }
         }.addOnFailureListener {
@@ -185,39 +196,57 @@ class FriendAdapter(private val context: Context, private val users: MutableList
         }
     }
 
-    private fun removeFriend(userId: String, friendId: String, otherUser: UserInfo) {
+    private fun removeFriend(userId: String, friendId: String, otherUser: UserInfo, layout: RelativeLayout) {
         fireStore.friendDocument(userId).get().addOnSuccessListener {
-            removeId(it, FRIEND_LIST, friendId)
+            val newFriendsCurrUser = removeId(it, FRIEND_LIST, friendId)
+            val newFriendsCurrDocument = mapOf(FRIEND_LIST to newFriendsCurrUser)
+            fireStore.friendDocument(userId).set(newFriendsCurrDocument)
             fireStore.friendDocument(friendId).get().addOnSuccessListener { document ->
-                removeId(document, FRIEND_LIST, userId)
+                val otherFriends = removeId(document, FRIEND_LIST, userId)
+                val otherDocument = mapOf(FRIEND_LIST to otherFriends)
+                fireStore.friendDocument(friendId).set(otherDocument)
             }
             BarAssistant.friends.remove(otherUser)
-            notifyDataSetChanged()
+            // notifyDataSetChanged()
+            setView(layout, otherUser)
+            refresh()
             context.toast("Removed ${otherUser.username} as a friend.")
         }.addOnFailureListener {
             context.toast("Failed to remove ${otherUser.username} as a friend.")
         }
     }
 
-    private fun denyFriend(userId: String, friendId: String, otherUser: UserInfo) {
+    private fun denyFriend(userId: String, friendId: String, otherUser: UserInfo, layout: RelativeLayout) {
         fireStore.requestDocument(userId).get().addOnSuccessListener {
-            removeId(it, friendId, REQUEST_LIST)
+            val newRequests = removeId(it, friendId, REQUEST_LIST)
+            val newDocument = mapOf(REQUEST_LIST to newRequests)
+            fireStore.requestDocument(userId).set(newDocument)
             fireStore.pendingDocument(friendId).get().addOnSuccessListener { document ->
-                removeId(document, userId, PENDING_LIST)
+                val newPending = removeId(document, userId, PENDING_LIST)
+                val pendingDocument = mapOf(PENDING_LIST to newPending)
+                fireStore.pendingDocument(friendId).set(pendingDocument)
             }
             BarAssistant.pendingRequests.remove(otherUser)
-            notifyDataSetChanged()
+            // notifyDataSetChanged()
+            setView(layout, otherUser)
+            refresh()
         }
     }
 
-    private fun cancelRequest(userId: String, friendId: String, otherUser: UserInfo) {
+    private fun cancelRequest(userId: String, friendId: String, otherUser: UserInfo, layout: RelativeLayout) {
         fireStore.pendingDocument(userId).get().addOnSuccessListener {
-            removeId(it, friendId, PENDING_LIST)
+            val newRequests = removeId(it, friendId, PENDING_LIST)
+            val newRequestDocument = mapOf(PENDING_LIST to newRequests)
+            fireStore.pendingDocument(userId).set(newRequestDocument)
             fireStore.requestDocument(friendId).get().addOnSuccessListener { document ->
-                removeId(document, userId, REQUEST_LIST)
+                val newRequestsList = removeId(document, userId, REQUEST_LIST)
+                val newRequest = mapOf(REQUEST_LIST to newRequestsList)
+                fireStore.requestDocument(friendId).set(newRequest)
             }
-            BarAssistant.requestsInProgress.remove(otherUser)
-            notifyDataSetChanged()
+            BarAssistant.pendingRequests.remove(otherUser)
+            setView(layout, otherUser)
+            refresh()
+            // notifyDataSetChanged()
         }
     }
 

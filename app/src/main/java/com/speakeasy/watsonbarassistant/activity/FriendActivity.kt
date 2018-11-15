@@ -5,6 +5,8 @@ import android.support.design.widget.TabLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
+import android.text.Editable
+import android.text.TextWatcher
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.speakeasy.watsonbarassistant.BarAssistant
@@ -32,7 +34,7 @@ class FriendActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
         friendTabs.addOnTabSelectedListener(this)
 
         val viewManager = LinearLayoutManager(this)
-        viewAdapter = FriendAdapter(applicationContext, users)
+        viewAdapter = FriendAdapter(applicationContext, users, this::refresh)
 
         userRecycler.apply {
             setHasFixedSize(true)
@@ -42,6 +44,28 @@ class FriendActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
         val itemDecorator = DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
         userRecycler?.addItemDecoration(itemDecorator)
         showCurrentTab()
+        friendSearch.addTextChangedListener(object: TextWatcher{
+            override fun afterTextChanged(s: Editable?) { }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                searchUsers(s.toString())
+            }
+
+        })
+    }
+
+    private fun searchUsers(query: String) {
+        if(query != "") {
+            val newUsers = BarAssistant.allUsers.filter { query in it.username }
+            users.clear()
+            users.addAll(newUsers)
+        } else {
+            users.clear()
+            users.addAll(BarAssistant.allUsers)
+        }
+        refresh()
     }
 
     override fun onResume() {
@@ -63,12 +87,12 @@ class FriendActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
         viewAdapter = when (tabIndex) {
             0 -> {
                 users.addAll(BarAssistant.friends)
-                FriendAdapter(applicationContext, users)
+                FriendAdapter(applicationContext, users, this::refresh)
             } else -> {
                 val uid = auth.currentUser?.uid
                 users.addAll(BarAssistant.allUsers.asSequence().filter { it.userId != uid }
                         .filter { it !in users && it !in BarAssistant.blockedUsers}.toList())
-                FriendAdapter(applicationContext, users)
+                FriendAdapter(applicationContext, users, this::refresh)
             }
         }
         userRecycler.adapter = viewAdapter
@@ -82,6 +106,9 @@ class FriendActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
     }
 
     private fun refresh() {
+        viewAdapter = FriendAdapter(applicationContext, users, this::refresh)
+        userRecycler.adapter = viewAdapter
         viewAdapter?.notifyDataSetChanged()
+        userRecycler.refreshDrawableState()
     }
 }
