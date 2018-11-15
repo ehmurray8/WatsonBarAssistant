@@ -20,6 +20,8 @@ out/
 # Keystore
 travis.keystore.jks
 travis-files.tar
+travis.tar
+travis-files.zip
 
 # Gradle files
 .gradle/
