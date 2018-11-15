@@ -18,14 +18,13 @@ class IngredientAdd : AppCompatActivity() {
     private var authorization = FirebaseAuth.getInstance()
     private var fireStore = FirebaseFirestore.getInstance()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?){
         super.onCreate(savedInstanceState)
         setContentView(R.layout.fragment_ingredient_add_main)
 
         title = "Add Ingredients"
 
         getIngredientMasterList()
-
     }
 
     private fun getIngredientMasterList() {
@@ -46,25 +45,8 @@ class IngredientAdd : AppCompatActivity() {
             temp.sort()
         }
 
-        /*secondLevel!!.forEach {temp ->
-            temp.sort()
-        }
-
-        val ingredientsMap: LinkedHashMap<String, MutableList<MutableList<String>>> = linkedMapOf()
-
-        secondLevel[currentIndex].forEach { index->
-            ingredientsMap.keys.add(index)
-        }
-        //lastViewedRecipes.keys.add(secondLevel[currentIndex])
-        ingredientsMap.values.add(thirdLevel!!.slice(indexStart until indexEnd).toMutableList())
-        ingredientsMap.keys.forEach{ index ->
-            index.toSortedSet()
-        }*/
         expandable_ingredient_list_view.setAdapter(FirstExpandableListAdapter(this, secondLevel!![currentIndex], thirdLevel!!.slice(indexStart until indexEnd).toMutableList(), expandable_ingredient_list_view))
-        //expandable_ingredient_list_view.setAdapter(FirstExpandableListAdapter(this, lastViewedRecipes.keys.toMutableList(), lastViewedRecipes.values, expandable_ingredient_list_view))
         //expandable_ingredient_list_view.setAdapter(MapExpandableListAdapter(this, ingredientsMap, expandable_ingredient_list_view))
-        //ingredientsMap.clear()
-        expandable_ingredient_list_view.solidColor
 
     }
 }

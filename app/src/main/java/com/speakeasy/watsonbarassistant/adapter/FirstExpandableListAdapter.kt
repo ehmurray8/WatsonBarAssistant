@@ -15,11 +15,12 @@ import com.speakeasy.watsonbarassistant.activity.IngredientAdd
 import com.speakeasy.watsonbarassistant.activity.MainMenu
 import kotlinx.android.synthetic.main.fragment_ingredient_add_main.*
 
-class FirstExpandableListAdapter(var context: Context, var firstLevel : MutableList<String>?, var secondLevel : MutableList<MutableList<String>>?, var expandableListView: ExpandableListView) : BaseExpandableListAdapter() {
+class FirstExpandableListAdapter(var activity: Activity, var firstLevel : MutableList<String>?, var secondLevel : MutableList<MutableList<String>>?, var expandableListView: ExpandableListView) : BaseExpandableListAdapter() {
 
     val addedIngredients: MutableList<String> = mutableListOf()
 
     override fun getGroup(groupPosition: Int): String {
+
         return firstLevel!![groupPosition]
     }
 
@@ -34,7 +35,7 @@ class FirstExpandableListAdapter(var context: Context, var firstLevel : MutableL
     override fun getGroupView(groupPosition: Int, isExpanded: Boolean, convertView: View?, parent: ViewGroup?): View? {
         var convertView = convertView
         if(convertView == null){
-            val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            val inflater = activity.baseContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
             convertView = inflater.inflate(R.layout.fragment_ingredient_add_group, null)
         }
         val title = convertView?.findViewById<CheckBox>(R.id.listTitle)
@@ -44,6 +45,7 @@ class FirstExpandableListAdapter(var context: Context, var firstLevel : MutableL
                 expandableListView.collapseGroup(groupPosition)
             }
             else{
+                activity.confirmButton.visibility = View.VISIBLE
                 expandableListView.expandGroup(groupPosition)
             }
             //Log.d("TAG", "Parent clicked")
@@ -66,14 +68,19 @@ class FirstExpandableListAdapter(var context: Context, var firstLevel : MutableL
     override fun getChildView(groupPosition: Int, childPosition: Int, isLastChild: Boolean, convertView: View?, parent: ViewGroup?): View? {
         var convertView = convertView
         if(convertView == null){
-            val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            val inflater = activity.baseContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
             convertView = inflater.inflate(R.layout.fragment_ingredient_add_item, null)
         }
         val title = convertView?.findViewById<CheckBox>(R.id.expandedListItem)
         title?.text = getChild(groupPosition, childPosition)
         title?.setOnClickListener{
-            Toast.makeText(context, "Added "+getChild(groupPosition, childPosition)+" "+getGroup(groupPosition), Toast.LENGTH_SHORT).show()
-            addedIngredients.add(getChild(groupPosition, childPosition)+" "+getGroup(groupPosition))
+            if(title.isChecked) {
+                Toast.makeText(activity.baseContext, "Added " + getChild(groupPosition, childPosition) + " " + getGroup(groupPosition), Toast.LENGTH_SHORT).show()
+                addedIngredients.add(getChild(groupPosition, childPosition) + " " + getGroup(groupPosition))
+            }
+            else{
+                addedIngredients.remove(getChild(groupPosition, childPosition) + " " + getGroup(groupPosition))
+            }
         }
         return convertView
     }
@@ -84,6 +91,11 @@ class FirstExpandableListAdapter(var context: Context, var firstLevel : MutableL
 
     override fun getGroupCount(): Int {
         return firstLevel!!.size
+    }
+    fun onConfirmClicked(){
+        activity.confirmButton.setOnClickListener{
+            addedIngredients.clear()
+        }
     }
 
 }
