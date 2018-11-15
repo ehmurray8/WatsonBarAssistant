@@ -61,17 +61,20 @@ private fun addUnique(recipes: MutableList<FeedElement>) {
 
 private fun addSuggestions(count: Int): MutableList<FeedElement> {
     val feedElements = mutableListOf<FeedElement>()
-    if(BarAssistant.recipes[0].count() >= count) {
-        synchronized(BarAssistant.feed) {
-            feedElements.addAll(BarAssistant.recipes[0].slice(0 until count).map{ FeedElement(it, FeedType.SUGGESTION) })
+    try {
+        if(BarAssistant.recipes[0].count() >= count) {
+            synchronized(BarAssistant.feed) {
+                feedElements.addAll(BarAssistant.recipes[0].slice(0 until count).map{ FeedElement(it, FeedType.SUGGESTION) })
+            }
+        } else if(BarAssistant.recipes.count() > 0) {
+            synchronized(BarAssistant.feed) {
+                feedElements.addAll(BarAssistant.recipes[0].slice(0 until BarAssistant.recipes[0].count()).map {
+                    FeedElement(it, FeedType.SUGGESTION)
+                })
+            }
         }
-    } else if(BarAssistant.recipes.count() > 0) {
-        synchronized(BarAssistant.feed) {
-            feedElements.addAll(BarAssistant.recipes[0].slice(0 until BarAssistant.recipes[0].count()).map {
-                FeedElement(it, FeedType.SUGGESTION)
-            })
-        }
-    }
+    } catch(_: IndexOutOfBoundsException) { }
+
     return feedElements
 }
 
@@ -122,8 +125,10 @@ private fun getFriendRecipes(fireStore: FirebaseFirestore): MutableList<FeedElem
                 val task = fireStore.recipeDocument(rid).get()
                 tasks.add(task)
                 task.addOnSuccessListener {
-                    val recipe = it.toObject(FireStoreRecipe::class.java)?.toDiscoveryRecipe()
-                    recipe?.let{ r -> friendRecipes[friend.username]?.add(r) }
+                    synchronized(friendRecipes) {
+                        val recipe = it.toObject(FireStoreRecipe::class.java)?.toDiscoveryRecipe()
+                        recipe?.let{ r -> friendRecipes[friend.username]?.add(r) }
+                    }
                 }
             }
         }

@@ -40,6 +40,7 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
     var tabIndex = 1
     var fragment: Fragment? = null
     var searchFragment: SearchFragment? = null
+    private var signOut = false
 
     private var tabsItems: Array<TabItem>? = null
 
@@ -51,9 +52,10 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
     private var lastDiscoveryRefreshTime = -1L
 
     private val client = Client(ALGOLIA_APP_ID, ALGOLIA_API_KEY)
-    private val recipeIndex = client.getIndex("Recipe")
+    val recipeIndex = client.getIndex("Recipe")
     private var searchMenuItem: MenuItem? = null
     private var loadingUserInfo = false
+    private var menu: Menu? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -156,6 +158,7 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_toolbar_menu, menu)
+        this.menu = menu
 
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as? SearchManager
         searchMenuItem = menu?.findItem(R.id.searchMenuButton)
@@ -252,6 +255,21 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
             editor.putString(USER_INFO_PREFERENCES, userInfoJson)
             editor.apply()
         }
+        if(signOut) {
+            synchronized(BarAssistant.recipes) {
+                BarAssistant.recipes.forEach { it.clear() }
+            }
+            synchronized(BarAssistant.lastViewedRecipes) {
+                BarAssistant.lastViewedRecipes.clear()
+            }
+            synchronized(BarAssistant.lastViewedTimes) {
+                BarAssistant.lastViewedTimes.clear()
+            }
+            val preferences = getSharedPreferences(SHARED_PREFERENCES_SETTINGS, Context.MODE_PRIVATE)
+            val editor = preferences.edit()
+            editor.clear()
+            editor.apply()
+        }
         loadingUserInfo = false
     }
 
@@ -272,6 +290,7 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
         val barAssistant = application as? BarAssistant
         barAssistant?.let {
             it.loadFavoritesFromFireStore(authorization, fireStore)
+            it.loadUserCreatedRecipesFromFireStore(authorization,fireStore)
             it.loadUserInfo(authorization, fireStore)
         }
         loadRecentlyViewed()
@@ -348,11 +367,17 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
             R.id.user_profile -> {
+                menu?.getItem(0)?.isEnabled = false
+                menu?.getItem(1)?.isEnabled = false
+                menu?.getItem(2)?.isEnabled = false
                 val userProfileIntent = Intent(this, FriendActivity::class.java)
                 startActivity(userProfileIntent)
                 return true
             }
             R.id.shoppingCartMenuButton -> {
+                menu?.getItem(0)?.isEnabled = false
+                menu?.getItem(1)?.isEnabled = false
+                menu?.getItem(2)?.isEnabled = false
                 val shoppingCartIntent= Intent(this, ShoppingCart::class.java)
                 startActivity(shoppingCartIntent)
                 return true
@@ -371,6 +396,13 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
                 refreshDiscovery(true)
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        menu?.getItem(0)?.isEnabled = true
+        menu?.getItem(1)?.isEnabled = true
+        menu?.getItem(2)?.isEnabled = true
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
@@ -410,6 +442,19 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
                 }
                 searchFragment?.refresh()
             }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if(requestCode == 401) {
+            val signOut = data?.getBooleanExtra("SignOut", false)
+            if(signOut == true) {
+                val intent = Intent(applicationContext, Login::class.java)
+                startActivity(intent)
+                finish()
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data)
         }
     }
 }

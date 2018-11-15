@@ -17,6 +17,7 @@ import java.util.*
 class Login : AppCompatActivity() {
 
     private var authorization = FirebaseAuth.getInstance()
+    private var loaded = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +33,10 @@ class Login : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         checkForCrashes()
+        if(loaded) {
+            finish()
+        }
+        loaded = true
     }
 
     private fun checkForCrashes() {
@@ -48,8 +53,6 @@ class Login : AppCompatActivity() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
         if (requestCode == RC_SIGN_IN) {
             val response = IdpResponse.fromResultIntent(data)
 
@@ -60,7 +63,14 @@ class Login : AppCompatActivity() {
                     applicationContext.toast("Login failed.")
                 }
             }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data)
         }
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        finish()
     }
 
     private fun showMainMenu() {

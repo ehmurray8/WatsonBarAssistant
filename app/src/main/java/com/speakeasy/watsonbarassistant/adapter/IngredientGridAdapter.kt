@@ -71,7 +71,6 @@ class IngredientGridAdapter(private val ingredientsSet: TreeSet<Ingredient>, pri
             }
         }
 
-
         imageView?.let {
             loadIngredientImage(activity.applicationContext, it, ingredient)
         }

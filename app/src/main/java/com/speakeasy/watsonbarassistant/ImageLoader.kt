@@ -11,7 +11,8 @@ fun loadImage(context: Context, imageView: SimpleDraweeView, recipe: DiscoveryRe
     if(recipe != null) {
         val imageUriString = recipe.recipeImageUriString
         if(imageUriString == "") {
-            val imageReference = BarAssistant.storageReference?.child(recipe.getImageName())
+            val imageName = recipe.getImageName()
+            val imageReference = BarAssistant.storageReference?.child(imageName)
             imageReference?.downloadUrl?.addOnSuccessListener {
                 recipe.recipeImageUriString = it.toString()
                 setImage(imageView, recipe, context, it)
