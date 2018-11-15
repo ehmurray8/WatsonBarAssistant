@@ -16,7 +16,7 @@ import com.speakeasy.watsonbarassistant.R
 import com.speakeasy.watsonbarassistant.activity.UserProfile
 import com.speakeasy.watsonbarassistant.adapter.HorizontalRecipeAdapter
 import com.speakeasy.watsonbarassistant.com.speakeasy.watsonbarassistant.activity.AddRecipeActivity
-import kotlinx.android.synthetic.main.fragment_ingredient_tab.*
+import kotlinx.android.synthetic.main.activity_add_recipe.*
 import kotlinx.android.synthetic.main.fragment_personal_tab.*
 
 class PersonalTab : Fragment(), TabLayout.OnTabSelectedListener {
@@ -46,16 +46,18 @@ class PersonalTab : Fragment(), TabLayout.OnTabSelectedListener {
 
         fullAccountButton.setOnClickListener {
             val intent = Intent(activity, UserProfile::class.java)
-            startActivity(intent)
+            activity?.startActivityForResult(intent, 401)
         }
 
         floatingCreateRecipeButton.setOnClickListener {
             val intent = Intent(activity, AddRecipeActivity::class.java)
             startActivity(intent)
         }
+        showCreateButton()
         updateRecyclerView()
         viewManager?.scrollToPosition(scrollPosition)
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -84,8 +86,18 @@ class PersonalTab : Fragment(), TabLayout.OnTabSelectedListener {
         if(newIndex != tabIndex) {
             scrollPosition = 0
         }
+        addRecipeButton
         tabIndex = newIndex
+        showCreateButton()
         updateRecyclerView()
+    }
+
+    private fun showCreateButton() {
+        if(tabIndex == 2) {
+            floatingCreateRecipeButton.visibility = View.VISIBLE
+        } else {
+            floatingCreateRecipeButton.visibility = View.GONE
+        }
     }
 
     private fun updateRecyclerView() {
@@ -93,17 +105,16 @@ class PersonalTab : Fragment(), TabLayout.OnTabSelectedListener {
         val collectionName: String
         when(tabIndex) {
             0 -> {
-                recipes = BarAssistant.userCreatedRecipes.toMutableList()
-                //recipes = BarAssistant.recipes[0]
-                collectionName = "Suggestions"
-            }
-            1 -> {
                 recipes = BarAssistant.favoritesList.toMutableList()
                 collectionName = "Favorites"
             }
-            else -> {
+            1 -> {
                 recipes = BarAssistant.recipes[1]
                 collectionName = "Recently Viewed"
+            }
+            else -> {
+                recipes = BarAssistant.userCreatedRecipes.toMutableList()
+                collectionName = "Created"
             }
         }
         viewAdapter = HorizontalRecipeAdapter(recipes, activity as Activity, collectionName)

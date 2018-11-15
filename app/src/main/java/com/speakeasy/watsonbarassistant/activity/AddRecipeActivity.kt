@@ -10,15 +10,19 @@ import android.provider.MediaStore
 import android.support.annotation.RequiresApi
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
+import com.algolia.search.saas.Client
+import com.algolia.search.saas.Query
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.speakeasy.watsonbarassistant.*
+import com.speakeasy.watsonbarassistant.extensions.toast
 import kotlinx.android.synthetic.main.activity_add_recipe.*
+import kotlinx.serialization.json.JSON
 import java.io.ByteArrayOutputStream
 
 class AddRecipeActivity : AppCompatActivity() {
@@ -47,11 +51,9 @@ class AddRecipeActivity : AppCompatActivity() {
         })
 
         description_text.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(p0: Editable?) {
-            }
+            override fun afterTextChanged(p0: Editable?) { }
 
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) { }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 setDescriptionTextState(!p0.isNullOrEmpty())
@@ -68,23 +70,41 @@ class AddRecipeActivity : AppCompatActivity() {
             if (this.newImageBitmap != null) {
                 addRecipe()
                 this.finish()
-            } else {
-                //Toast.makeText(Context,"Add a Picture!",Toast.LENGTH_SHORT)
-                Log.i("AddRecipeActivity", "Add a new recipe.")
-            }
+            } else { }
         }
     }
 
     private fun setTitleTextState(state: Boolean){
         this.titleNotNull = state
-        Log.i("AddRecipeActivity", "Title state: " + this.titleNotNull.toString())
         //TODO check title uniquness
-        setAddButtonVisibility()
+        val algoliaClient = Client(ALGOLIA_APP_ID, ALGOLIA_API_KEY)
+        val algoliaIndex = algoliaClient.getIndex("Recipe")
+        algoliaIndex.searchAsync(Query(title_text.text.toString())) { content, error ->
+            if(error != null) {
+                toast("Failed to add recipe, please try again.")
+            }
+            if (error == null && content != null) {
+                val response = content.getJSONArray("hits")
+                if (response.length() > 0) {
+                    for (i in 0 until response.length()) {
+                        val recipe = JSON.nonstrict.parse<DiscoveryRecipe>(response.getJSONObject(i).toString())
+                        if(recipe.title == title_text.text.toString()) {
+                            titleNotNull = false
+                            AlertDialog.Builder(this).setCancelable(true)
+                                    .setMessage("Title is not unique, please add a new recipe title.")
+                                    .setTitle("Recipe Add Error").show()
+                        }
+                    }
+                }
+                if(titleNotNull) {
+                    setAddButtonVisibility()
+                }
+            }
+        }
     }
 
     private fun setDescriptionTextState(state: Boolean){
         this.descriptionNotNull = state
-        Log.i("AddRecipeActivity", "Description state: " + this.descriptionNotNull.toString())
         setAddButtonVisibility()
     }
 
@@ -98,7 +118,6 @@ class AddRecipeActivity : AppCompatActivity() {
     }
 
     private fun addRecipe(){
-        Log.i("AddRecipeActivity","Adding the recipe.")
         val assistant = BarAssistant()
 
         val stream = ByteArrayOutputStream()
@@ -111,7 +130,6 @@ class AddRecipeActivity : AppCompatActivity() {
             //TODO failed to save image message
         }else{
             val newRecipe = DiscoveryRecipe(title = title_text.text.toString(), description = description_text.text.toString(), imageId = newImageId, ingredientList = emptyList())
-            Log.i("AddRecipeActivity",newRecipe.toString())
             assistant.storeNewRecipeInFireStore(FirebaseAuth.getInstance(),FirebaseFirestore.getInstance(), newRecipe)
         }
     }
@@ -119,11 +137,18 @@ class AddRecipeActivity : AppCompatActivity() {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if(requestCode == CAMERA_PERMISSION_REQUEST_CODE && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
-                takePictureIntent.resolveActivity(packageManager)?.also { _ ->
-                    startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO)
+            //PictureDialog.cameraHandler = {
+                Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+                    takePictureIntent.resolveActivity(packageManager)?.also { _ ->
+                        startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO)
+                    }
                 }
-            }
+            //}
+            //PictureDialog.fileHandler = {
+            //    val pickPhoto = Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            //    startActivityForResult(pickPhoto , 8)
+            //}
+            //PictureDialog().show(fragmentManager, "Picture Dialog")
         }
     }
     private fun checkCameraPermission(): Boolean {
@@ -138,6 +163,9 @@ class AddRecipeActivity : AppCompatActivity() {
             this.pictureNotDefualt = true
             newPic.setImageBitmap(bitmap)
             setAddButtonVisibility()
+        } else if (requestCode == 8 && resultCode == Activity.RESULT_OK) {
+            val selectedImage = data?.data
+            newPic.setImageURI(selectedImage)
         }
     }
 }

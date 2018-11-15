@@ -8,10 +8,7 @@ import android.graphics.Rect
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,11 +18,8 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import com.speakeasy.watsonbarassistant.BarAssistant
 import com.speakeasy.watsonbarassistant.R
-import com.speakeasy.watsonbarassistant.SwipeToDeleteCallback
 import com.speakeasy.watsonbarassistant.activity.MainMenu
 import com.speakeasy.watsonbarassistant.activity.VisionActivity
-import com.speakeasy.watsonbarassistant.com.speakeasy.watsonbarassistant.activity.AddRecipeActivity
-import com.speakeasy.watsonbarassistant.extensions.toast
 import com.speakeasy.watsonbarassistant.adapter.IngredientGridAdapter
 import kotlinx.android.synthetic.main.fragment_ingredient_tab.*
 
@@ -108,26 +102,9 @@ class IngredientsTab : Fragment() {
             startActivity(intent)
         }
 
-        val itemDecorator = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
-        ingredients_recycler_view.addItemDecoration(itemDecorator)
-
         setupKeyboardListener()
         refresh()
     }
-
-
-     private fun setupSwipeHandler() {
-         val context = activity?.baseContext ?: return
-         val swipeHandler = object : SwipeToDeleteCallback(context) {
-
-             override fun onSwiped(p0: RecyclerView.ViewHolder, direction: Int) {
-                 val position = p0.adapterPosition
-                 viewAdapter?.removeAt(position)
-             }
-         }
-         val itemTouchHelper = ItemTouchHelper(swipeHandler)
-         itemTouchHelper.attachToRecyclerView(ingredients_recycler_view)
-     }
 
     fun refresh() {
         activity?.runOnUiThread {

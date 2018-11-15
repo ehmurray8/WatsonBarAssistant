@@ -56,18 +56,19 @@ class IngredientGridAdapter(private val ingredientsSet: TreeSet<Ingredient>, pri
                 removeAt(position)
                 notifyDataSetChanged()
             }
+            imageView?.setOnClickListener(null)
             imageView?.setOnClickListener {
                 showDelete = false
                 notifyDataSetChanged()
             }
         } else {
             deleteButton?.visibility = View.GONE
-        }
-
-        imageView?.setOnLongClickListener { _ ->
-            showDelete = true
-            notifyDataSetChanged()
-            true
+            imageView?.setOnClickListener(null)
+            imageView?.setOnLongClickListener { _ ->
+                showDelete = true
+                notifyDataSetChanged()
+                true
+            }
         }
 
         imageView?.let {

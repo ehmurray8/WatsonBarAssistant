@@ -5,8 +5,6 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
-import android.util.Log
-import com.algolia.search.saas.Client
 import com.facebook.cache.disk.DiskCacheConfig
 import com.facebook.common.util.ByteConstants
 import com.facebook.drawee.backends.pipeline.Fresco
@@ -29,8 +27,6 @@ class BarAssistant: Application() {
         var storageReference: StorageReference? = null
         var userInfo: UserInfo? = null
 
-        private val algoliaClient = Client(ALGOLIA_APP_ID, ALGOLIA_API_KEY)
-        val algoliaIndex = algoliaClient.getIndex("Recipe")
         val recipes = mutableListOf<MutableList<DiscoveryRecipe>>()
         val favoritesList = sortedSetOf<DiscoveryRecipe>()
         val userCreatedRecipes = sortedSetOf<DiscoveryRecipe>()
@@ -143,8 +139,6 @@ class BarAssistant: Application() {
 
                     val addToAlgolia = AddToAlgolia()
                     addToAlgolia.execute(newRecipe)
-                    Log.i("BarAssistantAddingFirebaseRecipe", "id: " + newRecipe.imageId + " recipe: " + newRecipe.toString() + " uid: " + uid.toString())
-
                 }
             } else {
                 //TODO invalid user error

@@ -33,7 +33,6 @@ import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.MalformedURLException
 import java.net.URL
-import java.util.*
 import kotlin.concurrent.thread
 
 class RecipeDetail : AppCompatActivity() {
@@ -68,7 +67,8 @@ class RecipeDetail : AppCompatActivity() {
 
             description_content.text = recipe.description
 
-            val viewAdapter = IngredientAdapter(TreeSet(recipe.ingredientList.map { Ingredient(it) }), applicationContext)
+            val viewAdapter = IngredientAdapter(recipe.ingredientList.map { Ingredient(it) },
+                    recipe.normalIngredients, applicationContext)
             val viewManager = AutoLinearLayoutManager(this)
 
             detailIngredients.isNestedScrollingEnabled = false
@@ -94,20 +94,21 @@ class RecipeDetail : AppCompatActivity() {
             parallaxSetup(recipe)
 
             button_favorite.setOnClickListener {
-                synchronized(BarAssistant.favoritesList) {
-                    if (favorited) {
-                        favorited = false
+                if (favorited) {
+                    favorited = false
+                    synchronized(BarAssistant.favoritesList) {
                         BarAssistant.favoritesList.removeIf { favorite ->
                             favorite.imageId == recipe.imageId
                         }
-                    } else {
-                        favorited = true
-                        button_favorite.startAnimation(favoriteAnim)
-                        if (!favoriteIds.contains(recipe.imageId)) {
+                    }
+                } else {
+                    favorited = true
+                    button_favorite.startAnimation(favoriteAnim)
+                    if (!favoriteIds.contains(recipe.imageId)) {
+                        synchronized(BarAssistant.favoritesList) {
                             BarAssistant.favoritesList.add(recipe)
                         }
                     }
-                    Unit
                 }
             }
             thread {

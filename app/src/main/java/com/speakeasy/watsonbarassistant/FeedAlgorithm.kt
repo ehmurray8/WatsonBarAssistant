@@ -1,6 +1,5 @@
 package com.speakeasy.watsonbarassistant
 
-import android.util.Log
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.DocumentSnapshot
@@ -32,16 +31,20 @@ fun loadFeedRecipes(fireStore: FirebaseFirestore, refresh: (() -> Unit)? = null)
         val friendRecipes = getFriendRecipes(fireStore)
         synchronized(BarAssistant.feed) {
             BarAssistant.feed.clear()
-            BarAssistant.feed.addAll(randomRecipes)
-            BarAssistant.feed.addAll(friendRecipes)
-            BarAssistant.feed.addAll(popularRecipes)
+            addUnique(randomRecipes)
+            addUnique(friendRecipes)
+            addUnique(popularRecipes)
         }
+        var suggested: MutableList<FeedElement>? = null
         if (BarAssistant.friends.count() > 0 && ingredientsList.count() > 0) {
-            addSuggestions(BarAssistant.feed, 15)
+            suggested = addSuggestions(15)
         } else if (BarAssistant.friends.count() > 0) {
-            addSuggestions(BarAssistant.feed, 10)
+            suggested = addSuggestions(10)
         } else if (BarAssistant.ingredients.count() > 0) {
-            addSuggestions(BarAssistant.feed, 30)
+            suggested = addSuggestions(30)
+        }
+        if (suggested != null) {
+            addUnique(suggested)
         }
         synchronized(BarAssistant.feed) {
             BarAssistant.feed.shuffle()
@@ -50,18 +53,29 @@ fun loadFeedRecipes(fireStore: FirebaseFirestore, refresh: (() -> Unit)? = null)
     }
 }
 
-private fun addSuggestions(feedElements: MutableList<FeedElement>, count: Int) {
-    if(BarAssistant.recipes[0].count() >= count) {
-        synchronized(BarAssistant.feed) {
-            feedElements.addAll(BarAssistant.recipes[0].slice(0 until count).map{ FeedElement(it, FeedType.SUGGESTION) })
-        }
-    } else if(BarAssistant.recipes.count() > 0) {
-        synchronized(BarAssistant.feed) {
-            feedElements.addAll(BarAssistant.recipes[0].slice(0 until BarAssistant.recipes[0].count()).map {
-                FeedElement(it, FeedType.SUGGESTION)
-            })
-        }
+private fun addUnique(recipes: MutableList<FeedElement>) {
+    synchronized(BarAssistant.feed) {
+        BarAssistant.feed.addAll(recipes.filter { it.recipe.imageId !in BarAssistant.feed.map { f -> f.recipe.imageId } })
     }
+}
+
+private fun addSuggestions(count: Int): MutableList<FeedElement> {
+    val feedElements = mutableListOf<FeedElement>()
+    try {
+        if(BarAssistant.recipes[0].count() >= count) {
+            synchronized(BarAssistant.feed) {
+                feedElements.addAll(BarAssistant.recipes[0].slice(0 until count).map{ FeedElement(it, FeedType.SUGGESTION) })
+            }
+        } else if(BarAssistant.recipes.count() > 0) {
+            synchronized(BarAssistant.feed) {
+                feedElements.addAll(BarAssistant.recipes[0].slice(0 until BarAssistant.recipes[0].count()).map {
+                    FeedElement(it, FeedType.SUGGESTION)
+                })
+            }
+        }
+    } catch(_: IndexOutOfBoundsException) { }
+
+    return feedElements
 }
 
 private fun getRandomRecipes(count: Int, fireStore: FirebaseFirestore): MutableList<FeedElement> {
@@ -99,8 +113,7 @@ private fun getPopularRecipes(fireStore: FirebaseFirestore): MutableList<FeedEle
 
 private fun getFriendRecipes(fireStore: FirebaseFirestore): MutableList<FeedElement> {
     val friendRecipes = mutableMapOf<String, MutableList<DiscoveryRecipe>>()
-    Log.d("Feed Algorithm", BarAssistant.friends.toString())
-    val friends = synchronized(BarAssistant.friends){BarAssistant.friends}
+    val friends = synchronized(BarAssistant.friends){BarAssistant.friends.toList()}
     val tasks = mutableListOf<Task<DocumentSnapshot>>()
     for(friend in friends) {
         friend.userId?.let { fid ->
@@ -108,21 +121,20 @@ private fun getFriendRecipes(fireStore: FirebaseFirestore): MutableList<FeedElem
             val document = Tasks.await(fireStore.favoritesDocument(fid).get())
             val storedIds = document.get(FAVORITES_LIST) as? ArrayList<*>
             val storedStringIds = storedIds?.toStringMutableList() ?: mutableListOf()
-            Log.d("Feed Algorithm", "Stored ids: " + storedIds?.toString())
-            Log.d("Feed Algorithm", "Stored string ids: " + storedStringIds.toString())
             for(rid in storedStringIds) {
                 val task = fireStore.recipeDocument(rid).get()
                 tasks.add(task)
                 task.addOnSuccessListener {
-                    val recipe = it.toObject(FireStoreRecipe::class.java)?.toDiscoveryRecipe()
-                    recipe?.let{ r -> friendRecipes[friend.username]?.add(r) }
+                    synchronized(friendRecipes) {
+                        val recipe = it.toObject(FireStoreRecipe::class.java)?.toDiscoveryRecipe()
+                        recipe?.let{ r -> friendRecipes[friend.username]?.add(r) }
+                    }
                 }
             }
         }
     }
     Tasks.await(Tasks.whenAllComplete(tasks))
     val feedElements = mutableListOf<FeedElement>()
-    Log.d("Feed Algorithm", "Friend recipes" + friendRecipes.toString())
     do {
         var keepGoing = false
         for ((friendUsername, recipeList) in friendRecipes){
@@ -134,11 +146,9 @@ private fun getFriendRecipes(fireStore: FirebaseFirestore): MutableList<FeedElem
                 keepGoing = true
                 val recipe = recipeList.removeAt(count - 1)
                 val feedElement = FeedElement(recipe, FeedType.FRIEND, friendUsername)
-                Log.d("Feed Algorithm", feedElement.toString())
                 feedElements.add(feedElement)
             }
         }
     } while(keepGoing && feedElements.count() < MAX_FRIEND_RECIPES)
-    Log.d("Feed Algorithm", feedElements.toString())
     return feedElements
 }
