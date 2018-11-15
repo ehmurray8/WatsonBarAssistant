@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.ToggleButton
 import com.facebook.drawee.view.SimpleDraweeView
 import com.speakeasy.watsonbarassistant.BarAssistant
 import com.speakeasy.watsonbarassistant.R
@@ -19,6 +20,11 @@ class FeedAdapter(private var activity: Activity): RecyclerView.Adapter<Recycler
 
     class FeedViewHolder(val layout: ConstraintLayout): RecyclerView.ViewHolder(layout)
     var clicked = false
+
+    private var favoriteIds = listOf<String>()
+    get() {
+        return synchronized(BarAssistant.favoritesList) {BarAssistant.favoritesList.map { it.imageId }}
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val layout = LayoutInflater.from(parent.context).inflate(R.layout.large_recipe_card,
@@ -46,8 +52,28 @@ class FeedAdapter(private var activity: Activity): RecyclerView.Adapter<Recycler
             val imageView = relativeLayout?.findViewById(R.id.home_recipe_card) as? SimpleDraweeView
             val description = relativeLayout?.findViewById(R.id.recipeCardDescription) as? TextView
             val numberOfFavoritesView = relativeLayout?.findViewById(R.id.numberOfFavorites) as? TextView
+            val favoriteButton = relativeLayout?.findViewById(R.id.buttonFavoriteHome) as? ToggleButton
 
             val element = BarAssistant.feed[position]
+
+            if(favoriteIds.contains(element.recipe.imageId)) {
+                favoriteButton?.isChecked = true
+            }
+            favoriteButton?.setOnClickListener {
+                if (favoriteIds.contains(element.recipe.imageId)) {
+                    synchronized(BarAssistant.favoritesList) {
+                        BarAssistant.favoritesList.removeIf { favorite ->
+                            favorite.imageId == element.recipe.imageId
+                        }
+                    }
+                } else {
+                    if (!favoriteIds.contains(element.recipe.imageId)) {
+                        synchronized(BarAssistant.favoritesList) {
+                            BarAssistant.favoritesList.add(element.recipe)
+                        }
+                    }
+                }
+            }
 
             imageView?.setOnClickListener {
                 if(clicked) return@setOnClickListener

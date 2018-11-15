@@ -10,9 +10,9 @@ import com.facebook.drawee.view.SimpleDraweeView
 import com.speakeasy.watsonbarassistant.Ingredient
 import com.speakeasy.watsonbarassistant.R
 import com.speakeasy.watsonbarassistant.loadIngredientImage
-import java.util.*
 
-class IngredientAdapter(private val ingredientsSet: TreeSet<Ingredient>, private val context: Context):
+    class IngredientAdapter(private val ingredientsSet: List<Ingredient>, private val normalIngredients: List<String?>,
+                        private val context: Context):
         RecyclerView.Adapter<IngredientAdapter.ViewHolder>() {
 
     private val ingredientsList: MutableList<Ingredient>
@@ -35,16 +35,10 @@ class IngredientAdapter(private val ingredientsSet: TreeSet<Ingredient>, private
 
         val imageView = holder.layout.getChildAt(0) as? SimpleDraweeView
         imageView?.let {
-            loadIngredientImage(context, it, ingredient)
+            val normalIngredient = normalIngredients.getOrNull(position)
+            normalIngredient?.let { ni -> loadIngredientImage(context, it, Ingredient(ni)) }
         }
     }
 
     override fun getItemCount(): Int = ingredientsList.count()
-
-    fun removeAt(position: Int) {
-        val ingredient = ingredientsList[position]
-        ingredientsSet.removeIf { it.name == ingredient.name }
-        ingredientsSet.remove(ingredient)
-        notifyDataSetChanged()
-    }
 }

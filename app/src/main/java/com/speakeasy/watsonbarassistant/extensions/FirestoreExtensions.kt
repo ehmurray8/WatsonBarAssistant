@@ -32,6 +32,10 @@ fun FirebaseFirestore.recentlyViewedDocument(userId: String): DocumentReference 
     return appDocument(userId, RECENTLY_VIEWED_COLLECTION)
 }
 
+fun FirebaseFirestore.userCreatedRecipesDocument(userId: String): DocumentReference {
+    return appDocument(userId, USER_CREATED_RECIPES)
+}
+
 fun FirebaseFirestore.favoritesDocument(userId: String): DocumentReference {
     return appDocument(userId, FAVORITES_COLLECTION)
 }

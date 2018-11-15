@@ -3,46 +3,48 @@ package com.speakeasy.watsonbarassistant
 import kotlinx.serialization.Optional
 import java.io.Serializable
 
+@kotlinx.serialization.Serializable
 data class FireStoreRecipe(val title: String = "", val imageUrl: String = "", val reviewCount: Long = 0,
                            val description: String = "", val recipeUrl: String = "", val ingredientList: List<String> = emptyList(),
+                           val normalIngredients: List<String?> = emptyList(),
                            val instructionList: List<String> = emptyList(), val prepTime: String = "", val cookTime: String = "",
-                           val totalTime: String = "", val imageId: Long = 0, val googleBestImgUrl: String = "",
-                           val googleBestImgScore: Double = 0.0, var favoriteCount: Int = 0) {
+                           val totalTime: String = "", val imageId: Long = -1, val googleBestImgUrl: String = "",
+                           val googleBestImgScore: Double = 0.0, val objectId: Long = -1, var favoriteCount: Int = 0) {
+
 
     fun toDiscoveryRecipe(): DiscoveryRecipe {
-        return DiscoveryRecipe(title = title, imageUrl = imageUrl, reviewCount = reviewCount.toString(),
+        return DiscoveryRecipe(title = title, reviewCount = reviewCount.toString(),
                 description = description, recipeUrl = recipeUrl, ingredientList = ingredientList,
-                instructionList = instructionList, prepTime = prepTime, cookTime = cookTime,
+                instructionList = instructionList, prepTime = prepTime,
                 totalTime = totalTime, imageId = imageId.toString(), googleBestImgUrl = googleBestImgUrl,
-                googleBestImgScore = googleBestImgScore, favoriteCount = favoriteCount)
+                favoriteCount = favoriteCount, normalIngredients = normalIngredients)
     }
 }
 
 @kotlinx.serialization.Serializable
 data class DiscoveryRecipe(@Optional val title: String = "",
-                           @Optional val imageUrl: String = "",
-                           @Optional val reviewCount: String = "",
+                           @Optional val reviewCount: String = "0",
                            @Optional val description: String = "",
                            @Optional val recipeUrl: String = "",
                            @Optional val ingredientList: List<String> = emptyList(),
                            @Optional val instructionList: List<String> = emptyList(),
                            @Optional val prepTime: String = "",
-                           @Optional val cookTime: String = "",
                            @Optional val totalTime: String = "",
                            @Optional val imageId: String = "",
                            @Optional val googleBestImgUrl: String = "",
-                           @Optional val googleBestImgScore: Double = 0.0,
+                           @Optional val normalIngredients: List<String?> = emptyList(),
                            @Optional val favoriteCount: Int = 0): Serializable, Comparable<DiscoveryRecipe> {
 
     @Optional var percentOfIngredientsOwned: Int = 0
     @Optional var recipeImageUriString: String = ""
 
     fun toFireStoreRecipe(): FireStoreRecipe {
-        return FireStoreRecipe(title = title, imageUrl = imageUrl, reviewCount = reviewCount.toFloat().toLong(),
+        return FireStoreRecipe(title = title, reviewCount = reviewCount.toFloat().toLong(),
                 description = description, recipeUrl = recipeUrl, ingredientList = ingredientList,
-                instructionList = instructionList, prepTime = prepTime, cookTime = cookTime,
-                totalTime = totalTime, imageId = imageId.toFloat().toLong(), googleBestImgUrl = googleBestImgUrl,
-                googleBestImgScore = googleBestImgScore, favoriteCount = favoriteCount)
+                instructionList = instructionList, prepTime = prepTime,
+                totalTime = totalTime, imageId = imageId.toLong(), googleBestImgUrl = googleBestImgUrl,
+                normalIngredients = normalIngredients,
+                favoriteCount = favoriteCount, objectId = imageId.toLong())
     }
 
     override fun equals(other: Any?): Boolean {
@@ -74,7 +76,11 @@ data class DiscoveryRecipe(@Optional val title: String = "",
     }
 
     fun getImageName(): String {
-        return "recipe_images/GSBimg-${imageId.toFloat().toInt()}.jpg"
+        var id = imageId
+        if (id.contains(".")){
+            id = id.dropLast(2)
+        }
+        return "recipe_images/GSBimg-${id.toLong()}.jpg"
     }
 
     fun getTags(): List<RecipeTag> {
