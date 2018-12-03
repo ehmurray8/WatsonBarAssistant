@@ -3,6 +3,7 @@ package com.speakeasy.watsonbarassistant.activity
 import android.app.Activity
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.widget.CheckedTextView
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -61,8 +62,16 @@ class IngredientAdd : AppCompatActivity() {
         thirdLevel!!.forEach {temp ->
             temp.sort()
         }
+        var childCheckedBoolean:MutableList<MutableList<Boolean>> = mutableListOf()
+        var temp:MutableList<Boolean>
+        thirdLevel.forEach { index->
+            temp= MutableList(index.size) {false}
+            childCheckedBoolean.add(temp)
+        }
+        var parentCheckedBoolean:MutableList<Boolean> =  MutableList(secondLevel!![currentIndex]!!.size) { false }
+        //var childCheckedBoolean = MutableList(childLevel!!.size) {index -> MutableList(childLevel!![groupPosition].size) {index2-> false} }
 
-        expandable_ingredient_list_view.setAdapter(IngredientExpandableListAdapter(this, secondLevel!![currentIndex], thirdLevel!!.slice(indexStart until indexEnd).toMutableList(), expandable_ingredient_list_view, currentIndex))
+        expandable_ingredient_list_view.setAdapter(IngredientExpandableListAdapter(this, secondLevel!![currentIndex], parentCheckedBoolean, childCheckedBoolean, thirdLevel.slice(indexStart until indexEnd).toMutableList(), expandable_ingredient_list_view, currentIndex))
         //expandable_ingredient_list_view.setAdapter(MapExpandableListAdapter(this, ingredientsMap, expandable_ingredient_list_view))
     }
 

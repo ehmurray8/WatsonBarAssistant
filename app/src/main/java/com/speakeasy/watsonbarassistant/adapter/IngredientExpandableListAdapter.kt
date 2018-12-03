@@ -3,6 +3,7 @@ package com.speakeasy.watsonbarassistant.adapter
 import android.app.Activity
 import android.app.Application
 import android.content.Context
+import android.support.v4.app.NotificationCompat.getGroup
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -12,32 +13,31 @@ import com.speakeasy.watsonbarassistant.R
 import com.speakeasy.watsonbarassistant.activity.IngredientAdd
 
 import kotlinx.android.synthetic.main.fragment_ingredient_add_main.*
+import org.apache.commons.lang3.mutable.Mutable
 import java.util.ArrayList
 
-class IngredientExpandableListAdapter(var activity: Activity, var firstLevel : MutableList<String>?, var secondLevel : MutableList<MutableList<String>>?, var expandableListView: ExpandableListView, var currentIndex:Int) : BaseExpandableListAdapter() {
+class IngredientExpandableListAdapter(var activity: Activity, var parentLevel : MutableList<String>?, private var parentCheckedBoolean: MutableList<Boolean>, private var childCheckedBoolean: MutableList<MutableList<Boolean>>,var childLevel : MutableList<MutableList<String>>?, var expandableListView: ExpandableListView, var currentIndex:Int) : BaseExpandableListAdapter() {
 
-    val addedIngredients: MutableList<String> = mutableListOf()
-    var parentCheckedBoolean: MutableList<Boolean> = mutableListOf()
-    var childCheckedBoolean: MutableList<MutableList<Boolean>> = mutableListOf()
-    var parentCheckBoxes:MutableList<CheckedTextView> = mutableListOf()
+    private val addedIngredients: MutableList<String> = mutableListOf()
+
 
     override fun getGroup(groupPosition: Int): String {
         if(currentIndex==5){
-            return firstLevel!![groupPosition]+" Juice"
+            return parentLevel!![groupPosition]+" Juice"
         }
         else if(currentIndex==6){
-            return firstLevel!![groupPosition]+" Liqueur"
+            return parentLevel!![groupPosition]+" Liqueur"
         }
         else if(currentIndex==9){
-            return firstLevel!![groupPosition]+" Syrup"
+            return parentLevel!![groupPosition]+" Syrup"
         }
         else {
-            return firstLevel!![groupPosition]
+            return parentLevel!![groupPosition]
         }
     }
 
     override fun isChildSelectable(groupPosition: Int, childPosition: Int): Boolean {
-        return secondLevel!![groupPosition][childPosition].isNotEmpty()
+        return childLevel!![groupPosition][childPosition].isNotEmpty()
     }
 
     override fun hasStableIds(): Boolean {
@@ -45,20 +45,23 @@ class IngredientExpandableListAdapter(var activity: Activity, var firstLevel : M
     }
 
     override fun getGroupView(groupPosition: Int, isExpanded: Boolean, convertView: View?, parent: ViewGroup?): View? {
-        parentCheckedBoolean = MutableList(firstLevel!!.size) {index -> false }
         var v: View
-        if(convertView == null){
+        v = if(convertView == null){
             val inflater = activity.baseContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-            v = inflater.inflate(R.layout.fragment_ingredient_add_group, null)
+            inflater.inflate(R.layout.fragment_ingredient_add_group, null)
         }
         else{
-            v=convertView
+            convertView
         }
-        val title = v?.findViewById<CheckedTextView>(R.id.listTitle)
+
+        val title = v.findViewById<CheckedTextView>(R.id.listTitle)
         title?.text = getGroup(groupPosition)
+
+        title.isChecked = parentCheckedBoolean[groupPosition]
+
         title?.setOnClickListener{
             if(expandableListView.isGroupExpanded(groupPosition)){
-                //title.isChecked=false
+                title.isChecked=false
                 parentCheckedBoolean[groupPosition]=false
                 expandableListView.collapseGroup(groupPosition)
                 addedIngredients.remove(getGroup(groupPosition))
@@ -69,27 +72,23 @@ class IngredientExpandableListAdapter(var activity: Activity, var firstLevel : M
                 activity.confirmButton.setOnClickListener{
                     onConfirmClicked()
                 }
-                //title.isChecked=true
+                title.isChecked=true
                 parentCheckedBoolean[groupPosition]=true
                 addedIngredients.add(getGroup(groupPosition))
                 Toast.makeText(activity.baseContext, "Added " + getGroup(groupPosition), Toast.LENGTH_SHORT).show()
                 expandableListView.expandGroup(groupPosition)
             }
 
-            /*Log.d("SIZE", parentCheckedBoolean.size.toString())
-            parentCheckedBoolean.forEach { i ->
-                Log.d("TAG", i.toString())
-            }*/
         }
         return v
     }
 
     override fun getChildrenCount(groupPosition: Int): Int {
-        return secondLevel!![groupPosition].size
+        return childLevel!![groupPosition].size
     }
 
     override fun getChild(groupPosition: Int, childPosition: Int): String {
-        return secondLevel!![groupPosition][childPosition]
+        return childLevel!![groupPosition][childPosition]
     }
 
     override fun getGroupId(groupPosition: Int): Long {
@@ -98,18 +97,20 @@ class IngredientExpandableListAdapter(var activity: Activity, var firstLevel : M
 
     override fun getChildView(groupPosition: Int, childPosition: Int, isLastChild: Boolean, convertView: View?, parent: ViewGroup?): View? {
 
-        childCheckedBoolean = MutableList(secondLevel!!.size) {index -> MutableList(secondLevel!![groupPosition].size) {index2-> false} }
-
         var v : View
-        if(convertView == null){
+        v= if(convertView == null){
             val inflater = activity.baseContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-            v = inflater.inflate(R.layout.fragment_ingredient_add_item, null)
+            inflater.inflate(R.layout.fragment_ingredient_add_item, null)
         }
         else{
-            v=convertView
+            convertView
         }
+
         val title = convertView?.findViewById<CheckedTextView>(R.id.expandedListItem)
         title?.text = getChild(groupPosition, childPosition)
+
+        title?.isChecked = childCheckedBoolean[groupPosition][childPosition]
+
         title?.setOnClickListener{
             if(!title.isChecked) {
                 title.isChecked=true
@@ -125,14 +126,6 @@ class IngredientExpandableListAdapter(var activity: Activity, var firstLevel : M
             }
         }
 
-        Log.d("SIZECHILD", childCheckedBoolean.size.toString())
-        childCheckedBoolean.forEach { i ->
-            //Log.d("OUTER", i.toString())
-            i.forEach {j->
-                //Log.d("INNER", j.toString())
-            }
-        }
-
         return v
     }
 
@@ -141,7 +134,7 @@ class IngredientExpandableListAdapter(var activity: Activity, var firstLevel : M
     }
 
     override fun getGroupCount(): Int {
-        return firstLevel!!.size
+        return parentLevel!!.size
     }
     fun onConfirmClicked(){
         Toast.makeText(activity.baseContext, "Ingredients Added!", Toast.LENGTH_SHORT).show()
