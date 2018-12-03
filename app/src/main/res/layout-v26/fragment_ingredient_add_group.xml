@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.AppCompatCheckBox xmlns:android="http://schemas.android.com/apk/res/android"
+<android.widget.CheckedTextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/listTitle"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="start"
-    android:button="@null"
+    android:onClick="onClick"
     android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
     android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
     android:paddingTop="10dp"
