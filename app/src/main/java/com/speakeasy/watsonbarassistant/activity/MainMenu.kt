@@ -48,7 +48,7 @@ class MainMenu : AppCompatActivity(), SearchView.OnQueryTextListener {
     internal val fireStore = FirebaseFirestore.getInstance()
     private var authorization = FirebaseAuth.getInstance()
 
-    private val client = Client(ALGOLIA_APP_ID, ALGOLIA_API_KEY)
+    private val client = Client(ALGOLIA_APP_ID, ALGOLIA_SEARCH_KEY)
     private val recipeIndex = client.getIndex("Recipe")
 
     private var searchMenuItem: MenuItem? = null
