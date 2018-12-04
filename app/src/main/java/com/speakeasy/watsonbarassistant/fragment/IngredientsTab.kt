@@ -21,6 +21,7 @@ import com.speakeasy.watsonbarassistant.extensions.addMainIngredients
 import com.speakeasy.watsonbarassistant.extensions.closeIngredientRadial
 import com.speakeasy.watsonbarassistant.extensions.openIngredientRadial
 import kotlinx.android.synthetic.main.fragment_ingredient_tab_radial.*
+import kotlinx.android.synthetic.main.ingredients_radial_overlay.*
 
 
 class IngredientsTab : Fragment() {
@@ -82,6 +83,7 @@ class IngredientsTab : Fragment() {
     }
 
     private fun closeMenus(){
+        barrier.visibility=View.GONE
         addMenuButton.startAnimation(menuAnimRotateBack)
         addViaCameraButton.startAnimation(menuAnimClose)
         addViaCameraButton.isClickable = false
@@ -92,6 +94,10 @@ class IngredientsTab : Fragment() {
     }
 
     private fun openMenus(){
+        barrier.visibility=View.VISIBLE
+        barrier.setOnClickListener{
+            closeMenus()
+        }
         addMenuButton.startAnimation(menuAnimRotateOut)
         addViaCameraButton.startAnimation(menuAnimOpen)
         addViaCameraButton.isClickable = true
