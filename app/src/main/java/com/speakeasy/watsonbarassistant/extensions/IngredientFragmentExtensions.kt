@@ -8,6 +8,7 @@ import com.speakeasy.watsonbarassistant.BarAssistant.Companion.currentIngredient
 import com.speakeasy.watsonbarassistant.Ingredient
 import com.speakeasy.watsonbarassistant.activity.IngredientAdd
 import com.speakeasy.watsonbarassistant.addIngredient
+import com.speakeasy.watsonbarassistant.fragment.IngredientsTab
 import kotlinx.android.synthetic.main.ingredients_radial_overlay.*
 
 
@@ -16,36 +17,76 @@ fun Activity.addIngredientHandlers(addIngredients: ((MutableList<Ingredient>, Co
         currentIngredientCategoryIndex = 0
         showIngredientAdd(addIngredients)
     }
+    alcoholsLayout.setOnClickListener {
+        currentIngredientCategoryIndex = 0
+        showIngredientAdd(addIngredients)
+    }
+    beveragesAndFlavoringLayout.setOnClickListener {
+        currentIngredientCategoryIndex = 1
+        showIngredientAdd(addIngredients)
+    }
     beveragesAndFlavoringButton.setOnClickListener {
         currentIngredientCategoryIndex = 1
+        showIngredientAdd(addIngredients)
+    }
+    bittersLayout.setOnClickListener {
+        currentIngredientCategoryIndex = 2
         showIngredientAdd(addIngredients)
     }
     bittersButton.setOnClickListener {
         currentIngredientCategoryIndex = 2
         showIngredientAdd(addIngredients)
     }
+    fruitsAndVegetablesLayout.setOnClickListener {
+        currentIngredientCategoryIndex = 3
+        showIngredientAdd(addIngredients)
+    }
     fruitsAndVegetablesButton.setOnClickListener {
         currentIngredientCategoryIndex = 3
+        showIngredientAdd(addIngredients)
+    }
+    herbsAndSpicesLayout.setOnClickListener {
+        currentIngredientCategoryIndex = 4
         showIngredientAdd(addIngredients)
     }
     herbsAndSpicesButton.setOnClickListener {
         currentIngredientCategoryIndex = 4
         showIngredientAdd(addIngredients)
     }
+    juicesLayout.setOnClickListener {
+        currentIngredientCategoryIndex = 5
+        showIngredientAdd(addIngredients)
+    }
     juicesButton.setOnClickListener {
         currentIngredientCategoryIndex = 5
+        showIngredientAdd(addIngredients)
+    }
+    liqueursLayout.setOnClickListener {
+        currentIngredientCategoryIndex = 6
         showIngredientAdd(addIngredients)
     }
     liqueursButton.setOnClickListener {
         currentIngredientCategoryIndex = 6
         showIngredientAdd(addIngredients)
     }
+    miscellaneousLayout.setOnClickListener {
+        currentIngredientCategoryIndex = 7
+        showIngredientAdd(addIngredients)
+    }
     miscellaneousButton.setOnClickListener {
         currentIngredientCategoryIndex = 7
         showIngredientAdd(addIngredients)
     }
+    sweetsLayout.setOnClickListener {
+        currentIngredientCategoryIndex = 8
+        showIngredientAdd(addIngredients)
+    }
     sweetsButton.setOnClickListener {
         currentIngredientCategoryIndex = 8
+        showIngredientAdd(addIngredients)
+    }
+    syrupsLayout.setOnClickListener {
+        currentIngredientCategoryIndex = 9
         showIngredientAdd(addIngredients)
     }
     syrupsButton.setOnClickListener {
@@ -62,6 +103,7 @@ fun Activity.showIngredientAdd(addIngredients: ((MutableList<Ingredient>, Contex
 
 
 fun Activity.closeIngredientRadial() {
+    //barrier.visibility=View.GONE
     alcoholsLayout.visibility = View.GONE
     alcoholsButton.isClickable = false
     alcoholsButton.hide()
@@ -74,7 +116,7 @@ fun Activity.closeIngredientRadial() {
     fruitsAndVegetablesLayout.visibility = View.GONE
     fruitsAndVegetablesButton.isClickable = false
     fruitsAndVegetablesButton.hide()
-    herbsAndSpicesButtonLayout.visibility = View.GONE
+    herbsAndSpicesLayout.visibility = View.GONE
     herbsAndSpicesButton.isClickable = false
     herbsAndSpicesButton.hide()
     juicesLayout.visibility = View.GONE
@@ -96,6 +138,7 @@ fun Activity.closeIngredientRadial() {
 
 
 fun Activity.openIngredientRadial() {
+    //barrier.visibility = View.VISIBLE
     alcoholsLayout.visibility = View.VISIBLE
     alcoholsButton.isClickable = true
     alcoholsButton.show()
@@ -108,7 +151,7 @@ fun Activity.openIngredientRadial() {
     fruitsAndVegetablesLayout.visibility = View.VISIBLE
     fruitsAndVegetablesButton.isClickable = true
     fruitsAndVegetablesButton.show()
-    herbsAndSpicesButtonLayout.visibility = View.VISIBLE
+    herbsAndSpicesLayout.visibility = View.VISIBLE
     herbsAndSpicesButton.isClickable = true
     herbsAndSpicesButton.show()
     juicesLayout.visibility = View.VISIBLE

@@ -61,8 +61,17 @@ class IngredientAdd : AppCompatActivity() {
                 }
             }
         }
-        val adapter = IngredientExpandableListAdapter(this, secondLevel?.get(currentIngredientCategoryIndex),
-                        thirdLevel?.slice(indexStart until indexEnd)?.toMutableList(), expandable_ingredient_list_view, currentIngredientCategoryIndex)
+
+        var parentCheckedBooleanList:MutableList<Boolean> = MutableList(secondLevel!![currentIngredientCategoryIndex].size) { false }
+        var childCheckedBooleanList: MutableList<MutableList<Boolean>> = mutableListOf()
+        var temp:MutableList<Boolean>
+        thirdLevel?.forEach { index ->
+            temp = MutableList(index.size) { false }
+            childCheckedBooleanList.add(temp)
+        }
+
+        val adapter = IngredientExpandableListAdapter(this, secondLevel?.get(currentIngredientCategoryIndex), parentCheckedBooleanList,
+                        thirdLevel?.slice(indexStart until indexEnd)?.toMutableList(), childCheckedBooleanList, expandable_ingredient_list_view, currentIngredientCategoryIndex)
         expandable_ingredient_list_view.setAdapter(adapter)
     }
 }
