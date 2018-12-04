@@ -39,10 +39,14 @@ data class DiscoveryRecipe(@Optional val title: String = "",
     @Optional var recipeImageUriString: String = ""
 
     fun toFireStoreRecipe(): FireStoreRecipe {
+        var id = imageId
+        if (id.contains(".")){
+            id = id.dropLast(2)
+        }
         return FireStoreRecipe(title = title, reviewCount = reviewCount.toFloat().toLong(),
                 description = description, recipeUrl = recipeUrl, ingredientList = ingredientList,
                 instructionList = instructionList, prepTime = prepTime,
-                totalTime = totalTime, imageId = imageId.toLong(), googleBestImgUrl = googleBestImgUrl,
+                totalTime = totalTime, imageId = id.toLong(), googleBestImgUrl = googleBestImgUrl,
                 normalIngredients = normalIngredients,
                 favoriteCount = favoriteCount, objectId = imageId.toLong())
     }
