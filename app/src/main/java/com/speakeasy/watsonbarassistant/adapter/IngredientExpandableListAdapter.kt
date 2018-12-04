@@ -93,12 +93,12 @@ class IngredientExpandableListAdapter(var activity: Activity, var firstLevel : M
             if(title.isChecked) {
                 childCheckedBooleanList[groupPosition][childPosition]=false
                 title.isChecked=false
-                addedIngredients.add(getChild(groupPosition, childPosition) + " " + getGroup(groupPosition))
+                addedIngredients.remove(getChild(groupPosition, childPosition) + " " + getGroup(groupPosition))
             }
             else{
                 childCheckedBooleanList[groupPosition][childPosition]=true
                 title.isChecked=true
-                addedIngredients.remove(getChild(groupPosition, childPosition) + " " + getGroup(groupPosition))
+                addedIngredients.add(getChild(groupPosition, childPosition) + " " + getGroup(groupPosition))
             }
         }
         return view
