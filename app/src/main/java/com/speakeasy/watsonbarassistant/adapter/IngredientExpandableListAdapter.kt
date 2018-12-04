@@ -13,6 +13,7 @@ import com.speakeasy.watsonbarassistant.Ingredient
 import com.speakeasy.watsonbarassistant.R
 import com.speakeasy.watsonbarassistant.activity.IngredientAdd
 import kotlinx.android.synthetic.main.fragment_ingredient_add_main.*
+import org.apache.commons.lang3.ObjectUtils
 
 class IngredientExpandableListAdapter(var activity: Activity, var firstLevel : MutableList<String>?, var parentCheckedBooleanList : MutableList<Boolean>,var secondLevel : MutableList<MutableList<String>>?, var childCheckedBooleanList: MutableList<MutableList<Boolean>>, var expandableListView: ExpandableListView, var currentIndex:Int) : BaseExpandableListAdapter() {
 
@@ -87,7 +88,9 @@ class IngredientExpandableListAdapter(var activity: Activity, var firstLevel : M
         val title = view.findViewById<CheckedTextView>(R.id.expandedListItem)
         title?.text = getChild(groupPosition, childPosition)
 
-        title.isChecked = childCheckedBooleanList[groupPosition][childPosition]
+        if (title != null) {
+            title.isChecked = childCheckedBooleanList[groupPosition][childPosition]
+        }
 
         title?.setOnClickListener{
             if(title.isChecked) {

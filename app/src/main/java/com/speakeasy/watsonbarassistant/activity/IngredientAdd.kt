@@ -71,7 +71,7 @@ class IngredientAdd : AppCompatActivity() {
         }
 
         val adapter = IngredientExpandableListAdapter(this, secondLevel?.get(currentIngredientCategoryIndex), parentCheckedBooleanList,
-                        thirdLevel?.slice(indexStart until indexEnd)?.toMutableList(), childCheckedBooleanList, expandable_ingredient_list_view, currentIngredientCategoryIndex)
+                        thirdLevel?.slice(indexStart until indexEnd)?.toMutableList(), childCheckedBooleanList?.slice(indexStart until indexEnd)?.toMutableList(), expandable_ingredient_list_view, currentIngredientCategoryIndex)
         expandable_ingredient_list_view.setAdapter(adapter)
     }
 }
