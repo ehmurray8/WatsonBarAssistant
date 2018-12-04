@@ -62,16 +62,16 @@ class IngredientAdd : AppCompatActivity() {
             }
         }
 
-        var parentCheckedBooleanList:MutableList<Boolean> = MutableList(secondLevel!![currentIngredientCategoryIndex].size) { false }
-        var childCheckedBooleanList: MutableList<MutableList<Boolean>> = mutableListOf()
+        val parentCheckedBooleanList:MutableList<Boolean> = MutableList(secondLevel!![currentIngredientCategoryIndex].size) { false }
+        val childCheckedBooleanList: MutableList<MutableList<Boolean>> = mutableListOf()
         var temp:MutableList<Boolean>
         thirdLevel?.forEach { index ->
             temp = MutableList(index.size) { false }
             childCheckedBooleanList.add(temp)
         }
 
-        val adapter = IngredientExpandableListAdapter(this, secondLevel?.get(currentIngredientCategoryIndex), parentCheckedBooleanList,
-                        thirdLevel?.slice(indexStart until indexEnd)?.toMutableList(), childCheckedBooleanList?.slice(indexStart until indexEnd)?.toMutableList(), expandable_ingredient_list_view, currentIngredientCategoryIndex)
+        val adapter = IngredientExpandableListAdapter(this, secondLevel.get(currentIngredientCategoryIndex), parentCheckedBooleanList,
+                        thirdLevel?.slice(indexStart until indexEnd)?.toMutableList(), childCheckedBooleanList.slice(indexStart until indexEnd).toMutableList(), expandable_ingredient_list_view, currentIngredientCategoryIndex)
         expandable_ingredient_list_view.setAdapter(adapter)
     }
 }
