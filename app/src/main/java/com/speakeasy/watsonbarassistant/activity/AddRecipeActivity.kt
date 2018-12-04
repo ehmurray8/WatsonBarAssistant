@@ -144,7 +144,7 @@ class AddRecipeActivity : AppCompatActivity() {
 
     private fun setTitleTextState(state: Boolean){
         titleNotNull = state
-        val algoliaClient = Client(ALGOLIA_APP_ID, ALGOLIA_SEARCH_KEY)
+        val algoliaClient = Client(ALGOLIA_APP_ID, ALGOLIA_API_KEY)
         val algoliaIndex = algoliaClient.getIndex("Recipe")
         algoliaIndex.searchAsync(Query(title_text.text.toString())) { content, error ->
             if(error != null) {
