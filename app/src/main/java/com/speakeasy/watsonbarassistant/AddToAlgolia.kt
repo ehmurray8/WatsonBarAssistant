@@ -4,6 +4,7 @@ import android.os.AsyncTask
 import com.algolia.search.saas.Client
 import com.algolia.search.saas.RequestOptions
 import com.speakeasy.watsonbarassistant.ALGOLIA_API_KEY
+import com.speakeasy.watsonbarassistant.ALGOLIA_SEARCH_KEY
 import com.speakeasy.watsonbarassistant.ALGOLIA_APP_ID
 import com.speakeasy.watsonbarassistant.DiscoveryRecipe
 import kotlinx.serialization.json.JSON
